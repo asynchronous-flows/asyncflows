@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "asyncflows"
+version = "0.0.0"
+description = ""
+authors = ["Rafael Irgolic <hello@irgolic.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
