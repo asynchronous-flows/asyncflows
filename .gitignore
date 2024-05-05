@@ -1,2 +1,5 @@
 .DS_Store
 .idea
+dist
+__pycache__/
+*.pyc

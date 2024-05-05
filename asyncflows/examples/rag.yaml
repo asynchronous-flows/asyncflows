@@ -1,0 +1,39 @@
+default_model:
+  model: claude-3-sonnet-20240229
+  temperature: 1
+  max_output_tokens: 2000
+flow:
+  # `retrieve` performs a vector search, fast for large datasets
+  retrieval:
+    action: retrieve
+    k: 5
+    documents:
+      var: texts
+    query:
+      var: question
+  # `rerank` picks the most appropriate documents, it's slower than retrieve, but better at matching against the query
+  reranking:
+    action: rerank
+    k: 2
+    documents:
+      link: retrieval.result
+    query:
+      var: question
+  # `chatbot` prompts the LLM to summarize the top papers
+  chat:
+    action: prompt
+    prompt:
+      - heading: Related documents
+        text: |
+          {% for doc in reranking.result %}
+          ---
+          {{ doc }}
+          ---
+          {% endfor %}
+      - heading: Question
+        var: question
+      - text: |
+          Based on the top papers, what is the most relevant information to the query?
+          Summarize the key points of the papers in a few sentences.
+
+default_output: chat.result

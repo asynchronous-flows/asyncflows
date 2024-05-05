@@ -1,0 +1,2844 @@
+{
+  "$defs": {
+    "AddInputs_ActionFieldTemplate": {
+      "properties": {
+        "a": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "A"
+        },
+        "b": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "B"
+        }
+      },
+      "required": [
+        "a",
+        "b"
+      ],
+      "title": "AddInputs_ActionFieldTemplate",
+      "type": "object"
+    },
+    "Blob_": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "file_extension": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Extension"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Blob_",
+      "type": "object"
+    },
+    "Blob_ActionFieldTemplate": {
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Id"
+        },
+        "file_extension": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Extension"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Blob_ActionFieldTemplate",
+      "type": "object"
+    },
+    "EnvDeclaration": {
+      "additionalProperties": false,
+      "description": "An env declaration is a string that references an environment variable.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "env": {
+          "title": "Env",
+          "type": "string"
+        }
+      },
+      "required": [
+        "env"
+      ],
+      "title": "EnvDeclaration",
+      "type": "object"
+    },
+    "File_": {
+      "properties": {
+        "sources": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Blob_"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sources"
+      ],
+      "title": "File_",
+      "type": "object"
+    },
+    "LambdaDeclaration": {
+      "additionalProperties": false,
+      "description": "A lambda declaration is a python expression that can be evaluated within a context.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "lambda": {
+          "title": "Lambda",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lambda"
+      ],
+      "title": "LambdaDeclaration",
+      "type": "object"
+    },
+    "LinkDeclaration": {
+      "additionalProperties": false,
+      "description": "An link declaration is a string that references another action's output",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "link": {
+          "title": "Link",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link"
+      ],
+      "title": "LinkDeclaration",
+      "type": "object"
+    },
+    "ModelConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "max_output_tokens": {
+          "default": 2000,
+          "title": "Max Output Tokens",
+          "type": "integer"
+        },
+        "max_prompt_tokens": {
+          "default": 8000,
+          "title": "Max Prompt Tokens",
+          "type": "integer"
+        },
+        "temperature": {
+          "default": 0.6,
+          "title": "Temperature",
+          "type": "number"
+        },
+        "top_p": {
+          "default": 1.0,
+          "title": "Top P",
+          "type": "number"
+        },
+        "frequency_penalty": {
+          "default": 0.0,
+          "title": "Frequency Penalty",
+          "type": "number"
+        },
+        "presence_penalty": {
+          "default": 0.0,
+          "title": "Presence Penalty",
+          "type": "number"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "enum": [
+                "gpt-4-1106-preview",
+                "gpt-4",
+                "gpt-4-turbo",
+                "gpt-3.5-turbo-16k",
+                "gpt-3.5-turbo-1106",
+                "gpt-3.5-turbo",
+                "gemini-pro",
+                "claude-3-haiku-20240307",
+                "claude-3-opus-20240229",
+                "claude-3-sonnet-20240229"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "default": "gpt-3.5-turbo-1106",
+          "title": "Model"
+        }
+      },
+      "title": "ModelConfig",
+      "type": "object"
+    },
+    "NestedPromptContext_ActionFieldTemplate": {
+      "properties": {
+        "context": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/RoleElement__"
+                  },
+                  {
+                    "$ref": "#/$defs/TextElement__"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigVar_"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigTemplate_"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigLink_"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigLambda_"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Context"
+        }
+      },
+      "required": [
+        "context"
+      ],
+      "title": "NestedPromptContext_ActionFieldTemplate",
+      "type": "object"
+    },
+    "OptionalModelConfigActionFieldTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "max_output_tokens": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Output Tokens"
+        },
+        "max_prompt_tokens": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Prompt Tokens"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temperature"
+        },
+        "top_p": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Top P"
+        },
+        "frequency_penalty": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Frequency Penalty"
+        },
+        "presence_penalty": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Presence Penalty"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "enum": [
+                "gpt-4-1106-preview",
+                "gpt-4",
+                "gpt-4-turbo",
+                "gpt-3.5-turbo-16k",
+                "gpt-3.5-turbo-1106",
+                "gpt-3.5-turbo",
+                "gemini-pro",
+                "claude-3-haiku-20240307",
+                "claude-3-opus-20240229",
+                "claude-3-sonnet-20240229"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        }
+      },
+      "title": "OptionalModelConfigActionFieldTemplate",
+      "type": "object"
+    },
+    "PromptContextInConfigLambda": {
+      "additionalProperties": false,
+      "description": "A lambda declaration for prompt context in config.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "lambda": {
+          "title": "Lambda",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lambda",
+        "heading"
+      ],
+      "title": "PromptContextInConfigLambda",
+      "type": "object"
+    },
+    "PromptContextInConfigLambda_": {
+      "additionalProperties": false,
+      "properties": {
+        "stream": {
+          "default": null,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "lambda_": {
+          "title": "Lambda ",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lambda_",
+        "heading"
+      ],
+      "title": "PromptContextInConfigLambda_",
+      "type": "object"
+    },
+    "PromptContextInConfigLink": {
+      "additionalProperties": false,
+      "description": "An input declaration for prompt context in config.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "link": {
+          "title": "Link",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link",
+        "heading"
+      ],
+      "title": "PromptContextInConfigLink",
+      "type": "object"
+    },
+    "PromptContextInConfigLink_": {
+      "additionalProperties": false,
+      "properties": {
+        "stream": {
+          "default": null,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "link": {
+          "title": "Link",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link",
+        "heading"
+      ],
+      "title": "PromptContextInConfigLink_",
+      "type": "object"
+    },
+    "PromptContextInConfigTemplate": {
+      "additionalProperties": false,
+      "description": "A template string for prompt context in config.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "heading"
+      ],
+      "title": "PromptContextInConfigTemplate",
+      "type": "object"
+    },
+    "PromptContextInConfigTemplate_": {
+      "additionalProperties": false,
+      "properties": {
+        "stream": {
+          "default": null,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "heading"
+      ],
+      "title": "PromptContextInConfigTemplate_",
+      "type": "object"
+    },
+    "PromptContextInConfigVar": {
+      "additionalProperties": false,
+      "description": "A variable declaration for prompt context in config.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "var": {
+          "title": "Var",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "var",
+        "heading"
+      ],
+      "title": "PromptContextInConfigVar",
+      "type": "object"
+    },
+    "PromptContextInConfigVar_": {
+      "additionalProperties": false,
+      "properties": {
+        "stream": {
+          "default": null,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "var": {
+          "title": "Var",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "var",
+        "heading"
+      ],
+      "title": "PromptContextInConfigVar_",
+      "type": "object"
+    },
+    "QuoteStyle": {
+      "enum": [
+        "backticks",
+        "xml"
+      ],
+      "title": "QuoteStyle",
+      "type": "string"
+    },
+    "RoleElement_": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "user",
+            "system",
+            "assistant"
+          ],
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role"
+      ],
+      "title": "RoleElement_",
+      "type": "object"
+    },
+    "RoleElement__": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "user",
+            "system",
+            "assistant"
+          ],
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role"
+      ],
+      "title": "RoleElement__",
+      "type": "object"
+    },
+    "TextDeclaration": {
+      "additionalProperties": false,
+      "description": "A template declaration is a string that can be rendered within a context.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "TextDeclaration",
+      "type": "object"
+    },
+    "TextElement_": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "TextElement_",
+      "type": "object"
+    },
+    "TextElement__": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "TextElement__",
+      "type": "object"
+    },
+    "VarDeclaration": {
+      "additionalProperties": false,
+      "description": "A variable declaration is a string that references a variable (or path to nested variable) in the context.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "var": {
+          "title": "Var",
+          "type": "string"
+        }
+      },
+      "required": [
+        "var"
+      ],
+      "title": "VarDeclaration",
+      "type": "object"
+    },
+    "extract_pdf_textActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "extract_pdf_text",
+          "enum": [
+            "extract_pdf_text"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "file": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/File_"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "File"
+        },
+        "min_start_chars": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "default": null,
+          "title": "Min Start Chars"
+        }
+      },
+      "required": [
+        "action",
+        "file"
+      ],
+      "title": "extract_pdf_textActionInvocation",
+      "type": "object"
+    },
+    "get_urlActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "get_url",
+          "enum": [
+            "get_url"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Url"
+        }
+      },
+      "required": [
+        "action",
+        "url"
+      ],
+      "title": "get_urlActionInvocation",
+      "type": "object"
+    },
+    "promptActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "prompt",
+          "enum": [
+            "prompt"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OptionalModelConfigActionFieldTemplate"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "quote_style": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuoteStyle"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quote Style"
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/RoleElement_"
+                  },
+                  {
+                    "$ref": "#/$defs/TextElement_"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigVar"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigTemplate"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigLink"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigLambda"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Prompt"
+        }
+      },
+      "required": [
+        "action",
+        "prompt"
+      ],
+      "title": "promptActionInvocation",
+      "type": "object"
+    },
+    "rerankActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "rerank",
+          "enum": [
+            "rerank"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "enum": [
+                "cross-encoder/ms-marco-TinyBERT-L-2-v2",
+                "BAAI/bge-reranker-base"
+              ],
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "documents": {
+          "anyOf": [
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Documents"
+        },
+        "texts": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Texts"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Query"
+        },
+        "k": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "default": null,
+          "title": "K"
+        }
+      },
+      "required": [
+        "action",
+        "documents",
+        "query"
+      ],
+      "title": "rerankActionInvocation",
+      "type": "object"
+    },
+    "retrieveActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "retrieve",
+          "enum": [
+            "retrieve"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "enum": [
+                "sentence-transformers/all-mpnet-base-v2",
+                "BAAI/bge-small-en-v1.5"
+              ],
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "documents": {
+          "anyOf": [
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Documents"
+        },
+        "texts": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Texts"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Query"
+        },
+        "k": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "default": null,
+          "title": "K"
+        }
+      },
+      "required": [
+        "action",
+        "documents",
+        "query"
+      ],
+      "title": "retrieveActionInvocation",
+      "type": "object"
+    },
+    "scoreActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "score",
+          "enum": [
+            "score"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "mutated_response_output": {
+          "anyOf": [
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Mutated Response Output"
+        },
+        "expected_output": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Expected Output"
+        }
+      },
+      "required": [
+        "action",
+        "mutated_response_output",
+        "expected_output"
+      ],
+      "title": "scoreActionInvocation",
+      "type": "object"
+    },
+    "test_addActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_add",
+          "enum": [
+            "test_add"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "a": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "A"
+        },
+        "b": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "B"
+        }
+      },
+      "required": [
+        "action",
+        "a",
+        "b"
+      ],
+      "title": "test_addActionInvocation",
+      "type": "object"
+    },
+    "test_create_blobActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_create_blob",
+          "enum": [
+            "test_create_blob"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "title": "test_create_blobActionInvocation",
+      "type": "object"
+    },
+    "test_double_addActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_double_add",
+          "enum": [
+            "test_double_add"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "a": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "A"
+        },
+        "b": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "B"
+        }
+      },
+      "required": [
+        "action",
+        "a",
+        "b"
+      ],
+      "title": "test_double_addActionInvocation",
+      "type": "object"
+    },
+    "test_errorActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_error",
+          "enum": [
+            "test_error"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "title": "test_errorActionInvocation",
+      "type": "object"
+    },
+    "test_finishActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_finish",
+          "enum": [
+            "test_finish"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "title": "test_finishActionInvocation",
+      "type": "object"
+    },
+    "test_get_blobActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_get_blob",
+          "enum": [
+            "test_get_blob"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "blob": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Blob_ActionFieldTemplate"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Blob"
+        }
+      },
+      "required": [
+        "action",
+        "blob"
+      ],
+      "title": "test_get_blobActionInvocation",
+      "type": "object"
+    },
+    "test_nested_addActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_nested_add",
+          "enum": [
+            "test_nested_add"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "nested": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AddInputs_ActionFieldTemplate"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Nested"
+        }
+      },
+      "required": [
+        "action",
+        "nested"
+      ],
+      "title": "test_nested_addActionInvocation",
+      "type": "object"
+    },
+    "test_non_caching_adderActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_non_caching_adder",
+          "enum": [
+            "test_non_caching_adder"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "a": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "A"
+        },
+        "b": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "B"
+        }
+      },
+      "required": [
+        "action",
+        "a",
+        "b"
+      ],
+      "title": "test_non_caching_adderActionInvocation",
+      "type": "object"
+    },
+    "test_optional_nested_addActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_optional_nested_add",
+          "enum": [
+            "test_optional_nested_add"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "nested": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AddInputs_ActionFieldTemplate"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Nested"
+        }
+      },
+      "required": [
+        "action",
+        "nested"
+      ],
+      "title": "test_optional_nested_addActionInvocation",
+      "type": "object"
+    },
+    "test_passing_promptActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_passing_prompt",
+          "enum": [
+            "test_passing_prompt"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OptionalModelConfigActionFieldTemplate"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "quote_style": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QuoteStyle"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quote Style"
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/RoleElement_"
+                  },
+                  {
+                    "$ref": "#/$defs/TextElement_"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigVar"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigTemplate"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigLink"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigLambda"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Prompt"
+        }
+      },
+      "required": [
+        "action",
+        "prompt"
+      ],
+      "title": "test_passing_promptActionInvocation",
+      "type": "object"
+    },
+    "test_range_streamActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_range_stream",
+          "enum": [
+            "test_range_stream"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "range": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Range"
+        }
+      },
+      "required": [
+        "action",
+        "range"
+      ],
+      "title": "test_range_streamActionInvocation",
+      "type": "object"
+    },
+    "test_stringifierActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_stringifier",
+          "enum": [
+            "test_stringifier"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "action",
+        "value"
+      ],
+      "title": "test_stringifierActionInvocation",
+      "type": "object"
+    },
+    "test_transforming_promptActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_transforming_prompt",
+          "enum": [
+            "test_transforming_prompt"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/RoleElement_"
+                  },
+                  {
+                    "$ref": "#/$defs/TextElement_"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigVar"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigTemplate"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigLink"
+                  },
+                  {
+                    "$ref": "#/$defs/PromptContextInConfigLambda"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Context"
+        },
+        "nested": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NestedPromptContext_ActionFieldTemplate"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Nested"
+        }
+      },
+      "required": [
+        "action",
+        "context",
+        "nested"
+      ],
+      "title": "test_transforming_promptActionInvocation",
+      "type": "object"
+    },
+    "test_waiting_addActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "test_waiting_add",
+          "enum": [
+            "test_waiting_add"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "a": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "A"
+        },
+        "b": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "B"
+        }
+      },
+      "required": [
+        "action",
+        "a",
+        "b"
+      ],
+      "title": "test_waiting_addActionInvocation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "default_model": {
+      "$ref": "#/$defs/ModelConfig"
+    },
+    "action_timeout": {
+      "default": 360,
+      "title": "Action Timeout",
+      "type": "number"
+    },
+    "flow": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/extract_pdf_textActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/retrieveActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/rerankActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/promptActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/get_urlActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/scoreActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_addActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_nested_addActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_optional_nested_addActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_double_addActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_waiting_addActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_errorActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_create_blobActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_get_blobActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_transforming_promptActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_passing_promptActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_range_streamActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_stringifierActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_non_caching_adderActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/test_finishActionInvocation"
+          }
+        ]
+      },
+      "title": "Flow",
+      "type": "object"
+    },
+    "default_output": {
+      "title": "Default Output",
+      "type": "string"
+    }
+  },
+  "required": [
+    "default_model",
+    "flow",
+    "default_output"
+  ],
+  "title": "HintedActionConfig",
+  "type": "object"
+}

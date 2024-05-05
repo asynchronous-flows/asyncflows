@@ -1,0 +1,178 @@
+# yaml-language-server: $schema=../../../../schemas/testing_action_schema.json
+
+default_model:
+  model: gpt-3.5-turbo-1106
+action_timeout: 5
+flow:
+  first_sum:
+    action: test_add
+    a: 1
+    b: 2
+
+  second_sum:
+    action: test_add
+    a:
+      link: first_sum.result
+    b: 4
+
+  double_add:
+    action: test_double_add
+    a: 1
+    b: 2
+
+  streaming_dependency_add:
+    action: test_add
+    a:
+      link: double_add.result
+
+      stream: true
+    b: 1
+
+  non_streaming_dependency_add:
+    action: test_add
+    a:
+      link: double_add.result
+      stream: false
+    b: 1
+
+  both_streaming_dependency_add:
+    action: test_add
+    a:
+      link: double_add.result
+      stream: true
+    b:
+      link: double_add.result
+      stream: false
+
+  waiting_add:
+    action: test_waiting_add
+    a: 1
+    b:
+      link: double_add.result
+
+  first_sum_nested:
+    action: test_nested_add
+    nested:
+      a: 1
+      b: 2
+  second_sum_nested:
+    action: test_nested_add
+    nested:
+      a:
+        link: first_sum_nested.nested.result
+      b: 4
+
+  sum_optional_nested:
+    action: test_optional_nested_add
+    nested:
+      a:
+        link: first_sum_nested.nested.result
+      b: 2
+
+  error_action:
+    action: test_error
+
+  create_blob_action:
+    action: test_create_blob
+  get_blob_action:
+    action: test_get_blob
+    blob:
+      link: create_blob_action.blob
+
+  transforming_prompt:
+    action: test_transforming_prompt
+    context:
+      - link: first_sum.result
+        heading: Test
+    nested:
+      context:
+        - text: |
+            {{ first_sum.result }}
+          heading: Nested test
+
+  passing_prompt:
+    action: test_passing_prompt
+    prompt:
+      - role: system
+      - text: |
+          Hi {{ first_sum.result }}
+      - text: Oh {{ second_sum_nested.nested.result }}
+        heading: Test2 {{ first_sum_nested.nested.result }}
+      - role: assistant
+      - link: first_sum.result
+        heading: abc
+      - text: |
+          {{ first_sum.result }}
+
+  range_stream:
+    action: test_range_stream
+    range: 10
+
+  stringified_add:
+    action: test_stringifier
+    value:
+      link: first_sum.result
+
+  finish_action:
+    action: test_finish
+
+  non_caching_adder:
+    action: test_non_caching_adder
+    a: 1
+    b: 2
+
+  cache_key_adder:
+    action: test_add
+    cache_key: "test_cache_key"
+    a: 1
+    b:
+      link: first_sum.result
+
+  cache_key_adder_2:
+    action: test_add
+    cache_key: "test_cache_key"
+    a: 1
+    b:
+      link: second_sum.result
+
+  cache_key_var_adder:
+    action: test_add
+    cache_key:
+      link: first_sum.result
+    a: 1
+    b:
+      link: first_sum.result
+
+  cache_key_varadder_2:
+    action: test_add
+    cache_key:
+      link: first_sum.result
+    a: 1
+    b:
+      link: second_sum.result
+
+  env_adder:
+    action: test_add
+    a: 1
+    b:
+      env: DUMMY_ENV_VAR
+
+  lambda_adder:
+    action: test_add
+    a:
+      lambda: first_sum.result + second_sum.result
+    b: 1
+
+#  sum_iterator:
+#    for: num
+#    in:
+#      lambda: range(3)
+#    flow:
+#      add:
+#        action: test_add
+#        a:
+#          var: num
+#        b:
+#          link: first_sum.result
+
+default_output: first_sum.result

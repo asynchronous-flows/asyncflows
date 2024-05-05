@@ -1,0 +1,17 @@
+default_model:
+  model: claude-3-sonnet-20240229
+  temperature: 1
+  max_output_tokens: 2000
+flow:
+  get_website:
+    action: get_url
+    url:
+      var: url
+  extract_title:
+    action: prompt
+    prompt:
+      - heading: Website content
+        link: get_website.result
+      - text: |
+          What is the title of the webpage?
+default_output: extract_title.result

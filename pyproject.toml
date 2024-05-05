@@ -6,9 +6,64 @@ authors = ["Rafael Irgolic <hello@irgolic.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.13"
+pydantic = "^2.4.2"
+openai = "^1"
+tenacity = "^8.2.3"
+pyyaml = "^6.0.1"
+cryptography = "^41.0.4"
+beautifulsoup4 = "^4.12.2"
+pytest = "^7.4.3"
+pytest-mock = "^3.12.0"
+pytest-asyncio = "^0.21.1"
+redis = "^5.0.1"
+pypdfium2 = "^4.24.0"
+litellm = "^1.30.3"
+aiohttp = "^3.9.1"
+structlog = "^23.2.0"
+numpy = "^1.26.2"
+structlog-sentry = "^2.0.3"
+greenlet = "^3.0.3"
+aioboto3 = "^12.2.0"
+types-aioboto3 = {extras = ["s3"], version = "^12.2.0"}
+nltk = "^3.8.1"
+lxml = "^5.1.0"
+simpleeval = "^0.9.13"
+google-cloud-aiplatform = "^1.43.0"
+anthropic = "^0.21.3"
+infinity-emb = {extras = ["torch", "optimum"], version = "^0.0.32"}
+sentence-transformers = "^2.6.1,<2.7.0"
+anyio = "^3.7.1,<4.0.0"
+datamodel-code-generator = "^0.25.6"
 
+[tool.poetry.group.dev.dependencies]
+pyright = "1.1.347"
+ruff = "^0.3.0"
+aioresponses = "^0.7.6"
+dash = "^2.14.2"
+dash-cytoscape = "^0.3.0"
+
+[tool.poetry.group.test.dependencies]
+aioresponses = "^0.7.6"
+jsonschema = "^4.21.0"
+jinja2schema = {git = "https://github.com/irgolic/jinja2schema.git", branch = "master"}
+moto = {extras = ["server"], version = "^4.2.13"}
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pyright]
+reportIncompatibleVariableOverride = false
+enableExperimentalFeatures = true
+reportUnnecessaryTypeIgnoreComment = "warning"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "allow_skip: marks tests that are allowed to be skipped",
+]
+testpaths = [
+    "asyncflows/tests",
+]
