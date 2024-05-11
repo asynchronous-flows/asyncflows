@@ -1,0 +1,87 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  pytest:
+    strategy:
+      matrix:
+        python-version: [ 3.11 ]
+        poetry-version: [ 1.7.1 ]
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      seaweedfs:
+        image: irgolic/seaweedfs-ci:dev
+        ports:
+          - 8333:8333
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'poetry'
+
+      - run: poetry install
+      - run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+
+      - run: make test-no-skip
+        env:
+          REDIS_HOST: localhost
+          REDIS_PASSWORD: ""
+          AWS_ACCESS_KEY_ID: ""
+          BUCKET_NAME: "mimi-blobs"
+          AWS_SECRET_ACCESS_KEY: ""
+          AWS_ENDPOINT_URL: http://localhost:8333
+
+  pyright:
+    strategy:
+      matrix:
+        python-version: [ 3.11 ]
+        pyright-version: [ 1.1.343 ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'poetry'
+
+      - run: poetry install --with dev --with test
+      - run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+
+      - uses: jakebailey/pyright-action@v1
+        with:
+          version: ${{ matrix.pyright-version }}
+
+  ruff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: chartboost/ruff-action@v1
+        with:
+          args: "check"
+      - uses: chartboost/ruff-action@v1
+        with:
+          args: "format --check"
