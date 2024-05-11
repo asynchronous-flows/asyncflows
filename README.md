@@ -88,7 +88,9 @@ and provide an `OPENAI_API_KEY` environment variable instead.
 Here is a simple flow that prompts the LLM to say "hello world", and prints the result.
 
 <div align="center">
-<img width="465" alt="hello world" src="https://gist.github.com/assets/24586651/7dd4cd7e-46ef-4d3b-becb-798d4fff9156">
+
+<img width="465" alt="hello world" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/9ef8234d-f0d0-4ea7-a42e-92fe1650c19a">
+
 </div>
 
 YAML file that defines the flow:
@@ -127,7 +129,8 @@ The concept is based on the idea of using different colored hats to represent di
 This flow parallelizes the thinking under five hats, and synthesizes them under the blue hat.
 
 <div align="center">
-<img width="1079" alt="debono" src="https://gist.github.com/assets/24586651/f4b7e5e2-27b2-4ed4-8b93-d5cefac91aad">
+<img width="1079" alt="debono" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/1a6efeeb-d8b2-41cf-a79b-0ff0b692f3db">
+
 </div>
 
 Running the example (will prompt you for something to think about):
@@ -282,7 +285,7 @@ The form of RAG we're using is **retrieval** followed by **reranking**.
 Retrieval is great for searching through a large dataset, while reranking is slower but better at matching against the query.
 
 <div align="center">
-<img width="1086" alt="rag" src="https://gist.github.com/assets/24586651/d274dac5-8f9b-4f18-81fc-e8f9287d8d23">
+<img width="1104" alt="rag" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/93e7bade-3ee3-4da8-bf3d-18affdc8f874">
 </div>
 
 Running the example, running transformers locally, over `examples/recipes/` (a folder with text files):
