@@ -584,7 +584,7 @@ async def test_exception_in_upstream_action_internals(
             "action_id": action_id,
             "action": action_name,
             "event": "Not all action tasks completed",
-            "action_task_ids": {upstream_action_id},
+            "action_task_ids": [upstream_action_id],
             "missing_action_ids": {upstream_action_id},
             "log_level": "error",
         },

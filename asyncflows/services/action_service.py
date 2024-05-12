@@ -377,13 +377,13 @@ class ActionService:
             return
 
         if is_set_of_tuples(dependencies):
-            action_ids = {id_ for id_, _ in dependencies}
+            action_ids = list({id_ for id_, _ in dependencies})
             stream_flags = [
                 not any(id_ == action_id and not stream for id_, stream in dependencies)
                 for action_id in action_ids
             ]
         else:
-            action_ids = dependencies
+            action_ids = list(set(dependencies))
             stream_flags = [True for _ in action_ids]
 
         if len(action_ids) != len(stream_flags):
@@ -432,7 +432,7 @@ class ActionService:
         if not all(action_id in dependency_outputs for action_id in action_ids):
             log.error(
                 "Not all action tasks completed",
-                missing_action_ids=action_ids - set(dependency_outputs.keys()),
+                missing_action_ids=set(action_ids) - set(dependency_outputs.keys()),
             )
             yield Sentinel
 

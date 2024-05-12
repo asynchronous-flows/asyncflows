@@ -1,7 +1,7 @@
 import asyncio
 import time
 from asyncio import CancelledError
-from typing import TypeVar, AsyncIterator, Awaitable
+from typing import TypeVar, AsyncIterator, Awaitable, Sequence
 
 import sentry_sdk
 import structlog
@@ -49,7 +49,7 @@ class LagMonitor:
 
 async def merge_iterators(
     log: structlog.stdlib.BoundLogger,
-    ids: set[IdType],
+    ids: Sequence[IdType],
     coros: list[AsyncIterator[OutputType]],
 ) -> AsyncIterator[tuple[IdType, OutputType | None]]:
     async def worker(
