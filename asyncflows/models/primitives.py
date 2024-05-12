@@ -5,6 +5,8 @@ from pydantic import BaseModel
 ExecutableId = str
 ExecutableName = str
 
+TaskId = str
+
 # class ExecutableId(str):
 #     reserved_keywords = [
 #         "context",

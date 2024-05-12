@@ -4,8 +4,7 @@ from typing import TypeVar
 import yaml
 from pydantic import BaseModel
 
-from asyncflows.models.config.action import ActionConfig
-
+from asyncflows.models.config.flow import ActionConfig
 
 T = TypeVar("T", bound=BaseModel)
 

@@ -164,6 +164,9 @@ class LambdaDeclaration(Declaration):
 
         evaluator = simpleeval.EvalWithCompoundTypes(
             names=context,
+            functions={
+                "range": range,
+            },
         )
         return evaluator.eval(self.lambda_)
 

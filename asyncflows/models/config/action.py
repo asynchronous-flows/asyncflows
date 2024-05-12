@@ -5,14 +5,13 @@ from pydantic import ConfigDict, Field
 
 from asyncflows.actions import get_actions_dict
 from asyncflows.models.config.common import StrictModel
-from asyncflows.models.config.model import ModelConfig
 from asyncflows.models.config.value_declarations import (
     VarDeclaration,
     ValueDeclaration,
     LinkDeclaration,
 )
 from asyncflows.models.primitives import HintType
-from asyncflows.models.primitives import ExecutableName, ExecutableId
+from asyncflows.models.primitives import ExecutableName
 from asyncflows.utils.config_utils import templatify_model
 
 
@@ -88,19 +87,8 @@ def build_actions(
 ActionInvocationUnion = Union[tuple(build_actions())]  # pyright: ignore
 
 
-class ActionConfig(StrictModel):
-    default_model: ModelConfig
-    action_timeout: float = 360
-    flow: dict[ExecutableId, ActionInvocationUnion]
-    default_output: ExecutableId
-
-
 # TODO assert tests not imported before this line
 import asyncflows.tests.resources.actions  # noqa
 
 
 TestingActionInvocationUnion = Union[tuple(build_actions())]  # pyright: ignore
-
-
-class TestActionConfig(ActionConfig):
-    flow: dict[ExecutableId, TestingActionInvocationUnion]

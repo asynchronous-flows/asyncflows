@@ -1,6 +1,6 @@
 import asyncio
 from collections import defaultdict
-from typing import Any, AsyncIterator
+from typing import Any, AsyncIterator, assert_never, Iterable
 
 import sentry_sdk
 import structlog
@@ -19,13 +19,13 @@ from asyncflows.actions.base import (
 )
 from asyncflows.models.blob import Blob
 from asyncflows.models.config.action import ActionInvocation
+from asyncflows.models.config.flow import ActionConfig, Loop, FlowConfig
 from asyncflows.models.config.transform import TransformsInto
 from asyncflows.models.config.value_declarations import (
     TextDeclaration,
     ValueDeclaration,
 )
-from asyncflows.models.config.action import ActionConfig
-from asyncflows.models.primitives import ExecutableName, ExecutableId
+from asyncflows.models.primitives import ExecutableName, ExecutableId, TaskId
 
 from asyncflows.repos.blob_repo import BlobRepo
 
@@ -77,11 +77,17 @@ class ActionService:
         raise ValueError(f"Unknown action: {name}")
 
     def _get_action_instance(
-        self, log: structlog.stdlib.BoundLogger, action_id: ExecutableId
+        self,
+        log: structlog.stdlib.BoundLogger,
+        action_id: ExecutableId,
+        flow: FlowConfig,
     ) -> ActionSubclass:
         if action_id in self.action_cache:
             return self.action_cache[action_id]
-        action_config = self.config.flow[action_id]
+        action_config = flow[action_id]
+        if not isinstance(action_config, ActionInvocation):
+            log.error("Not an action", action_id=action_id)
+            raise RuntimeError("Not an action")
         action_name = action_config.action
         action_type = self.get_action_type(action_name)
 
@@ -97,6 +103,7 @@ class ActionService:
         log: structlog.stdlib.BoundLogger,
         action_id: ExecutableId,
         inputs: Inputs | None,
+        flow: FlowConfig,
     ) -> AsyncIterator[Outputs | None]:
         # Prepare inputs
         if isinstance(inputs, RedisUrlInputs):
@@ -107,7 +114,7 @@ class ActionService:
             inputs._default_model = self.config.default_model
 
         # Get the action instance
-        action = self._get_action_instance(log, action_id)
+        action = self._get_action_instance(log, action_id, flow=flow)
         if not isinstance(inputs, action._get_inputs_type()):
             raise ValueError(
                 f"Inputs type mismatch: {type(inputs)} != {action._get_inputs_type()}"
@@ -274,11 +281,11 @@ class ActionService:
         dependencies: set[tuple[ExecutableId, bool]],
         variables: dict[str, Any],
     ) -> AsyncIterator[dict[ExecutableId, Outputs] | type[Sentinel]]:
-        action_dependencies = {d for d in dependencies if d[0] in self.config.flow}
+        executable_dependencies = {d for d in dependencies if d[0] in self.config.flow}
         extra_dependency_ids = {
             d[0]
             for d in dependencies
-            if d not in action_dependencies and d[0] not in variables
+            if d not in executable_dependencies and d[0] not in variables
         }
         if extra_dependency_ids:
             log.error(
@@ -288,8 +295,10 @@ class ActionService:
             for id_ in extra_dependency_ids:
                 variables[id_] = None
 
-        async for dependency_outputs in self.stream_action_tasks(
-            log, action_dependencies, variables
+        async for dependency_outputs in self.stream_executable_tasks(
+            log,
+            executable_dependencies,
+            variables,
         ):
             yield dependency_outputs
 
@@ -340,7 +349,9 @@ class ActionService:
             return
 
         async for dependency_outputs in self.stream_dependencies(
-            log, dependencies, variables
+            log,
+            dependencies,
+            variables,
         ):
             if is_sentinel(dependency_outputs):
                 # propagate error
@@ -363,54 +374,76 @@ class ActionService:
                 )
                 sentry_sdk.capture_exception(e)
 
-    async def stream_action_tasks(
+    async def stream_executable_tasks(
         self,
         log: structlog.stdlib.BoundLogger,
         dependencies: set[tuple[ExecutableId, bool]] | set[ExecutableId],
         variables: None | dict[str, Any] = None,
+        flow: FlowConfig | None = None,
+        task_prefix: str = "",
     ) -> AsyncIterator[dict[ExecutableId, Outputs] | type[Sentinel]]:
         if variables is None:
             variables = {}
+        if flow is None:
+            flow = self.config.flow
 
         if not dependencies:
             yield {}
             return
 
         if is_set_of_tuples(dependencies):
-            action_ids = list({id_ for id_, _ in dependencies})
+            executable_ids = list({id_ for id_, _ in dependencies})
             stream_flags = [
-                not any(id_ == action_id and not stream for id_, stream in dependencies)
-                for action_id in action_ids
+                not any(
+                    id_ == executable_id and not stream for id_, stream in dependencies
+                )
+                for executable_id in executable_ids
             ]
         else:
-            action_ids = list(set(dependencies))
-            stream_flags = [True for _ in action_ids]
+            executable_ids = list(set(dependencies))
+            stream_flags = [True for _ in executable_ids]
 
-        if len(action_ids) != len(stream_flags):
+        if len(executable_ids) != len(stream_flags):
             log.error(
                 "Length mismatch between action_ids and stream_flags",
-                action_ids=action_ids,
+                action_ids=executable_ids,
                 stream_flags=stream_flags,
             )
             yield Sentinel
 
-        merged_iterator = merge_iterators(
-            log,
-            action_ids,
-            [
-                self.stream_action(
+        iterators = []
+        for id_, stream in zip(executable_ids, stream_flags):
+            executable = flow[id_]
+            if isinstance(executable, ActionInvocation):
+                iter_ = self.stream_action(
                     log=log,
                     action_id=id_,
                     variables=variables,
                     partial=stream,
+                    flow=flow,
+                    task_prefix=task_prefix,
                 )
-                for id_, stream in zip(action_ids, stream_flags)
-            ],
+            elif isinstance(executable, Loop):
+                iter_ = self.stream_loop(
+                    log=log,
+                    loop_id=id_,
+                    variables=variables,
+                    partial=stream,
+                    task_prefix=task_prefix,
+                )
+            else:
+                assert_never(executable)
+            iterators.append(iter_)
+
+        merged_iterator = merge_iterators(
+            log,
+            executable_ids,
+            iterators,
         )
 
-        log = log.bind(action_task_ids=action_ids)
+        log = log.bind(action_task_ids=executable_ids)
         dependency_outputs = {}
-        async for action_id, action_outputs in merged_iterator:
+        async for executable_id, executable_outputs in merged_iterator:
             # None is yielded as action_outputs if an action throws an exception
             # if action_outputs is None:
             #     raise RuntimeError(f"{action_id} returned None")
@@ -418,36 +451,36 @@ class ActionService:
             # if action_outputs is not None:
             #     # TODO consider parity with `stream_action` in returning a model instead of a dict
             #     action_outputs = action_outputs.model_dump()
-            dependency_outputs[action_id] = action_outputs
+            dependency_outputs[executable_id] = executable_outputs
 
             # TODO do we need more fine grained controls on what actions need to return?
-            if all(action_id in dependency_outputs for action_id in action_ids):
+            if all(action_id in dependency_outputs for action_id in executable_ids):
                 log.debug("Yielding combined action task results")
                 yield dependency_outputs
             else:
                 log.debug(
                     "Action task results received, waiting for other actions to complete",
-                    received_action_id=action_id,
+                    received_action_id=executable_id,
                 )
-        if not all(action_id in dependency_outputs for action_id in action_ids):
+        if not all(action_id in dependency_outputs for action_id in executable_ids):
             log.error(
                 "Not all action tasks completed",
-                missing_action_ids=set(action_ids) - set(dependency_outputs.keys()),
+                missing_action_ids=set(executable_ids) - set(dependency_outputs.keys()),
             )
             yield Sentinel
 
     def _broadcast_outputs(
         self,
         log: structlog.stdlib.BoundLogger,
-        action_id: ExecutableId,
+        task_id: TaskId,
         outputs: Outputs | None | type[Sentinel],
         queues: list[asyncio.Queue] | None = None,
     ):
         if queues is None:
-            queues = self.action_output_broadcast[action_id]
+            queues = self.action_output_broadcast[task_id]
 
         # Broadcast outputs
-        new_listeners_queues = self.new_listeners[action_id]
+        new_listeners_queues = self.new_listeners[task_id]
         for queue in queues[:]:
             # TODO should we only ever leave one output in queue? or should we just let the subscriber handle partials?
             #  pro: badly written actions will work better/faster
@@ -464,9 +497,13 @@ class ActionService:
         self,
         log: structlog.stdlib.BoundLogger,
         action_id: ExecutableId,
-        cache_key: Any,
+        cache_key: str | None,
+        flow: FlowConfig,
     ) -> None | Outputs:
-        action_config = self.config.flow[action_id]
+        action_config = flow[action_id]
+        if not isinstance(action_config, ActionInvocation):
+            log.error("Not an action", action_id=action_id)
+            return None
         action_name = action_config.action
         action_type = self.get_action_type(action_name)
 
@@ -544,24 +581,33 @@ class ActionService:
         self,
         log: structlog.stdlib.BoundLogger,
         action_id: ExecutableId,
+        task_id: TaskId,
         variables: dict[str, Any],
+        flow: FlowConfig,
     ) -> None:
         log.debug("Running action task")
 
-        action_config = self.config.flow[action_id]
+        action_config = flow[action_id]
+        if not isinstance(action_config, ActionInvocation):
+            log.error("Not an action", task_id=task_id)
+            return
         action_name = action_config.action
         action_type = self.get_action_type(action_name)
 
         # Check cache by `cache_key` if provided
         cache_key = await self._resolve_cache_key(log, action_config, variables)
+        if is_sentinel(cache_key):
+            log.error("Failed to create cache key")
+            return
+
         if cache_key is not None:
-            hardcoded_cache_key = True
-            outputs = await self._check_cache(log, action_id, action_config.cache_key)
+            hardcoded_cache_key = cache_key
+            outputs = await self._check_cache(log, action_id, cache_key, flow=flow)
             if outputs is not None:
-                self._broadcast_outputs(log, action_id, outputs)
+                self._broadcast_outputs(log, task_id, outputs)
                 return
         else:
-            hardcoded_cache_key = False
+            hardcoded_cache_key = cache_key
 
         inputs = None
         outputs = None
@@ -571,7 +617,9 @@ class ActionService:
         # FIXME instead of running the action on each partial dependency result, every time the action execution
         #  finishes on partial results, run it on the most recent set of partial inputs
         async for inputs in self.stream_input_dependencies(
-            log, action_config, variables
+            log,
+            action_config,
+            variables,
         ):
             if is_sentinel(inputs):
                 # propagate error
@@ -579,12 +627,14 @@ class ActionService:
             cache_hit = False
 
             # Check cache
-            if not hardcoded_cache_key:
+            if hardcoded_cache_key is not None:
+                cache_key = hardcoded_cache_key
+            else:
                 cache_key = inputs.model_dump_json() if inputs is not None else None
-            outputs = await self._check_cache(log, action_id, cache_key)
+            outputs = await self._check_cache(log, action_id, cache_key, flow=flow)
             if outputs is not None:
                 cache_hit = True
-                self._broadcast_outputs(log, action_id, outputs)
+                self._broadcast_outputs(log, task_id, outputs)
                 continue
 
             # TODO rework this to handle partial outputs, not just full output objects
@@ -592,13 +642,14 @@ class ActionService:
                 log=log,
                 action_id=action_id,
                 inputs=inputs,
+                flow=flow,
             ):
                 # TODO are there any race conditions here, between result caching and in-progress action awaiting?
                 #  also consider paradigm of multiple workers, indexing tasks in a database and pulling from cache instead
 
                 # Send result to queue
                 # log.debug("Broadcasting outputs")
-                self._broadcast_outputs(log, action_id, outputs)
+                self._broadcast_outputs(log, task_id, outputs)
 
             # log.debug("Outputs done")
 
@@ -610,10 +661,11 @@ class ActionService:
             inputs._finished = True
             async for outputs in self._run_action(
                 log=log,
-                action_id=action_id,
+                action_id=task_id,
                 inputs=inputs,
+                flow=flow,
             ):
-                self._broadcast_outputs(log, action_id, outputs)
+                self._broadcast_outputs(log, task_id, outputs)
 
         # Cache result
         # TODO should we cache intermediate results too, or only on the final set of inputs/outputs?
@@ -643,28 +695,140 @@ class ActionService:
                     exc_info=e,
                 )
 
-        if queues := self.new_listeners[action_id]:
+        if queues := self.new_listeners[task_id]:
             log.debug("Final output broadcast for new listeners")
-            self._broadcast_outputs(log, action_id, outputs, queues=queues)
+            self._broadcast_outputs(log, task_id, outputs, queues=queues)
 
     async def _run_and_broadcast_action_task(
         self,
         log: structlog.stdlib.BoundLogger,
         action_id: ExecutableId,
+        task_id: TaskId,
         variables: dict[str, Any],
+        flow: FlowConfig,
     ):
         try:
-            await self._run_and_broadcast_action(log, action_id, variables)
+            await self._run_and_broadcast_action(
+                log=log,
+                action_id=action_id,
+                task_id=task_id,
+                variables=variables,
+                flow=flow,
+            )
         except Exception as e:
             log.exception("Action service exception", exc_info=True)
             sentry_sdk.capture_exception(e)
         finally:
             log.debug("Broadcasting end of stream")
             # Signal end of queue
-            self._broadcast_outputs(log, action_id, Sentinel)
+            self._broadcast_outputs(log, task_id, Sentinel)
 
             # Signal that the task is done
-            del self.tasks[action_id]
+            del self.tasks[task_id]
+
+    async def stream_loop(
+        self,
+        log: structlog.stdlib.BoundLogger,
+        loop_id: ExecutableId,
+        variables: dict[str, Any] | None = None,
+        partial: bool = False,
+        task_prefix: str = "",
+    ) -> AsyncIterator[list[Outputs]]:
+        if variables is None:
+            variables = {}
+        if partial:
+            # TODO support streaming
+            log.warning(
+                "Streaming outputs from a loop is not yet supported",
+                loop_id=loop_id,
+            )
+            partial = False
+
+        if "action_id" in log._context:
+            downstream_action_id = log._context["action_id"]
+            log = (
+                log.unbind("action_id")
+                .unbind("action_name")
+                .bind(downstream_action_id=downstream_action_id)
+            )
+        log = log.bind(action_id=loop_id)
+
+        loop = self.config.flow[loop_id]
+        if not isinstance(loop, Loop):
+            log.error("Not a loop", loop_id=loop_id)
+            raise RuntimeError("Not a loop")
+
+        # Get the dependencies of the variable we're iterating
+        looped_dependency = self._get_dependency_ids_and_stream_flag_from_input_spec(
+            loop.in_
+        )
+        dependency_outputs = Sentinel
+        async for dependency_outputs in self.stream_dependencies(
+            log,
+            looped_dependency,
+            variables,
+        ):
+            pass
+        if is_sentinel(dependency_outputs):
+            return
+
+        # Render the variable
+        looped_variable = await self._collect_inputs_from_context(
+            log,
+            input_spec=loop.in_,
+            context=dependency_outputs | variables,
+        )
+        if not isinstance(looped_variable, Iterable):
+            log.error(
+                "Looped variable is not iterable",
+                looped_variable=looped_variable,
+            )
+            return
+
+        # Run the loop
+        iterators = []
+        for i, item in enumerate(looped_variable):
+            loop_variables = {loop.for_: item} | variables
+            new_task_prefix = f"{task_prefix}{loop_id}[{i}]."
+            # TODO don't run all the actions in the loop, only those that are actually used
+            iterators.append(
+                self.stream_executable_tasks(
+                    log,
+                    set(loop.flow),
+                    loop_variables,
+                    flow=loop.flow,
+                    task_prefix=new_task_prefix,
+                )
+            )
+
+        # Merge the iterators and wait for results
+        merged_iterator = merge_iterators(
+            log,
+            range(len(iterators)),
+            iterators,
+        )
+        indexed_results = {}
+        async for id_, outputs in merged_iterator:
+            if is_sentinel(outputs):
+                log.error(
+                    "Loop stream ended with sentinel",
+                )
+                return
+            indexed_results[id_] = outputs
+
+        if not all(id_ in indexed_results for id_ in range(len(iterators))):
+            log.error(
+                "Not all loop tasks completed",
+                missing_task_ids=set(range(len(iterators)))
+                - set(indexed_results.keys()),
+            )
+            return
+
+        # Combine the results
+        combined_results = []
+        for i in range(len(iterators)):
+            combined_results.append(indexed_results[i])
+        yield combined_results
 
     async def stream_action(
         self,
@@ -672,7 +836,9 @@ class ActionService:
         action_id: ExecutableId,
         variables: None | dict[str, Any] = None,
         partial: bool = True,
-    ) -> AsyncIterator[Outputs | None]:
+        flow: FlowConfig | None = None,
+        task_prefix: str = "",
+    ) -> AsyncIterator[Outputs]:
         """
         Execute the action and stream the outputs of the action as async iterator.
         If the action is already running, subscribe to that execution's output stream.
@@ -688,12 +854,21 @@ class ActionService:
         """
         if variables is None:
             variables = {}
+        if flow is None:
+            flow = self.config.flow
 
         action_task = None
         queue = None
 
         # Configure logger
-        action_name = self.config.flow[action_id].action
+        action = flow[action_id]
+        if not isinstance(action, ActionInvocation):
+            log.error(
+                "Not an action",
+                action_id=action_id,
+            )
+            raise RuntimeError
+        action_name = action.action
 
         if "action_id" in log._context:
             downstream_action_id = log._context["action_id"]
@@ -702,23 +877,31 @@ class ActionService:
             )
         log = log.bind(action_id=action_id, action=action_name)
 
+        task_id = f"{task_prefix}{action_id}"
+
         # TODO rewrite this try/finally into a `with` scope that cleans up
         try:
             # Join broadcast
             queue = asyncio.Queue()
-            self.action_output_broadcast[action_id].append(queue)
-            self.new_listeners[action_id].append(queue)
+            self.action_output_broadcast[task_id].append(queue)
+            self.new_listeners[task_id].append(queue)
 
             # Start action task if not already running
-            if action_id not in self.tasks:
+            if task_id not in self.tasks:
                 log.debug(
                     "Scheduling action task",
                 )
                 action_task = asyncio.create_task(
-                    self._run_and_broadcast_action_task(log, action_id, variables)
+                    self._run_and_broadcast_action_task(
+                        log=log,
+                        action_id=action_id,
+                        task_id=task_id,
+                        variables=variables,
+                        flow=flow,
+                    )
                 )
 
-                self.tasks[action_id] = action_task
+                self.tasks[task_id] = action_task
             else:
                 log.debug(
                     "Listening to existing action task",
@@ -759,7 +942,7 @@ class ActionService:
         finally:
             # Clean up
             if queue is not None:
-                self.action_output_broadcast[action_id].remove(queue)
+                self.action_output_broadcast[task_id].remove(queue)
             if action_task is not None:
                 try:
                     # give task 3 seconds to finish
@@ -772,12 +955,74 @@ class ActionService:
                     except asyncio.CancelledError:
                         pass
 
+    async def stream_executable(
+        self,
+        log: structlog.stdlib.BoundLogger,
+        executable_id: ExecutableId,
+        variables: None | dict[str, Any] = None,
+        partial: bool = True,
+        flow: FlowConfig | None = None,
+    ) -> AsyncIterator[list[Outputs] | Outputs]:
+        if flow is None:
+            flow = self.config.flow
+
+        executable = flow[executable_id]
+
+        if isinstance(executable, ActionInvocation):
+            async for outputs in self.stream_action(
+                log=log,
+                action_id=executable_id,
+                variables=variables,
+                partial=partial,
+                flow=flow,
+            ):
+                yield outputs
+        elif isinstance(executable, Loop):
+            result = Sentinel
+            async for result in self.stream_loop(
+                log=log, loop_id=executable_id, variables=variables, partial=partial
+            ):
+                pass
+            if is_sentinel(result):
+                log.error("Loop did not yield an output")
+            else:
+                yield result
+            return
+        else:
+            assert_never(executable)
+
+    async def run_executable(
+        self,
+        log: structlog.stdlib.BoundLogger,
+        executable_id: ExecutableId,
+        variables: None | dict[str, Any] = None,
+    ) -> list[Outputs] | Outputs | None:
+        return await iterator_to_coro(
+            self.stream_executable(
+                log=log, executable_id=executable_id, variables=variables, partial=False
+            )
+        )
+
     async def run_action(
         self,
         log: structlog.stdlib.BoundLogger,
         action_id: ExecutableId,
         variables: None | dict[str, Any] = None,
-    ) -> Outputs | None:
+    ):
         return await iterator_to_coro(
-            self.stream_action(log, action_id, variables, partial=False)
+            self.stream_action(
+                log=log, action_id=action_id, variables=variables, partial=False
+            )
+        )
+
+    async def run_loop(
+        self,
+        log: structlog.stdlib.BoundLogger,
+        loop_id: ExecutableId,
+        variables: None | dict[str, Any] = None,
+    ) -> list[Outputs] | None:
+        return await iterator_to_coro(
+            self.stream_loop(
+                log=log, loop_id=loop_id, variables=variables, partial=False
+            )
         )

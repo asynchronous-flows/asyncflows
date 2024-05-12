@@ -163,16 +163,38 @@ flow:
       lambda: first_sum.result + second_sum.result
     b: 1
 
-#  sum_iterator:
-#    for: num
-#    in:
-#      lambda: range(3)
-#    flow:
-#      add:
-#        action: test_add
-#        a:
-#          var: num
-#        b:
-#          link: first_sum.result
+  sum_iterator:
+    for: num
+    in:
+      lambda: range(3)
+    flow:
+      add:
+        action: test_add
+        a:
+          var: num
+        b: 1
+
+  dependent_in_iterator:
+    for: num
+    in:
+      lambda: range(first_sum.result)
+    flow:
+      add:
+        action: test_add
+        a:
+          var: num
+        b: 1
+
+  dependent_flow_iterator:
+    for: num
+    in:
+      lambda: range(3)
+    flow:
+      add:
+        action: test_add
+        a:
+          var: num
+        b:
+          link: first_sum.result
 
 default_output: first_sum.result

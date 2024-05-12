@@ -7,11 +7,15 @@ from pydantic import ValidationError
 
 from asyncflows.actions import get_actions_dict
 from asyncflows.models.config.action import (
-    TestActionConfig,
     build_actions,
-    ActionConfig,
 )
 from asyncflows.models.primitives import ExecutableId
+from asyncflows.models.config.flow import (
+    ActionConfig,
+    Loop,
+    TestActionConfig,
+    Executable,
+)
 from asyncflows.services.config_service import ConfigService
 
 _cache = {}
@@ -37,6 +41,9 @@ def _build_action_specs(
     action_specs = []
     actions = get_actions_dict()
     for action_id, action_invocation in action_config.flow.items():
+        if isinstance(action_invocation, Loop):
+            # TODO build for-loop specs
+            continue
         action_name = action_invocation.action
         action_specs.append(
             {
@@ -72,14 +79,17 @@ def _build_hinted_action_model(
     #     config_service=config_service,
     # )
 
-    HintedActionInvocationUnion = Union[
-        tuple(
-            build_actions(
-                # vars_=vars_,
-                strict=strict,
-            )
-        )  # pyright: ignore
-    ]
+    HintedActionInvocationUnion = (
+        Executable
+        | Union[
+            tuple(
+                build_actions(
+                    # vars_=vars_,
+                    strict=strict,
+                )
+            )  # pyright: ignore
+        ]
+    )
 
     class HintedActionConfig(config_class):
         flow: dict[ExecutableId, HintedActionInvocationUnion]  # type: ignore

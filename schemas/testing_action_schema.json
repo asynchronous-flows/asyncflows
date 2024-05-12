@@ -223,6 +223,71 @@
       "title": "LinkDeclaration",
       "type": "object"
     },
+    "Loop": {
+      "additionalProperties": false,
+      "properties": {
+        "for": {
+          "title": "For",
+          "type": "string"
+        },
+        "in": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "In"
+        },
+        "flow": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/extract_pdf_textActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/retrieveActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/rerankActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/promptActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/get_urlActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/scoreActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/Loop"
+              }
+            ]
+          },
+          "title": "Flow",
+          "type": "object"
+        }
+      },
+      "required": [
+        "for",
+        "in",
+        "flow"
+      ],
+      "title": "Loop",
+      "type": "object"
+    },
     "ModelConfig": {
       "additionalProperties": false,
       "properties": {
@@ -2764,6 +2829,27 @@
     "flow": {
       "additionalProperties": {
         "anyOf": [
+          {
+            "$ref": "#/$defs/extract_pdf_textActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/retrieveActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/rerankActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/promptActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/get_urlActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/scoreActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/Loop"
+          },
           {
             "$ref": "#/$defs/extract_pdf_textActionInvocation"
           },

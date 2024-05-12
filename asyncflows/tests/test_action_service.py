@@ -4,6 +4,7 @@ from unittest import mock
 
 
 import asyncflows.tests.resources.actions  # noqa: F401
+from asyncflows.tests.resources.actions import AddOutputs
 from asyncflows.actions.utils.prompt_context import (
     RoleElement,
     TextElement,
@@ -709,6 +710,60 @@ async def test_lambda_adder(log, in_memory_action_service, log_history):
     )
     assert_logs(log_history, second_dependency_id, action_name, assert_empty=False)
     assert_logs(log_history, action_id, action_name)
+
+
+async def test_for_loop_adder(log, in_memory_action_service, log_history):
+    loop_id = "sum_iterator"
+
+    outputs = await in_memory_action_service.run_loop(log=log, loop_id=loop_id)
+
+    assert outputs == [
+        {
+            "add": AddOutputs(result=1),
+        },
+        {
+            "add": AddOutputs(result=2),
+        },
+        {
+            "add": AddOutputs(result=3),
+        },
+    ]
+
+
+async def test_dependent_in_loop(log, in_memory_action_service, log_history):
+    loop_id = "dependent_in_iterator"
+
+    outputs = await in_memory_action_service.run_loop(log=log, loop_id=loop_id)
+
+    assert outputs == [
+        {
+            "add": AddOutputs(result=1),
+        },
+        {
+            "add": AddOutputs(result=2),
+        },
+        {
+            "add": AddOutputs(result=3),
+        },
+    ]
+
+
+async def test_dependent_flow_loop(log, in_memory_action_service, log_history):
+    loop_id = "dependent_flow_iterator"
+
+    outputs = await in_memory_action_service.run_loop(log=log, loop_id=loop_id)
+
+    assert outputs == [
+        {
+            "add": AddOutputs(result=3),
+        },
+        {
+            "add": AddOutputs(result=4),
+        },
+        {
+            "add": AddOutputs(result=5),
+        },
+    ]
 
 
 # TODO test that `new_listeners` are all delivered the latest output when starting to listen while action is caching

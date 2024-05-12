@@ -18,7 +18,7 @@ from asyncflows.actions.transformer import (
 )
 from asyncflows.log_config import configure_logging, get_logger
 from asyncflows.models.blob import Blob
-from asyncflows.models.config.action import TestActionConfig
+from asyncflows.models.config.flow import TestActionConfig
 from asyncflows.repos.blob_repo import (
     InMemoryBlobRepo,
     RedisBlobRepo,

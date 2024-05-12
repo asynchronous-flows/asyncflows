@@ -1,4 +1,5 @@
 import ast
+import builtins
 import types
 import typing
 from typing import Optional, Any, Union
@@ -132,7 +133,7 @@ def get_names_from_ast(node: ast.AST, ignore_vars: None | frozenset = None) -> s
         ignore_vars = frozenset()
     names = set()
     if isinstance(node, ast.Name):
-        if node.id not in ignore_vars:
+        if node.id not in ignore_vars and node.id not in builtins.__dict__:
             names.add(node.id)
     elif isinstance(node, (ast.ListComp, ast.DictComp)):
         for gen in node.generators:
@@ -211,7 +212,7 @@ _allowed_ast_types = (
     ast.Compare,
     ast.Eq,
     ast.NotEq,
-    # ast.Call,
+    ast.Call,
 )
 
 
