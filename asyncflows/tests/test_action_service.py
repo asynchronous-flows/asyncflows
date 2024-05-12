@@ -729,6 +729,8 @@ async def test_for_loop_adder(log, in_memory_action_service, log_history):
         },
     ]
 
+    # TODO test unordered logs
+
 
 async def test_dependent_in_loop(log, in_memory_action_service, log_history):
     loop_id = "dependent_in_iterator"
@@ -747,6 +749,8 @@ async def test_dependent_in_loop(log, in_memory_action_service, log_history):
         },
     ]
 
+    # TODO test unordered logs
+
 
 async def test_dependent_flow_loop(log, in_memory_action_service, log_history):
     loop_id = "dependent_flow_iterator"
@@ -764,6 +768,24 @@ async def test_dependent_flow_loop(log, in_memory_action_service, log_history):
             "add": AddOutputs(result=5),
         },
     ]
+
+    # TODO test unordered logs
+
+
+async def test_nested_loop(log, in_memory_action_service, log_history):
+    loop_id = "nested_iterator"
+
+    expected_outputs = []
+    for i in range(3):
+        nested_outputs = []
+        for j in range(3):
+            nested_outputs.append({"add": AddOutputs(result=i + j)})
+        expected_outputs.append({"nested": nested_outputs})
+
+    outputs = await in_memory_action_service.run_loop(log=log, loop_id=loop_id)
+    assert outputs == expected_outputs
+
+    # TODO test unordered logs
 
 
 # TODO test that `new_listeners` are all delivered the latest output when starting to listen while action is caching

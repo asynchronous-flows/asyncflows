@@ -429,6 +429,7 @@ class ActionService:
                     loop_id=id_,
                     variables=variables,
                     partial=stream,
+                    flow=flow,
                     task_prefix=task_prefix,
                 )
             else:
@@ -732,8 +733,11 @@ class ActionService:
         loop_id: ExecutableId,
         variables: dict[str, Any] | None = None,
         partial: bool = False,
+        flow: FlowConfig | None = None,
         task_prefix: str = "",
     ) -> AsyncIterator[list[Outputs]]:
+        if flow is None:
+            flow = self.config.flow
         if variables is None:
             variables = {}
         if partial:
@@ -746,14 +750,14 @@ class ActionService:
 
         if "action_id" in log._context:
             downstream_action_id = log._context["action_id"]
-            log = (
-                log.unbind("action_id")
-                .unbind("action_name")
-                .bind(downstream_action_id=downstream_action_id)
+            log = log.unbind("action_id").bind(
+                downstream_action_id=downstream_action_id
             )
+        if "action_name" in log._context:
+            log = log.unbind("action_name")
         log = log.bind(action_id=loop_id)
 
-        loop = self.config.flow[loop_id]
+        loop = flow[loop_id]
         if not isinstance(loop, Loop):
             log.error("Not a loop", loop_id=loop_id)
             raise RuntimeError("Not a loop")

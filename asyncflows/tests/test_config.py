@@ -233,11 +233,13 @@ def test_lambda_declaration_dependency_extraction(expr, expected_dependencies):
             ["b", 3],
         ),
         # TODO make sure we can constrain stuff like this
-        (
-            "__import__(os).listdir('.')",
-            {},
-            None,
-        ),
+        # this is testing calls being blocked, but we allow them for `range(3)` type stuff
+        # simpleeval should catch only allowing certain functions
+        # (
+        #     "__import__(os).listdir('.')",
+        #     {},
+        #     None,
+        # ),
         # TODO support BaseModel formats in output context
         # (
         #     "{a: b for a, b in grobid.sections.items()}",

@@ -197,4 +197,21 @@ flow:
         b:
           link: first_sum.result
 
+  nested_iterator:
+    for: num
+    in:
+      lambda: range(3)
+    flow:
+      nested:
+        for: num2
+        in:
+          lambda: range(3)
+        flow:
+          add:
+            action: test_add
+            a:
+              var: num
+            b:
+              var: num2
+
 default_output: first_sum.result
