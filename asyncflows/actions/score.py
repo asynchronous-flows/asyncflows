@@ -1,5 +1,4 @@
-from pydantic import BaseModel
-from asyncflows.actions.base import Action
+from asyncflows.actions.base import Action, BaseModel
 
 
 class Inputs(BaseModel):

@@ -557,8 +557,7 @@ You can create custom actions by subclassing `Action` and defining the input and
 
 Python code for the custom action:
 ```python
-from pydantic import BaseModel, Field
-from asyncflows import Action
+from asyncflows import Action, BaseModel, Field
 
 import aiohttp
 

@@ -1,5 +1,4 @@
-from pydantic import BaseModel, Field
-from asyncflows.actions.base import Action
+from asyncflows.actions.base import Action, BaseModel, Field
 
 import aiohttp
 

@@ -1,8 +1,6 @@
 from typing import Any
 
-from pydantic import BaseModel
-
-from asyncflows.actions.base import Action
+from asyncflows.actions.base import Action, BaseModel
 from asyncflows.models.config.model import BiEncoderModelType, CrossEncoderModelType
 
 # from asyncflows.scripts.run_transformers_service import DocumentQueryRequest

@@ -10,52 +10,68 @@ from asyncflows.models.primitives import ExecutableName
 from asyncflows.repos.blob_repo import BlobRepo
 from asyncflows.utils.request_utils import request_text, request_read
 
+
+# re-export these from pydantic, in case we need to change them later
+
+
+class BaseModel(pydantic.BaseModel):
+    pass
+
+
+def Field(*args, **kwargs):
+    return pydantic.Field(*args, **kwargs)
+
+
+def PrivateAttr(*args, **kwargs):
+    return pydantic.PrivateAttr(*args, **kwargs)
+
+
 # TODO ensure that inputs don't contain `id` or `action` as fields
-Inputs = TypeVar("Inputs", bound=Union[pydantic.BaseModel, type(None)])
-Outputs = TypeVar("Outputs", bound=Union[pydantic.BaseModel, type(None)])
+Inputs = TypeVar("Inputs", bound=Union[BaseModel, type(None)])
+Outputs = TypeVar("Outputs", bound=Union[BaseModel, type(None)])
 
 
-class RedisUrlInputs(pydantic.BaseModel):
+class RedisUrlInputs(BaseModel):
     """
     Base class for inputs that include a `redis_url`.
     """
 
-    _redis_url: str = pydantic.PrivateAttr()
+    _redis_url: str = PrivateAttr()
 
 
-class BlobRepoInputs(pydantic.BaseModel):
+class BlobRepoInputs(BaseModel):
     """
     Base class for inputs that include a `blob_repo`.
     """
 
-    _blob_repo: BlobRepo = pydantic.PrivateAttr()
+    _blob_repo: BlobRepo = PrivateAttr()
 
 
-class DefaultModelInputs(pydantic.BaseModel):
+class DefaultModelInputs(BaseModel):
     """
     Base class for inputs that include a `default_model`.
     """
 
-    _default_model: ModelConfig = pydantic.PrivateAttr()
+    _default_model: ModelConfig = PrivateAttr()
 
 
-class FinalInvocationInputs(pydantic.BaseModel):
+class FinalInvocationInputs(BaseModel):
     """
     Base class for inputs that include information on whether this is the action's last invocation.
     Actions using FinalInvocationInputs will be invoked again after all dependencies are finished,
     with `_finished` set to `True`.
     """
 
-    _finished: bool = pydantic.PrivateAttr(default=False)
+    _finished: bool = PrivateAttr(default=False)
 
 
-class CacheControlOutputs(pydantic.BaseModel):
+class CacheControlOutputs(BaseModel):
     """
     Base class for outputs that control their caching.
     Set `cache` to `False` to prevent that output from being cached.
     """
 
-    _cache: bool = pydantic.PrivateAttr(default=True)
+    _cache: bool = PrivateAttr(default=True)
 
     def __init__(
         self,

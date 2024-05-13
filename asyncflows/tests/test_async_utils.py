@@ -4,9 +4,7 @@ from asyncio import Event
 from unittest.mock import Mock, patch
 
 import pytest
-from pydantic import BaseModel
-
-from asyncflows.actions.base import Action
+from asyncflows.actions.base import Action, BaseModel
 from asyncflows.utils.async_utils import Timer, measure_coro, measure_async_iterator
 
 

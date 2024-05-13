@@ -1,8 +1,6 @@
 from typing import Optional, Literal, assert_never
 
-from pydantic import BaseModel
-
-from asyncflows.actions.base import Action
+from asyncflows.actions.base import Action, BaseModel
 
 LIST_FORMAT = Literal["comma", "newline", "space", "bullet points"]
 
