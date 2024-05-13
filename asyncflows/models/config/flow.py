@@ -39,8 +39,10 @@ class TestActionConfig(ActionConfig):
     flow: "TestFlowConfig"
 
 
-Executable = Union[ActionInvocationUnion, Loop]
+NonActionExecutable = Loop
+Executable = Union[ActionInvocationUnion, NonActionExecutable]
 FlowConfig = dict[ExecutableId, Executable]
 
-TestExecutable = Union[TestingActionInvocationUnion, TestLoop]
+TestNonActionExecutable = TestLoop
+TestExecutable = Union[TestingActionInvocationUnion, TestNonActionExecutable]
 TestFlowConfig = dict[ExecutableId, TestExecutable]

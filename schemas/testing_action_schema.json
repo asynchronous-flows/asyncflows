@@ -223,71 +223,6 @@
       "title": "LinkDeclaration",
       "type": "object"
     },
-    "Loop": {
-      "additionalProperties": false,
-      "properties": {
-        "for": {
-          "title": "For",
-          "type": "string"
-        },
-        "in": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
-              "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
-              "$ref": "#/$defs/EnvDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LambdaDeclaration"
-            }
-          ],
-          "title": "In"
-        },
-        "flow": {
-          "additionalProperties": {
-            "anyOf": [
-              {
-                "$ref": "#/$defs/extract_pdf_textActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/retrieveActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/rerankActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/promptActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/get_urlActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/scoreActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/Loop"
-              }
-            ]
-          },
-          "title": "Flow",
-          "type": "object"
-        }
-      },
-      "required": [
-        "for",
-        "in",
-        "flow"
-      ],
-      "title": "Loop",
-      "type": "object"
-    },
     "ModelConfig": {
       "additionalProperties": false,
       "properties": {
@@ -854,6 +789,113 @@
         "role"
       ],
       "title": "RoleElement__",
+      "type": "object"
+    },
+    "TestLoop": {
+      "additionalProperties": false,
+      "properties": {
+        "for": {
+          "title": "For",
+          "type": "string"
+        },
+        "in": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "In"
+        },
+        "flow": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/extract_pdf_textActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/retrieveActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/rerankActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/promptActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/get_urlActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/scoreActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_addActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_nested_addActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_optional_nested_addActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_double_addActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_waiting_addActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_errorActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_create_blobActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_get_blobActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_transforming_promptActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_passing_promptActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_range_streamActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_stringifierActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_non_caching_adderActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/test_finishActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/TestLoop"
+              }
+            ]
+          },
+          "title": "Flow",
+          "type": "object"
+        }
+      },
+      "required": [
+        "for",
+        "in",
+        "flow"
+      ],
+      "title": "TestLoop",
       "type": "object"
     },
     "TextDeclaration": {
@@ -2854,25 +2896,7 @@
       "additionalProperties": {
         "anyOf": [
           {
-            "$ref": "#/$defs/extract_pdf_textActionInvocation"
-          },
-          {
-            "$ref": "#/$defs/retrieveActionInvocation"
-          },
-          {
-            "$ref": "#/$defs/rerankActionInvocation"
-          },
-          {
-            "$ref": "#/$defs/promptActionInvocation"
-          },
-          {
-            "$ref": "#/$defs/get_urlActionInvocation"
-          },
-          {
-            "$ref": "#/$defs/scoreActionInvocation"
-          },
-          {
-            "$ref": "#/$defs/Loop"
+            "$ref": "#/$defs/TestLoop"
           },
           {
             "$ref": "#/$defs/extract_pdf_textActionInvocation"

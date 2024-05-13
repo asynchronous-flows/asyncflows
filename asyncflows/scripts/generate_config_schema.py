@@ -8,13 +8,16 @@ from pydantic import ValidationError
 from asyncflows.actions import get_actions_dict
 from asyncflows.models.config.action import (
     build_actions,
+    _action_names,
+    _testing_action_names,
 )
 from asyncflows.models.primitives import ExecutableId
 from asyncflows.models.config.flow import (
     ActionConfig,
     Loop,
     TestActionConfig,
-    Executable,
+    NonActionExecutable,
+    TestNonActionExecutable,
 )
 from asyncflows.services.config_service import ConfigService
 
@@ -70,8 +73,10 @@ def _build_vars(
 
 
 def _build_hinted_action_model(
+    action_names: list[str],
+    non_action_executable: type,
     config_class: type[ActionConfig],
-    # config_seravice: ConfigService,
+    # config_service: ConfigService,
     strict: bool,
 ):
     # vars_ = _build_vars(
@@ -80,10 +85,11 @@ def _build_hinted_action_model(
     # )
 
     HintedActionInvocationUnion = (
-        Executable
+        non_action_executable
         | Union[
             tuple(
                 build_actions(
+                    action_names,
                     # vars_=vars_,
                     strict=strict,
                 )
@@ -98,13 +104,17 @@ def _build_hinted_action_model(
 
 
 def _build_action_schema(
+    action_names: list[str],
     config_class: type[ActionConfig],
+    non_action_executable: type,
     # config_service: ConfigService,
     output_file: str,
     strict: bool,
 ):
     HintedActionConfig = _build_hinted_action_model(
+        action_names=action_names,
         config_class=config_class,
+        non_action_executable=non_action_executable,
         # config_service=config_service,
         strict=strict,
     )
@@ -115,14 +125,18 @@ def _build_action_schema(
 
 if __name__ == "__main__":
     _build_action_schema(
+        action_names=_action_names,
         config_class=ActionConfig,
+        non_action_executable=NonActionExecutable,
         # config_service=ConfigService(),
         output_file="action_schema.json",
         strict=False,
     )
 
     _build_action_schema(
+        action_names=_testing_action_names,
         config_class=TestActionConfig,
+        non_action_executable=TestNonActionExecutable,
         # config_service=ConfigService(
         #     base_config_dir="asyncflows/tests/resources/config",
         #     action_config_stem="testing_actions.yaml",

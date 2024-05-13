@@ -33,6 +33,7 @@ class ActionInvocation(StrictModel):
 
 
 def build_actions(
+    action_names: list[str],
     vars_: HintType | None = None,
     links: HintType | None = None,
     strict: bool = False,
@@ -52,9 +53,10 @@ def build_actions(
             HintedValueDeclaration, LinkDeclaration.from_vars(links, strict)
         ]
 
-    actions = get_actions_dict()
+    actions_dict = get_actions_dict()
     action_models = []
-    for action in actions.values():
+    for action_name in action_names:
+        action = actions_dict[action_name]
         # build base model field
         fields = {
             "action": (Literal[action.name], ...)  # type: ignore
@@ -84,11 +86,13 @@ def build_actions(
     return action_models
 
 
-ActionInvocationUnion = Union[tuple(build_actions())]  # pyright: ignore
+_action_names = list(get_actions_dict().keys())
+ActionInvocationUnion = Union[tuple(build_actions(_action_names))]  # pyright: ignore
 
 
 # TODO assert tests not imported before this line
 import asyncflows.tests.resources.actions  # noqa
 
 
-TestingActionInvocationUnion = Union[tuple(build_actions())]  # pyright: ignore
+_testing_action_names = list(get_actions_dict().keys())
+TestingActionInvocationUnion = Union[tuple(build_actions(_testing_action_names))]  # pyright: ignore
