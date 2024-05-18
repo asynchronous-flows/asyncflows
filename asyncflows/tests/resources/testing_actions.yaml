@@ -214,4 +214,22 @@ flow:
             b:
               var: num2
 
+  iterator_with_internal_dependencies:
+    for: num
+    in:
+      lambda: range(3)
+    flow:
+      add:
+        action: test_add
+        a:
+          var: num
+        b:
+          link: first_sum.result
+      add2:
+        action: test_add
+        a:
+          var: num
+        b:
+          link: add.result
+
 default_output: first_sum.result

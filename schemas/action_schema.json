@@ -139,6 +139,9 @@
           "additionalProperties": {
             "anyOf": [
               {
+                "$ref": "#/$defs/extract_listActionInvocation"
+              },
+              {
                 "$ref": "#/$defs/extract_pdf_textActionInvocation"
               },
               {
@@ -624,6 +627,136 @@
         "var"
       ],
       "title": "VarDeclaration",
+      "type": "object"
+    },
+    "extract_listActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "extract_list",
+          "enum": [
+            "extract_list"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Text"
+        },
+        "valid_values": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid Values"
+        },
+        "list_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "comma",
+                "newline",
+                "space",
+                "bullet points"
+              ],
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "default": null,
+          "title": "List Format"
+        }
+      },
+      "required": [
+        "action",
+        "text"
+      ],
+      "title": "extract_listActionInvocation",
       "type": "object"
     },
     "extract_pdf_textActionInvocation": {
@@ -1428,6 +1561,9 @@
         "anyOf": [
           {
             "$ref": "#/$defs/Loop"
+          },
+          {
+            "$ref": "#/$defs/extract_listActionInvocation"
           },
           {
             "$ref": "#/$defs/extract_pdf_textActionInvocation"

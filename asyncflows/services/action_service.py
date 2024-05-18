@@ -280,8 +280,12 @@ class ActionService:
         log: structlog.stdlib.BoundLogger,
         dependencies: set[tuple[ExecutableId, bool]],
         variables: dict[str, Any],
+        flow: FlowConfig | None = None,
+        task_prefix: str = "",
     ) -> AsyncIterator[dict[ExecutableId, Outputs] | type[Sentinel]]:
-        executable_dependencies = {d for d in dependencies if d[0] in self.config.flow}
+        if flow is None:
+            flow = self.config.flow
+        executable_dependencies = {d for d in dependencies if d[0] in flow}
         extra_dependency_ids = {
             d[0]
             for d in dependencies
@@ -299,6 +303,8 @@ class ActionService:
             log,
             executable_dependencies,
             variables,
+            flow=flow,
+            task_prefix=task_prefix,
         ):
             yield dependency_outputs
 
@@ -307,7 +313,11 @@ class ActionService:
         log: structlog.stdlib.BoundLogger,
         action_config: ActionInvocation,
         variables: dict[str, Any],
+        flow: FlowConfig | None = None,
+        task_prefix: str = "",
     ) -> AsyncIterator[Inputs | None | type[Sentinel]]:
+        if flow is None:
+            flow = self.config.flow
         # Get action type
         action_type = self.get_action_type(action_config.action)
         inputs_type = action_type._get_inputs_type()
@@ -352,6 +362,8 @@ class ActionService:
             log,
             dependencies,
             variables,
+            flow=flow,
+            task_prefix=task_prefix,
         ):
             if is_sentinel(dependency_outputs):
                 # propagate error
@@ -550,6 +562,8 @@ class ActionService:
         log: structlog.stdlib.BoundLogger,
         action_config: ActionInvocation,
         variables: dict[str, Any],
+        flow: FlowConfig,
+        task_prefix: str,
     ) -> str | type[Sentinel] | None:
         if action_config.cache_key is None:
             return None
@@ -561,7 +575,11 @@ class ActionService:
 
         cache_key = None
         async for dependency_outputs in self.stream_dependencies(
-            log, dependencies, variables
+            log,
+            dependencies,
+            variables,
+            flow,
+            task_prefix,
         ):
             if is_sentinel(dependency_outputs):
                 # propagate error
@@ -585,6 +603,7 @@ class ActionService:
         task_id: TaskId,
         variables: dict[str, Any],
         flow: FlowConfig,
+        task_prefix: str,
     ) -> None:
         log.debug("Running action task")
 
@@ -596,7 +615,9 @@ class ActionService:
         action_type = self.get_action_type(action_name)
 
         # Check cache by `cache_key` if provided
-        cache_key = await self._resolve_cache_key(log, action_config, variables)
+        cache_key = await self._resolve_cache_key(
+            log, action_config, variables, flow, task_prefix
+        )
         if is_sentinel(cache_key):
             log.error("Failed to create cache key")
             return
@@ -617,10 +638,16 @@ class ActionService:
         # Run dependencies
         # FIXME instead of running the action on each partial dependency result, every time the action execution
         #  finishes on partial results, run it on the most recent set of partial inputs
+        # FIXME if an action's output is requested from within an inner scope (i.e., a loop),
+        #  it is treated as a separate action from the outer scope, due to task_prefix.
+        #  This should be consolidated, but then there needs to be a way of telling apart actions with the same name
+        #  in different levels of scope
         async for inputs in self.stream_input_dependencies(
             log,
             action_config,
             variables,
+            flow,
+            task_prefix=task_prefix,
         ):
             if is_sentinel(inputs):
                 # propagate error
@@ -707,6 +734,7 @@ class ActionService:
         task_id: TaskId,
         variables: dict[str, Any],
         flow: FlowConfig,
+        task_prefix: str,
     ):
         try:
             await self._run_and_broadcast_action(
@@ -715,6 +743,7 @@ class ActionService:
                 task_id=task_id,
                 variables=variables,
                 flow=flow,
+                task_prefix=task_prefix,
             )
         except Exception as e:
             log.exception("Action service exception", exc_info=True)
@@ -771,6 +800,8 @@ class ActionService:
             log,
             looped_dependency,
             variables,
+            flow=flow,
+            task_prefix=task_prefix,
         ):
             pass
         if is_sentinel(dependency_outputs):
@@ -800,7 +831,7 @@ class ActionService:
                     log,
                     set(loop.flow),
                     loop_variables,
-                    flow=loop.flow,
+                    flow=flow | loop.flow,
                     task_prefix=new_task_prefix,
                 )
             )
@@ -902,6 +933,7 @@ class ActionService:
                         task_id=task_id,
                         variables=variables,
                         flow=flow,
+                        task_prefix=task_prefix,
                     )
                 )
 

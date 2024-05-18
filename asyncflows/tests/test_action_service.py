@@ -788,6 +788,26 @@ async def test_nested_loop(log, in_memory_action_service, log_history):
     # TODO test unordered logs
 
 
+async def test_loop_with_internal_dependencies(
+    log, in_memory_action_service, log_history
+):
+    loop_id = "iterator_with_internal_dependencies"
+
+    expected_outputs = []
+    for i in range(3):
+        expected_outputs.append(
+            {
+                "add": AddOutputs(result=i + 3),
+                "add2": AddOutputs(result=i * 2 + 3),
+            }
+        )
+
+    outputs = await in_memory_action_service.run_loop(log=log, loop_id=loop_id)
+    assert outputs == expected_outputs
+
+    # TODO test unordered logs
+
+
 # TODO test that `new_listeners` are all delivered the latest output when starting to listen while action is caching
 # TODO test exception throwing through dependencies
 # TODO test multiple interleaving streaming actions
