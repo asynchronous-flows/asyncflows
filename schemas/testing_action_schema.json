@@ -831,6 +831,9 @@
                 "$ref": "#/$defs/ocrActionInvocation"
               },
               {
+                "$ref": "#/$defs/get_db_schemaActionInvocation"
+              },
+              {
                 "$ref": "#/$defs/retrieveActionInvocation"
               },
               {
@@ -1197,6 +1200,76 @@
         "file"
       ],
       "title": "extract_pdf_textActionInvocation",
+      "type": "object"
+    },
+    "get_db_schemaActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "get_db_schema",
+          "enum": [
+            "get_db_schema"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "database_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Database Url"
+        }
+      },
+      "required": [
+        "action",
+        "database_url"
+      ],
+      "title": "get_db_schemaActionInvocation",
       "type": "object"
     },
     "get_urlActionInvocation": {
@@ -3091,6 +3164,9 @@
           },
           {
             "$ref": "#/$defs/ocrActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/get_db_schemaActionInvocation"
           },
           {
             "$ref": "#/$defs/retrieveActionInvocation"
