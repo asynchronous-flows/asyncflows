@@ -1,15 +1,15 @@
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.sql.ddl import CreateTable
 
-from asyncflows.actions.base import BaseModel, Action
+from asyncflows.actions.base import BaseModel, Action, Field
 
 
 class Inputs(BaseModel):
-    database_url: str
+    database_url: str = Field(description="Database URL (synchronous)")
 
 
 class Outputs(BaseModel):
-    schema_text: str
+    schema_text: str = Field(description="Text describing the database schema in `CREATE TABLE` statements")
 
 
 class GetDBSchema(Action[Inputs, Outputs]):

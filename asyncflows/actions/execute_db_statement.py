@@ -1,19 +1,25 @@
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from asyncflows.actions.base import Action, BaseModel
+from asyncflows.actions.base import Action, BaseModel, Field
 
 
 class Inputs(BaseModel):
-    database_url: str
-    statement: str
+    database_url: str = Field(description="Database URL (asynchronous)")
+    statement: str = Field(description="SQL statement to execute")
 
-    allowed_statement_prefixes: list[str] = ["SELECT"]
-    max_rows: int = 5
+    allowed_statement_prefixes: list[str] = Field(
+        default=["SELECT"],
+        description="List of allowed statement prefixes",
+    )
+    max_rows: int = Field(
+        default=5,
+        description="Maximum number of rows to return",
+    )
 
 
 class Outputs(BaseModel):
-    result: str
+    result: str = Field(description="Result of the SQL statement")
 
 
 class ExecuteDBStatement(Action[Inputs, Outputs]):

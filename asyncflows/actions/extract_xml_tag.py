@@ -1,15 +1,15 @@
-from asyncflows.actions.base import Action, BaseModel
+from asyncflows.actions.base import Action, BaseModel, Field
 
 import re
 
 
 class Inputs(BaseModel):
-    text: str
-    tag: str
+    text: str = Field(description="Text to extract out of <tag>text</tag>")
+    tag: str = Field(description="Tag to extract from")
 
 
 class Outputs(BaseModel):
-    result: str
+    result: str = Field(description="Text extracted from the tag")
 
 
 class ExtractXMLTag(Action[Inputs, Outputs]):
