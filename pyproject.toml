@@ -45,6 +45,7 @@ pg = ["psycopg2", "asyncpg", "pandas"]
 transfomers = ["sentence-transformers", "infinity-emb"]
 ocr = ["ocrmypdf"]
 
+
 [tool.poetry.group.dev.dependencies]
 pyright = "1.1.347"
 ruff = "^0.3.0"
