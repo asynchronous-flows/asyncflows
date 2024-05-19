@@ -9,6 +9,9 @@ from unittest.mock import MagicMock, patch
 import pytest
 import tenacity
 import yaml
+from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 from asyncflows.actions.prompt import Outputs as PromptOutputs, Prompt
 from asyncflows.actions.transformer import (
@@ -183,6 +186,47 @@ def mock_tenacity():
 
     with patch("tenacity.retry", mock_tenacity):
         yield
+
+
+Base = declarative_base()
+
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    fullname = Column(String)
+    nickname = Column(String)
+
+    def __repr__(self):
+        return f"<User(name={self.name}, fullname={self.fullname}, nickname={self.nickname})>"
+
+
+@pytest.fixture
+def dummy_sqlite_engine():
+    engine = create_engine("sqlite:///:memory:", echo=True, future=True)
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    ed_user = User(name="ed", fullname="Ed Jones", nickname="edsnickname")
+    session.add(ed_user)
+    session.commit()
+    return engine
+
+
+@pytest.fixture
+async def dummy_async_sqlite_engine():
+    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=True)
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    async with AsyncSession(engine) as session:
+        ed_user = User(name="ed", fullname="Ed Jones", nickname="edsnickname")
+        session.add(ed_user)
+        await session.commit()
+
+    return engine
 
 
 @pytest.fixture

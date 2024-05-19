@@ -10,39 +10,6 @@ def action(log, temp_dir):
     return GetDBSchema(log=log, temp_dir=temp_dir)
 
 
-@pytest.fixture
-def dummy_sqlite_engine():
-    from sqlalchemy import create_engine
-    from sqlalchemy.orm import sessionmaker
-    from sqlalchemy.ext.declarative import declarative_base
-    from sqlalchemy import Column, Integer, String
-
-    Base = declarative_base()
-
-    class User(Base):
-        __tablename__ = "users"
-
-        id = Column(Integer, primary_key=True)
-        name = Column(String)
-        fullname = Column(String)
-        nickname = Column(String)
-
-        def __repr__(self):
-            return f"<User(name={self.name}, fullname={self.fullname}, nickname={self.nickname})>"
-
-    engine = create_engine("sqlite:///:memory:", echo=True, future=True)
-    Base.metadata.create_all(engine)
-
-    Session = sessionmaker(bind=engine)
-    session = Session()
-
-    ed_user = User(name="ed", fullname="Ed Jones", nickname="edsnickname")
-    session.add(ed_user)
-    session.commit()
-
-    return engine
-
-
 @pytest.mark.parametrize(
     "inputs, expected_outputs",
     [

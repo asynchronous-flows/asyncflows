@@ -828,6 +828,9 @@
                 "$ref": "#/$defs/extract_pdf_textActionInvocation"
               },
               {
+                "$ref": "#/$defs/execute_db_statementActionInvocation"
+              },
+              {
                 "$ref": "#/$defs/ocrActionInvocation"
               },
               {
@@ -973,6 +976,151 @@
         "var"
       ],
       "title": "VarDeclaration",
+      "type": "object"
+    },
+    "execute_db_statementActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "execute_db_statement",
+          "enum": [
+            "execute_db_statement"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "database_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Database Url"
+        },
+        "statement": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Statement"
+        },
+        "allowed_statement_prefixes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "default": null,
+          "title": "Allowed Statement Prefixes"
+        },
+        "max_rows": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "default": null,
+          "title": "Max Rows"
+        }
+      },
+      "required": [
+        "action",
+        "database_url",
+        "statement"
+      ],
+      "title": "execute_db_statementActionInvocation",
       "type": "object"
     },
     "extract_listActionInvocation": {
@@ -3161,6 +3309,9 @@
           },
           {
             "$ref": "#/$defs/extract_pdf_textActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/execute_db_statementActionInvocation"
           },
           {
             "$ref": "#/$defs/ocrActionInvocation"
