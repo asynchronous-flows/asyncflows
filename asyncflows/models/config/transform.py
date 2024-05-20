@@ -37,7 +37,10 @@ class TransformsFrom:  # (Generic[ConfigType]):
 
     @classmethod
     def _get_config_type(
-        cls, vars_: HintType | None, strict: bool = False
+        cls,
+        vars_: HintType | None,
+        links: HintType | None,
+        strict: bool = False,
     ) -> type:  # -> type[ConfigType]:
         raise NotImplementedError
 
@@ -58,6 +61,7 @@ _transformation_cache = {}
 def resolve_transforms_from(
     type_: Any,
     vars_: HintType | None,
+    links: HintType | None,
     strict: bool = False,
 ) -> Any:  # Union[type[ConfigType], type[ImplementsTransformsInContext]]:
     # to avoid forward references when unnecessary
@@ -101,7 +105,7 @@ def resolve_transforms_from(
     origin = typing.get_origin(type_)
     if origin is not None:
         args = typing.get_args(type_)
-        args = tuple(resolve_transforms_from(arg, vars_, strict) for arg in args)
+        args = tuple(resolve_transforms_from(arg, vars_, links, strict) for arg in args)
         if origin is types.UnionType:
             origin = Union
             # type_ = args[0] | args[1]
@@ -129,7 +133,7 @@ def resolve_transforms_from(
             else:
                 default = ...
             field_type = field_.annotation
-            field_type = resolve_transforms_from(field_type, vars_, strict)
+            field_type = resolve_transforms_from(field_type, vars_, links, strict)
             fields[field_name] = (field_type, default)
         # TODO does this break anything? the module namespacing miiiight be a problem
         type_ = pydantic.create_model(
@@ -141,7 +145,11 @@ def resolve_transforms_from(
         type_.model_rebuild()
     if issubclass(type_, TransformsFrom):
         # TODO load vars from actions config and pass them through
-        type_ = type_._get_config_type(vars_, strict)
+        type_ = type_._get_config_type(
+            vars_=vars_,
+            links=links,
+            strict=strict,
+        )
 
     if is_optional:
         type_ = Union[type_, None]

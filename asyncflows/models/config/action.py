@@ -45,12 +45,12 @@ def build_actions(
 
     if vars_:
         HintedValueDeclaration = Union[
-            HintedValueDeclaration, VarDeclaration.from_vars(vars_, strict)
+            VarDeclaration.from_vars(vars_, strict), HintedValueDeclaration
         ]
 
     if links:
         HintedValueDeclaration = Union[
-            HintedValueDeclaration, LinkDeclaration.from_vars(links, strict)
+            LinkDeclaration.from_vars(links, strict), HintedValueDeclaration
         ]
 
     actions_dict = get_actions_dict()
@@ -68,6 +68,7 @@ def build_actions(
             fields |= templatify_model(
                 inputs,
                 vars_=vars_,
+                links=links,
                 add_union=HintedValueDeclaration,
                 strict=strict,
             )

@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import traceback
@@ -76,13 +77,16 @@ def _build_hinted_action_model(
     action_names: list[str],
     non_action_executable: type,
     config_class: type[ActionConfig],
-    # config_service: ConfigService,
+    config_service: ConfigService | None,
     strict: bool,
 ):
-    # vars_ = _build_vars(
-    #     config_class=config_class,
-    #     config_service=config_service,
-    # )
+    if config_service:
+        links = _build_vars(
+            config_class=config_class,
+            config_service=config_service,
+        )
+    else:
+        links = None
 
     HintedActionInvocationUnion = (
         non_action_executable
@@ -90,7 +94,7 @@ def _build_hinted_action_model(
             tuple(
                 build_actions(
                     action_names,
-                    # vars_=vars_,
+                    links=links,
                     strict=strict,
                 )
             )  # pyright: ignore
@@ -107,40 +111,73 @@ def _build_action_schema(
     action_names: list[str],
     config_class: type[ActionConfig],
     non_action_executable: type,
-    # config_service: ConfigService,
-    output_file: str,
     strict: bool,
+    config_service: ConfigService | None = None,
 ):
     HintedActionConfig = _build_hinted_action_model(
         action_names=action_names,
         config_class=config_class,
         non_action_executable=non_action_executable,
-        # config_service=config_service,
+        config_service=config_service,
         strict=strict,
     )
     workflow_schema = HintedActionConfig.model_json_schema()
+    return workflow_schema
+
+
+def _build_and_save_action_schema(
+    action_names: list[str],
+    config_class: type[ActionConfig],
+    non_action_executable: type,
+    output_file: str,
+    strict: bool,
+    config_service: ConfigService | None = None,
+):
+    workflow_schema = _build_action_schema(
+        action_names=action_names,
+        config_class=config_class,
+        non_action_executable=non_action_executable,
+        strict=strict,
+        config_service=config_service,
+    )
     with open(os.path.join("schemas", output_file), "w") as f:
         json.dump(workflow_schema, f, indent=2)
 
 
 if __name__ == "__main__":
-    _build_action_schema(
-        action_names=_action_names,
-        config_class=ActionConfig,
-        non_action_executable=NonActionExecutable,
-        # config_service=ConfigService(),
-        output_file="action_schema.json",
-        strict=False,
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--flow",
+        default="",
+        help="Path to flow for populating link fields with",
     )
 
-    _build_action_schema(
-        action_names=_testing_action_names,
-        config_class=TestActionConfig,
-        non_action_executable=TestNonActionExecutable,
-        # config_service=ConfigService(
-        #     base_config_dir="asyncflows/tests/resources/config",
-        #     action_config_stem="testing_actions.yaml",
-        # ),
-        output_file="testing_action_schema.json",
-        strict=False,
-    )
+    args = parser.parse_args()
+
+    if args.flow:
+        schema = _build_action_schema(
+            action_names=_action_names,
+            config_class=ActionConfig,
+            non_action_executable=NonActionExecutable,
+            config_service=ConfigService(args.flow),
+            strict=False,
+        )
+        # straight to stdout we go
+        print(json.dumps(schema, indent=2))
+    else:
+        # build default action and test action schemas
+        _build_and_save_action_schema(
+            action_names=_action_names,
+            config_class=ActionConfig,
+            non_action_executable=NonActionExecutable,
+            output_file="action_schema.json",
+            strict=False,
+        )
+
+        _build_and_save_action_schema(
+            action_names=_testing_action_names,
+            config_class=TestActionConfig,
+            non_action_executable=TestNonActionExecutable,
+            output_file="testing_action_schema.json",
+            strict=False,
+        )

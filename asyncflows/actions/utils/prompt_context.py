@@ -70,21 +70,32 @@ class ContextElement(PromptElementBase, TransformsFrom):
     def _get_config_type(
         cls,
         vars_: HintType | None,
+        links: HintType | None,
         strict: bool = False,
     ) -> type["PromptContextInConfig"]:
-        if vars_:
-            HintedPromptContextInConfigVar = PromptContextInConfigVar.from_vars(
-                vars_, strict
-            )
-        else:
-            HintedPromptContextInConfigVar = PromptContextInConfigVar
+        HintedPromptContextInConfig = PromptContextInConfig
 
-        prompt_context_union_members = tuple(
-            arg
-            for arg in typing.get_args(PromptContextInConfig)
-            if arg != PromptContextInConfigVar
-        )
-        return Union[HintedPromptContextInConfigVar, *prompt_context_union_members]  # type: ignore
+        if vars_:
+            HintedPromptContextInConfig = Union[
+                PromptContextInConfigVar.from_vars(vars_, strict),
+                HintedPromptContextInConfig,
+            ]
+
+        if links:
+            HintedPromptContextInConfig = Union[
+                PromptContextInConfigLink.from_vars(links, strict),
+                HintedPromptContextInConfig,
+            ]
+
+        return HintedPromptContextInConfig
+
+        # TODO reimplement `strict` parameter
+        # prompt_context_union_members = tuple(
+        #     arg
+        #     for arg in typing.get_args(PromptContextInConfig)
+        #     if arg != PromptContextInConfigVar
+        # )
+        # return Union[HintedPromptContextInConfigVar, *prompt_context_union_members]  # type: ignore
 
     def as_string(
         self,

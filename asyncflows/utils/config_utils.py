@@ -15,6 +15,7 @@ from asyncflows.utils.type_utils import filter_none_from_type
 def templatify_model(
     model: type[BaseModel],
     vars_: HintType | None,
+    links: HintType | None,
     add_union: Optional[type] = None,
     strict: bool = False,
 ) -> dict[str, tuple[type, Any]]:
@@ -25,7 +26,7 @@ def templatify_model(
         # TODO i think if you pass SQLModel objects in it breaks on config parse
         type_ = field_.annotation
 
-        type_ = resolve_transforms_from(type_, vars_, strict)
+        type_ = resolve_transforms_from(type_, vars_, links, strict)
 
         is_none_union = False
         if typing.get_origin(type_) in [Union, types.UnionType]:
@@ -40,6 +41,7 @@ def templatify_model(
             subfields = templatify_model(
                 type_,
                 vars_=vars_,
+                links=links,
                 add_union=add_union,
                 strict=strict,
             )
