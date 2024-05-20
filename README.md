@@ -422,7 +422,7 @@ This flow facilitates asking questions over a SQL database.
 
 Running the example with a database available at `DATABASE_URL` passed as an environment variable:
 ```bash
-ANTHROPIC_API_KEY=... DATABASE_URL=... python -m asyncflows.examples.rag
+ANTHROPIC_API_KEY=... DATABASE_URL=... python -m asyncflows.examples.sql_rag
 ```
 
 <details>
