@@ -1,4 +1,5 @@
 import asyncio
+import traceback
 from collections import defaultdict
 from typing import Any, AsyncIterator, assert_never, Iterable
 
@@ -154,7 +155,8 @@ class ActionService:
             else:
                 raise ValueError(f"Unknown action type: {type(action)}")
         except Exception as e:
-            log.exception("Action exception", exc_info=True)
+            tb = traceback.format_exception(type(e), e, e.__traceback__)
+            log.error("Action exception", traceback="".join(tb))
             sentry_sdk.capture_exception(e)
             yield None
         finally:
@@ -746,7 +748,8 @@ class ActionService:
                 task_prefix=task_prefix,
             )
         except Exception as e:
-            log.exception("Action service exception", exc_info=True)
+            tb = traceback.format_exception(type(e), e, e.__traceback__)
+            log.error("Action service exception", traceback="".join(tb))
             sentry_sdk.capture_exception(e)
         finally:
             log.debug("Broadcasting end of stream")

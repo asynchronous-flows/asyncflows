@@ -1,7 +1,7 @@
 # import before importing action stuff so it gets registered via metaclass
 import os
 from unittest import mock
-
+from unittest.mock import ANY
 
 import asyncflows.tests.resources.actions  # noqa: F401
 from asyncflows.tests.resources.actions import AddOutputs
@@ -519,7 +519,7 @@ async def test_exception_in_internals(log, in_memory_action_service, log_history
             "action": action_name,
             "action_id": action_id,
             "event": "Action service exception",
-            "exc_info": True,
+            "traceback": ANY,
             "log_level": "error",
         },
         {
@@ -569,7 +569,7 @@ async def test_exception_in_upstream_action_internals(
             "action_id": upstream_action_id,
             "action": upstream_action_name,
             "event": "Action service exception",
-            "exc_info": True,
+            "traceback": ANY,
             "log_level": "error",
             "downstream_action_id": action_id,
         },
