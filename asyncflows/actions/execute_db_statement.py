@@ -29,15 +29,17 @@ class ExecuteDBStatement(Action[Inputs, Outputs]):
         import pandas as pd
         from pandas import Index
 
+        statement = inputs.statement.strip()
+
         if not any(
-            inputs.statement.lower().startswith(prefix.lower())
+            statement.lower().startswith(prefix.lower())
             for prefix in inputs.allowed_statement_prefixes
         ):
             raise ValueError(
                 f"Statement must start with one of {inputs.allowed_statement_prefixes}"
             )
 
-        statement = text(inputs.statement)
+        statement = text(statement)
 
         engine = create_async_engine(inputs.database_url)
         if engine is None:

@@ -1,0 +1,45 @@
+default_model:
+  model: claude-3-haiku-20240307
+  temperature: 1
+  max_output_tokens: 2000
+flow:
+  get_db_schema:
+    database_url:
+      env: DATABASE_URL
+    action: get_db_schema
+  generate_sql_statement:
+    action: prompt
+    quote_style: xml
+    prompt:
+      - link: get_db_schema.schema_text
+        heading: Database schema
+      - var: query
+        heading: User query
+      - text: |
+          Can you write a SQL statement to get data from the database, to help us answer the user query?
+          Wrap the statement in <sql> tags.
+  extract_sql_statement:
+    action: extract_xml_tag
+    text:
+      link: generate_sql_statement.result
+    tag: sql
+  exec:
+    action: execute_db_statement
+    database_url:
+      env: DATABASE_URL
+    statement:
+      link: extract_sql_statement.result
+  answer_user_query:
+    action: prompt
+    prompt:
+      - heading: SQL statement
+        link: extract_sql_statement.result
+      - text: |
+          Here is the result of executing the SQL statement:
+          ```
+          {{ exec.result }}
+          ```
+          Can you answer the user query based on this result?
+      - var: query
+        heading: User query
+default_output: answer_user_query.result

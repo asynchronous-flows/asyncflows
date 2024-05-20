@@ -9,7 +9,9 @@ class Inputs(BaseModel):
 
 
 class Outputs(BaseModel):
-    schema_text: str = Field(description="Text describing the database schema in `CREATE TABLE` statements")
+    schema_text: str = Field(
+        description="Text describing the database schema in `CREATE TABLE` statements"
+    )
 
 
 class GetDBSchema(Action[Inputs, Outputs]):
