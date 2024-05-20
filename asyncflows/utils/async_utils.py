@@ -106,7 +106,6 @@ async def merge_iterators(
                     log.warning(
                         "Generator exited",
                         id=id_,
-                        exc_info=e,
                     )
                     # FIXME asyncio taskgroup seems bugged to only handle CancelledError properly
                     #  e.g., see https://github.com/python/cpython/issues/95571
