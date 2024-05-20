@@ -1,10 +1,12 @@
 import asyncio
 import contextlib
 from collections import defaultdict
-from typing import AsyncIterator
+from typing import AsyncIterator, Any
 
 import numpy as np
-from infinity_emb import AsyncEmbeddingEngine, EngineArgs
+# from infinity_emb import AsyncEmbeddingEngine, EngineArgs
+
+AsyncEmbeddingEngine = Any
 
 
 DEFAULT_KEEP_ENGINE_ALIVE_DELAY = 2
@@ -29,6 +31,8 @@ async def shutdown_engine(log, delay: float, model: str, engine: AsyncEmbeddingE
 async def get_engine(
     log, model: str, keep_engine_alive_delay: float
 ) -> AsyncIterator[AsyncEmbeddingEngine]:
+    from infinity_emb import AsyncEmbeddingEngine, EngineArgs
+
     if model in active_engines:
         engine = active_engines[model]
         if not engine.running:
