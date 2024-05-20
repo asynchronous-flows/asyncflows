@@ -215,6 +215,15 @@ def dummy_sqlite_engine():
 
 
 @pytest.fixture
+def mock_sqlite_engine(dummy_sqlite_engine):
+    with patch(
+        "sqlalchemy.create_engine",
+        return_value=dummy_sqlite_engine,
+    ):
+        yield
+
+
+@pytest.fixture
 async def dummy_async_sqlite_engine():
     engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=True)
 
@@ -227,6 +236,15 @@ async def dummy_async_sqlite_engine():
         await session.commit()
 
     return engine
+
+
+@pytest.fixture
+def mock_async_sqlite_engine(dummy_async_sqlite_engine):
+    with patch(
+        "sqlalchemy.ext.asyncio.create_async_engine",
+        return_value=dummy_async_sqlite_engine,
+    ):
+        yield
 
 
 @pytest.fixture
@@ -304,7 +322,7 @@ def gracefully_cancel_tasks(event_loop):
 @pytest.fixture
 def mock_prompt_result():
     # TODO define mocks per action instance, not globally
-    return "mock result prompt <summary> my summary </summary>"
+    return "mock result prompt <summary> my summary </summary> <sql> select * from users </sql>"
 
 
 @pytest.fixture()

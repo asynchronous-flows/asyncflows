@@ -21,23 +21,42 @@ def mock_builtins_input(monkeypatch):
     monkeypatch.setattr(builtins, "input", input_mock)
 
 
+@pytest.fixture
+def mock_database_url_env_var():
+    database_url_bak = os.environ.get("DATABASE_URL")
+    os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
+    yield
+    if database_url_bak is not None:
+        os.environ["DATABASE_URL"] = database_url_bak
+    else:
+        del os.environ["DATABASE_URL"]
+
+
+def get_example_names():
+    examples_dir = "examples"
+    example_names = []
+    for example in os.listdir(examples_dir):
+        if example.endswith(".yaml"):
+            example_names.append(example[:-5])
+    return example_names
+
+
 @pytest.mark.slow
 # @pytest.mark.skipif(
 #     "ANTHROPIC_API_KEY" not in os.environ, reason="requires ANTROPIC_API_KEY env var"
 # )
 @pytest.mark.parametrize(
     "example_name",
-    [
-        "hello_world",
-        "rag",
-        "debono",
-    ],
+    get_example_names(),
 )
 async def test_run_example(
     mock_prompt_action,
     mock_transformer_action,
-    example_name,
     mock_builtins_input,
+    mock_sqlite_engine,
+    mock_async_sqlite_engine,
+    mock_database_url_env_var,
+    example_name,
     log_history,
 ):
     example_stem = f"examples/{example_name}"

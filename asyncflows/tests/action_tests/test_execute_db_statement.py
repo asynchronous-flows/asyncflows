@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 import pytest
 
 from asyncflows.actions.execute_db_statement import Inputs, Outputs, ExecuteDBStatement
@@ -26,11 +24,7 @@ def action(log, temp_dir):
     ],
 )
 async def test_get_db_schema(
-    dummy_async_sqlite_engine, action, inputs, expected_outputs
+    mock_async_sqlite_engine, action, inputs, expected_outputs
 ):
-    with patch(
-        "sqlalchemy.ext.asyncio.create_async_engine",
-        return_value=dummy_async_sqlite_engine,
-    ):
-        outputs = await action.run(inputs)
+    outputs = await action.run(inputs)
     assert outputs == expected_outputs

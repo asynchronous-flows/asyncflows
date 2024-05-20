@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 import pytest
 
 from asyncflows.actions.get_db_schema import Inputs, Outputs, GetDBSchema
@@ -30,10 +28,6 @@ CREATE TABLE users (
         ),
     ],
 )
-async def test_get_db_schema(dummy_sqlite_engine, action, inputs, expected_outputs):
-    with patch(
-        "sqlalchemy.create_engine",
-        return_value=dummy_sqlite_engine,
-    ):
-        outputs = await action.run(inputs)
+async def test_get_db_schema(mock_sqlite_engine, action, inputs, expected_outputs):
+    outputs = await action.run(inputs)
     assert outputs == expected_outputs
