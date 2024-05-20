@@ -65,15 +65,15 @@ class AsyncFlows:
         dependencies = declaration.get_dependencies()
         if len(dependencies) != 1:
             raise NotImplementedError("Only one dependency is supported for now")
-        action_id = list(dependencies)[0]
+        executable_id = list(dependencies)[0]
 
-        outputs = await self.action_service.run_action(
+        outputs = await self.action_service.run_executable(
             self.log,
-            action_id=action_id,
+            executable_id=executable_id,
             variables=self.variables,
         )
         context = {
-            action_id: outputs,
+            executable_id: outputs,
         }
 
         return await declaration.render(context)
