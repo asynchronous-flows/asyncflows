@@ -1,4 +1,3 @@
-import ocrmypdf
 import pypdfium2 as pdfium
 
 from asyncflows.actions.base import Action, CacheControlOutputs, BlobRepoInputs
@@ -8,7 +7,6 @@ from asyncflows.models.file import File
 class Inputs(BlobRepoInputs):
     file: File | str
     min_start_chars: int = 1000
-    ocr: bool = True
 
 
 class Outputs(CacheControlOutputs):
@@ -32,13 +30,6 @@ class ExtractPdfText(Action[Inputs, Outputs]):
                 return Outputs(
                     _cache=False,
                 )
-
-        # ocr the pdf
-        if inputs.ocr:
-            ocr_filepath = filepath + ".ocr.pdf"
-            # TODO find async alternative for this
-            ocrmypdf.ocr(filepath, ocr_filepath)
-            filepath = ocr_filepath
 
         # TODO make this async, tho it's relatively fast
         pdf = pdfium.PdfDocument(filepath)

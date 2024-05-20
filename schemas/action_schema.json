@@ -145,6 +145,9 @@
                 "$ref": "#/$defs/extract_pdf_textActionInvocation"
               },
               {
+                "$ref": "#/$defs/ocrActionInvocation"
+              },
+              {
                 "$ref": "#/$defs/retrieveActionInvocation"
               },
               {
@@ -847,30 +850,6 @@
           ],
           "default": null,
           "title": "Min Start Chars"
-        },
-        "ocr": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
-              "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
-              "$ref": "#/$defs/EnvDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LambdaDeclaration"
-            }
-          ],
-          "default": null,
-          "title": "Ocr"
         }
       },
       "required": [
@@ -948,6 +927,79 @@
         "url"
       ],
       "title": "get_urlActionInvocation",
+      "type": "object"
+    },
+    "ocrActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "ocr",
+          "enum": [
+            "ocr"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "pdf": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/File_"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Pdf"
+        }
+      },
+      "required": [
+        "action",
+        "pdf"
+      ],
+      "title": "ocrActionInvocation",
       "type": "object"
     },
     "promptActionInvocation": {
@@ -1567,6 +1619,9 @@
           },
           {
             "$ref": "#/$defs/extract_pdf_textActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/ocrActionInvocation"
           },
           {
             "$ref": "#/$defs/retrieveActionInvocation"
