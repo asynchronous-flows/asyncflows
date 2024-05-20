@@ -1,20 +1,25 @@
 import asyncio
 import os
+import typing
 import uuid
 from hashlib import sha256
-from pathlib import Path
 from typing import assert_never
 
 import structlog
-from pydantic import PrivateAttr, BaseModel
+from pydantic import PrivateAttr
 
+from asyncflows.actions.base import Field, BaseModel
 from asyncflows.models.blob import Blob
 from asyncflows.repos.blob_repo import BlobRepo
 from asyncflows.utils.request_utils import request_read
 
+URL = typing.NewType("URL", str)
+
 
 class File(BaseModel):
-    sources: list[Blob | str]
+    sources: list[Blob | URL] = Field(
+        description="List of blobs or URLs to download the file from"
+    )
 
     _filepath: None | str = PrivateAttr(None)
     _downloading_mutex: asyncio.Lock = PrivateAttr(default_factory=asyncio.Lock)
