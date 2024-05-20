@@ -828,6 +828,9 @@
                 "$ref": "#/$defs/extract_pdf_textActionInvocation"
               },
               {
+                "$ref": "#/$defs/extract_xml_tagActionInvocation"
+              },
+              {
                 "$ref": "#/$defs/execute_db_statementActionInvocation"
               },
               {
@@ -1348,6 +1351,100 @@
         "file"
       ],
       "title": "extract_pdf_textActionInvocation",
+      "type": "object"
+    },
+    "extract_xml_tagActionInvocation": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "const": "extract_xml_tag",
+          "enum": [
+            "extract_xml_tag"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "cache_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cache key for this action's result. Should be unique among all actions.",
+          "title": "Cache Key"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Text"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Tag"
+        }
+      },
+      "required": [
+        "action",
+        "text",
+        "tag"
+      ],
+      "title": "extract_xml_tagActionInvocation",
       "type": "object"
     },
     "get_db_schemaActionInvocation": {
@@ -3309,6 +3406,9 @@
           },
           {
             "$ref": "#/$defs/extract_pdf_textActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/extract_xml_tagActionInvocation"
           },
           {
             "$ref": "#/$defs/execute_db_statementActionInvocation"
