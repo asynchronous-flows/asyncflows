@@ -30,7 +30,7 @@ class ExtractXMLTag(Action[Inputs, Outputs]):
             return Outputs(result=text)
 
         # Extract the text between the opening and closing tags
-        pattern = re.compile(rf"{opening_tag}\s*(.*?)\s*{closing_tag}")
+        pattern = re.compile(rf"{opening_tag}\s*(.*?)\s*{closing_tag}", re.DOTALL)
         match = pattern.search(inputs.text)
         if match is None:
             self.log.warning("No text found between tags", tag=inputs.tag)

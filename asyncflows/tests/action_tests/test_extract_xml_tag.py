@@ -30,6 +30,11 @@ blablabla
             "tag",
             "hm",
         ),
+        (
+            "To get data about the database licenses, we can use the following SQL statement:\n\n<sql>\nSELECT \n    id,\n    created_at\nFROM serverlicense;\n</sql>\n\nThis query will retrieve all the columns from the `serverlicense` table, which contains information about the database licenses.",
+            "sql",
+            "SELECT \n    id,\n    created_at\nFROM serverlicense;",
+        ),
     ],
 )
 async def test_extract_tag(log, temp_dir, input_text, tag, expected_text):
