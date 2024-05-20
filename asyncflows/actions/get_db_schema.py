@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.sql.ddl import CreateTable
 
 from asyncflows.actions.base import BaseModel, Action, Field
+from asyncflows.utils.db_utils import get_sync_db_url
 
 
 class Inputs(BaseModel):
@@ -18,7 +19,8 @@ class GetDBSchema(Action[Inputs, Outputs]):
     name = "get_db_schema"
 
     async def run(self, inputs: Inputs) -> Outputs:
-        engine = create_engine(inputs.database_url)
+        database_url = get_sync_db_url(inputs.database_url)
+        engine = create_engine(database_url)
         if engine is None:
             raise ValueError("Could not connect to the database")
 
