@@ -1,3 +1,4 @@
+import typing
 from typing import Union, Literal
 
 import pydantic
@@ -32,6 +33,37 @@ class ActionInvocation(StrictModel):
     )
 
 
+def build_hinted_value_declaration(
+    vars_: HintType | None = None,
+    links: HintType | None = None,
+    strict: bool = False,
+):
+    union_elements = []
+
+    if vars_:
+        union_elements.append(
+            VarDeclaration.from_vars(vars_, strict),
+        )
+    if not vars_ or not strict:
+        union_elements.append(VarDeclaration)
+
+    if links:
+        union_elements.append(
+            LinkDeclaration.from_vars(links, strict),
+        )
+    if not links or not strict:
+        union_elements.append(LinkDeclaration)
+
+    other_elements = [
+        element
+        for element in typing.get_args(ValueDeclaration)
+        if element not in (VarDeclaration, LinkDeclaration)
+    ]
+    union_elements.extend(other_elements)
+
+    return Union[tuple(union_elements)]  # type: ignore
+
+
 def build_actions(
     action_names: list[str],
     vars_: HintType | None = None,
@@ -41,17 +73,7 @@ def build_actions(
     # Dynamically build action models from currently defined actions
     # for best typehints and autocompletion possible in the jsonschema
 
-    HintedValueDeclaration = ValueDeclaration
-
-    if vars_:
-        HintedValueDeclaration = Union[
-            VarDeclaration.from_vars(vars_, strict), HintedValueDeclaration
-        ]
-
-    if links:
-        HintedValueDeclaration = Union[
-            LinkDeclaration.from_vars(links, strict), HintedValueDeclaration
-        ]
+    HintedValueDeclaration = build_hinted_value_declaration(vars_, links, strict)
 
     actions_dict = get_actions_dict()
     action_models = []
@@ -59,7 +81,8 @@ def build_actions(
         action = actions_dict[action_name]
         # build base model field
         fields = {
-            "action": (Literal[action.name], ...)  # type: ignore
+            "action": (Literal[action.name], ...),  # type: ignore
+            "cache_key": (None | str | HintedValueDeclaration, None),
         }
 
         # build input fields
@@ -69,7 +92,7 @@ def build_actions(
                 inputs,
                 vars_=vars_,
                 links=links,
-                add_union=HintedValueDeclaration,
+                add_union=HintedValueDeclaration,  # type: ignore
                 strict=strict,
             )
 

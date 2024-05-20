@@ -6,19 +6,19 @@ from typing import Union
 
 from pydantic import ValidationError
 
+from asyncflows.actions.base import Field
 from asyncflows.actions import get_actions_dict
 from asyncflows.models.config.action import (
     build_actions,
     _action_names,
     _testing_action_names,
+    build_hinted_value_declaration,
 )
 from asyncflows.models.primitives import ExecutableId
 from asyncflows.models.config.flow import (
     ActionConfig,
     Loop,
     TestActionConfig,
-    NonActionExecutable,
-    TestNonActionExecutable,
 )
 from asyncflows.utils.config_utils import load_config_file
 
@@ -71,9 +71,8 @@ def _build_vars(
     return action_specs
 
 
-def _build_hinted_action_model(
+def build_hinted_flow_model(
     action_names: list[str],
-    non_action_executable: type,
     config_class: type[ActionConfig],
     config_filename: str | None,
     strict: bool,
@@ -86,21 +85,38 @@ def _build_hinted_action_model(
     else:
         links = None
 
-    HintedActionInvocationUnion = (
-        non_action_executable
-        | Union[
-            tuple(
-                build_actions(
-                    action_names,
-                    links=links,
-                    strict=strict,
-                )
-            )  # pyright: ignore
-        ]
+    # TODO this is called inside `build_actions` too, make it so it doesn't do it twice
+    HintedValueDeclaration = build_hinted_value_declaration(
+        # vars_=vars_,
+        links=links,
+        strict=strict,
     )
 
+    class HintedLoop(Loop):
+        in_: HintedValueDeclaration = Field(  # type: ignore
+            ...,
+            alias="in",
+        )
+        flow: "HintedFlowConfig"  # type: ignore
+
+    HintedActionInvocationUnion = Union[
+        tuple(
+            build_actions(
+                action_names,
+                links=links,
+                strict=strict,
+            )
+        )  # pyright: ignore
+    ]
+
+    HintedExecutable = HintedLoop | HintedActionInvocationUnion
+
+    HintedFlowConfig = dict[ExecutableId, HintedExecutable]
+
     class HintedActionConfig(config_class):
-        flow: dict[ExecutableId, HintedActionInvocationUnion]  # type: ignore
+        flow: HintedFlowConfig  # type: ignore
+
+    # HintedLoop.model_rebuild()  # TODO is this necessary?
 
     return HintedActionConfig
 
@@ -108,14 +124,12 @@ def _build_hinted_action_model(
 def _build_action_schema(
     action_names: list[str],
     config_class: type[ActionConfig],
-    non_action_executable: type,
     strict: bool,
     config_filename: str | None = None,
 ):
-    HintedActionConfig = _build_hinted_action_model(
+    HintedActionConfig = build_hinted_flow_model(
         action_names=action_names,
         config_class=config_class,
-        non_action_executable=non_action_executable,
         config_filename=config_filename,
         strict=strict,
     )
@@ -126,7 +140,6 @@ def _build_action_schema(
 def _build_and_save_action_schema(
     action_names: list[str],
     config_class: type[ActionConfig],
-    non_action_executable: type,
     output_file: str,
     strict: bool,
     config_filename: str | None = None,
@@ -134,7 +147,6 @@ def _build_and_save_action_schema(
     workflow_schema = _build_action_schema(
         action_names=action_names,
         config_class=config_class,
-        non_action_executable=non_action_executable,
         strict=strict,
         config_filename=config_filename,
     )
@@ -156,9 +168,8 @@ if __name__ == "__main__":
         schema = _build_action_schema(
             action_names=_action_names,
             config_class=ActionConfig,
-            non_action_executable=NonActionExecutable,
             config_filename=args.flow,
-            strict=False,
+            strict=True,
         )
         # straight to stdout we go
         print(json.dumps(schema, indent=2))
@@ -167,7 +178,6 @@ if __name__ == "__main__":
         _build_and_save_action_schema(
             action_names=_action_names,
             config_class=ActionConfig,
-            non_action_executable=NonActionExecutable,
             output_file="action_schema.json",
             strict=False,
         )
@@ -175,7 +185,6 @@ if __name__ == "__main__":
         _build_and_save_action_schema(
             action_names=_testing_action_names,
             config_class=TestActionConfig,
-            non_action_executable=TestNonActionExecutable,
             output_file="testing_action_schema.json",
             strict=False,
         )

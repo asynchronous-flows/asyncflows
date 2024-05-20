@@ -144,7 +144,6 @@ def resolve_transforms_from(
         )  # pyright: ignore[reportGeneralTypeIssues]
         type_.model_rebuild()
     if issubclass(type_, TransformsFrom):
-        # TODO load vars from actions config and pass them through
         type_ = type_._get_config_type(
             vars_=vars_,
             links=links,

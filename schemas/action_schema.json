@@ -68,6 +68,86 @@
       "title": "File_",
       "type": "object"
     },
+    "HintedLoop": {
+      "additionalProperties": false,
+      "properties": {
+        "for": {
+          "title": "For",
+          "type": "string"
+        },
+        "in": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "In"
+        },
+        "flow": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/HintedLoop"
+              },
+              {
+                "$ref": "#/$defs/extract_listActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/extract_pdf_textActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/extract_xml_tagActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/execute_db_statementActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/ocrActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/get_db_schemaActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/retrieveActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/rerankActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/promptActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/get_urlActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/scoreActionInvocation"
+              }
+            ]
+          },
+          "title": "Flow",
+          "type": "object"
+        }
+      },
+      "required": [
+        "for",
+        "in",
+        "flow"
+      ],
+      "title": "HintedLoop",
+      "type": "object"
+    },
     "LambdaDeclaration": {
       "additionalProperties": false,
       "description": "A lambda declaration is a python expression that can be evaluated within a context.",
@@ -106,86 +186,6 @@
         "link"
       ],
       "title": "LinkDeclaration",
-      "type": "object"
-    },
-    "Loop": {
-      "additionalProperties": false,
-      "properties": {
-        "for": {
-          "title": "For",
-          "type": "string"
-        },
-        "in": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
-              "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
-              "$ref": "#/$defs/EnvDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LambdaDeclaration"
-            }
-          ],
-          "title": "In"
-        },
-        "flow": {
-          "additionalProperties": {
-            "anyOf": [
-              {
-                "$ref": "#/$defs/extract_listActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/extract_pdf_textActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/extract_xml_tagActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/execute_db_statementActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/ocrActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/get_db_schemaActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/retrieveActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/rerankActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/promptActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/get_urlActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/scoreActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/Loop"
-              }
-            ]
-          },
-          "title": "Flow",
-          "type": "object"
-        }
-      },
-      "required": [
-        "for",
-        "in",
-        "flow"
-      ],
-      "title": "Loop",
       "type": "object"
     },
     "ModelConfig": {
@@ -321,13 +321,13 @@
               "type": "integer"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -348,13 +348,13 @@
               "type": "integer"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -375,13 +375,13 @@
               "type": "number"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -402,13 +402,13 @@
               "type": "number"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -429,13 +429,13 @@
               "type": "number"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -456,13 +456,13 @@
               "type": "number"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -521,13 +521,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -548,13 +548,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -771,13 +771,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -790,7 +790,6 @@
             }
           ],
           "default": null,
-          "description": "The cache key for this action's result. Should be unique among all actions.",
           "title": "Cache Key"
         },
         "database_url": {
@@ -799,13 +798,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -822,13 +821,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -848,13 +847,13 @@
               "type": "array"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -872,13 +871,13 @@
               "type": "integer"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -916,13 +915,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -935,7 +934,6 @@
             }
           ],
           "default": null,
-          "description": "The cache key for this action's result. Should be unique among all actions.",
           "title": "Cache Key"
         },
         "text": {
@@ -944,13 +942,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -970,13 +968,13 @@
               "type": "array"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1003,13 +1001,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1046,13 +1044,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1065,7 +1063,6 @@
             }
           ],
           "default": null,
-          "description": "The cache key for this action's result. Should be unique among all actions.",
           "title": "Cache Key"
         },
         "file": {
@@ -1077,13 +1074,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1100,13 +1097,13 @@
               "type": "integer"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1143,13 +1140,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1162,7 +1159,6 @@
             }
           ],
           "default": null,
-          "description": "The cache key for this action's result. Should be unique among all actions.",
           "title": "Cache Key"
         },
         "text": {
@@ -1171,13 +1167,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1194,13 +1190,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1237,13 +1233,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1256,7 +1252,6 @@
             }
           ],
           "default": null,
-          "description": "The cache key for this action's result. Should be unique among all actions.",
           "title": "Cache Key"
         },
         "database_url": {
@@ -1265,13 +1260,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1307,13 +1302,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1326,7 +1321,6 @@
             }
           ],
           "default": null,
-          "description": "The cache key for this action's result. Should be unique among all actions.",
           "title": "Cache Key"
         },
         "url": {
@@ -1335,13 +1329,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1377,13 +1371,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1396,7 +1390,6 @@
             }
           ],
           "default": null,
-          "description": "The cache key for this action's result. Should be unique among all actions.",
           "title": "Cache Key"
         },
         "pdf": {
@@ -1408,13 +1401,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1450,13 +1443,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1469,7 +1462,6 @@
             }
           ],
           "default": null,
-          "description": "The cache key for this action's result. Should be unique among all actions.",
           "title": "Cache Key"
         },
         "model": {
@@ -1478,13 +1470,13 @@
               "$ref": "#/$defs/OptionalModelConfigActionFieldTemplate"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1505,13 +1497,13 @@
               "$ref": "#/$defs/QuoteStyle"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1541,10 +1533,10 @@
                     "$ref": "#/$defs/PromptContextInConfigVar"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigTemplate"
+                    "$ref": "#/$defs/PromptContextInConfigLink"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigLink"
+                    "$ref": "#/$defs/PromptContextInConfigTemplate"
                   },
                   {
                     "$ref": "#/$defs/PromptContextInConfigLambda"
@@ -1554,13 +1546,13 @@
               "type": "array"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1596,13 +1588,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1615,7 +1607,6 @@
             }
           ],
           "default": null,
-          "description": "The cache key for this action's result. Should be unique among all actions.",
           "title": "Cache Key"
         },
         "model": {
@@ -1628,13 +1619,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1653,13 +1644,13 @@
               "type": "array"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1679,13 +1670,13 @@
               "type": "array"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1706,13 +1697,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1729,13 +1720,13 @@
               "type": "integer"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1773,13 +1764,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1792,7 +1783,6 @@
             }
           ],
           "default": null,
-          "description": "The cache key for this action's result. Should be unique among all actions.",
           "title": "Cache Key"
         },
         "model": {
@@ -1805,13 +1795,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1830,13 +1820,13 @@
               "type": "array"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1856,13 +1846,13 @@
               "type": "array"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1883,13 +1873,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1906,13 +1896,13 @@
               "type": "integer"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1950,13 +1940,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -1969,7 +1959,6 @@
             }
           ],
           "default": null,
-          "description": "The cache key for this action's result. Should be unique among all actions.",
           "title": "Cache Key"
         },
         "mutated_response_output": {
@@ -1979,13 +1968,13 @@
               "type": "array"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -2002,13 +1991,13 @@
               "type": "string"
             },
             {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
               "$ref": "#/$defs/VarDeclaration"
             },
             {
               "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
             },
             {
               "$ref": "#/$defs/EnvDeclaration"
@@ -2043,7 +2032,7 @@
       "additionalProperties": {
         "anyOf": [
           {
-            "$ref": "#/$defs/Loop"
+            "$ref": "#/$defs/HintedLoop"
           },
           {
             "$ref": "#/$defs/extract_listActionInvocation"
