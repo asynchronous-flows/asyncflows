@@ -17,8 +17,9 @@ Built with asyncio, pydantic, YAML, jinja
 3.1 [Hello world](#hello-world)  
 3.2 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
 3.3 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
-3.4 [Chatbot](#chatbot-planned)  
-3.5 [Writing your own actions](#writing-your-own-actions)
+3.4 [SQL Retrieval](#sql-retrieval)  
+3.5 [Chatbot](#chatbot-planned)  
+3.6 [Writing your own actions](#writing-your-own-actions)
 
 # Introduction
 
