@@ -1,4 +1,5 @@
 import tempfile
+from pathlib import Path
 from typing import Any
 
 from asyncflows.services.action_service import ActionService
@@ -41,10 +42,12 @@ class AsyncFlows:
     @classmethod
     def from_file(
         cls,
-        filename: str,
+        file: str | Path,
     ) -> "AsyncFlows":
+        if isinstance(file, Path):
+            file = file.as_posix()
         return AsyncFlows(
-            filename=filename,
+            filename=file,
         )
 
     def set_vars(self, **kwargs) -> "AsyncFlows":

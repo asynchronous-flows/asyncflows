@@ -1,5 +1,6 @@
 import glob
 import os
+from pathlib import Path
 
 from asyncflows import AsyncFlows
 
@@ -8,8 +9,8 @@ async def main():
     # Find the `rag.yaml` file in the `examples` directory
     # This is to make sure the example can be run from any directory,
     # e.g., `python -m asyncflows.examples.rag`
-    examples_dir = os.path.dirname(__file__)
-    rag_flow_path = os.path.join(examples_dir, "rag.yaml")
+    examples_dir = Path(os.path.dirname(__file__))
+    rag_flow_path = examples_dir / "rag.yaml"
 
     # Find all the recipes in the `recipes` directory
     recipes_glob = os.path.join(
