@@ -29,7 +29,7 @@ async def test_get_db_schema(
     dummy_async_sqlite_engine, action, inputs, expected_outputs
 ):
     with patch(
-        "asyncflows.actions.execute_db_statement.create_async_engine",
+        "sqlalchemy.ext.asyncio.create_async_engine",
         return_value=dummy_async_sqlite_engine,
     ):
         outputs = await action.run(inputs)

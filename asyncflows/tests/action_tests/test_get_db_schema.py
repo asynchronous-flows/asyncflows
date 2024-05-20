@@ -32,7 +32,7 @@ CREATE TABLE users (
 )
 async def test_get_db_schema(dummy_sqlite_engine, action, inputs, expected_outputs):
     with patch(
-        "asyncflows.actions.get_db_schema.create_engine",
+        "sqlalchemy.create_engine",
         return_value=dummy_sqlite_engine,
     ):
         outputs = await action.run(inputs)
