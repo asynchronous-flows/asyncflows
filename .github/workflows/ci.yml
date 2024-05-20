@@ -12,6 +12,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  generate_schema_without_optional_deps:
+    strategy:
+      matrix:
+        python-version: [ 3.11 ]
+        poetry-version: [ 1.7.1 ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'poetry'
+          cache-dependency-path: poetry.lock
+
+      # this should run without `--all-extras`
+      - run: poetry install
+      - run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+
+      # TODO check if schema changed; if so, fail
+      - run: make schema
+
   pytest:
     strategy:
       matrix:
@@ -42,7 +65,7 @@ jobs:
           cache: 'poetry'
           cache-dependency-path: poetry.lock
 
-      - run: poetry install
+      - run: poetry install --all-extras
       - run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
 
       - run: make test-no-skip
@@ -70,7 +93,7 @@ jobs:
           cache: 'poetry'
           cache-dependency-path: poetry.lock
 
-      - run: poetry install --with dev --with test
+      - run: poetry install --all-extras --with dev --with test
       - run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
 
       - uses: jakebailey/pyright-action@v1
