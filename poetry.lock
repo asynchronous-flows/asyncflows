@@ -6749,9 +6749,10 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more
 [extras]
 ocr = ["ocrmypdf"]
 pg = ["asyncpg", "pandas", "psycopg2"]
+sqlite = []
 transfomers = ["infinity-emb", "sentence-transformers"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "d708af2b7b6ea8dc071cd7ea19d5bf3f7246cf2ff5598841ebb414acc72449f7"
+content-hash = "62959739597c6bf3225c5ba710c064e73af58bc4724b34368c5d4cf143e9b95c"
