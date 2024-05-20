@@ -416,6 +416,7 @@ Both recipes are healthy, vegetarian options that incorporate fresh ingredients 
 This flow facilitates asking questions over a SQL database.
 
 <div align="center">
+<img width="1363" alt="sql rag" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/26be8575-3618-4835-a96a-57906084516a">
 </div>
 
 Running the example with a database available at `DATABASE_URL` passed as an environment variable:
