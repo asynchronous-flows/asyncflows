@@ -263,7 +263,8 @@ if __name__ == "__main__":
 Output of the python script:
 
 ---
-Provide a problem to think about: _What should I plan for my mom's 60th birthday? She likes black and white, lives to work out, and loves piano music._
+
+> What should I plan for my mom's 60th birthday? She likes black and white, lives to work out, and loves piano music.
 
 1. Host a black/white themed party with piano music and fitness elements.
 2. Hire a pianist and plan a group workout or dance class beforehand.
@@ -271,6 +272,7 @@ Provide a problem to think about: _What should I plan for my mom's 60th birthday
 4. Incorporate black/white desserts and compile a personalized music playlist.
 5. Assign tasks, set deadlines. Monitor progress against mom's interests/feedback.
 6. Success criteria: Mom feels celebrated in a personalized, meaningful way.
+
 ---
 
 </details>
@@ -395,7 +397,7 @@ Output of the python script:
 
 ---
 
-Ask me anything: _What's something healthy I could make?_
+> What's something healthy I could make?
 
 The two provided recipes, Mexican Guacamole and Lebanese Hummus, offer healthy and flavorful options to prepare. The key points are:
 
@@ -404,6 +406,146 @@ The two provided recipes, Mexican Guacamole and Lebanese Hummus, offer healthy a
 2. Hummus is a blend of chickpeas, tahini (sesame seed paste), lemon juice, garlic, and olive oil, seasoned with salt and cumin. It is typically served as a dip with warm pita bread and garnished with paprika and parsley.
 
 Both recipes are healthy, vegetarian options that incorporate fresh ingredients and can be easily prepared at home.
+
+---
+
+</details>
+
+## SQL Retrieval
+
+This flow facilitates asking questions over a SQL database.
+
+<div align="center">
+</div>
+
+Running the example with a database available at `DATABASE_URL` passed as an environment variable:
+```bash
+ANTHROPIC_API_KEY=... DATABASE_URL=... python -m asyncflows.examples.rag
+```
+
+<details>
+<summary>
+YAML file that defines the flow – click to expand
+</summary>
+
+```yaml
+# sql_rag.yaml
+
+default_model:
+  model: claude-3-haiku-20240307
+  temperature: 1
+  max_output_tokens: 2000
+flow:
+  
+  # Get the database schema as CREATE TABLE statements
+  get_db_schema:
+    database_url:
+      env: DATABASE_URL
+    action: get_db_schema
+  
+  # Generate a SQL statement to get data from the database
+  generate_sql_statement:
+    action: prompt
+    quote_style: xml
+    prompt:
+      - link: get_db_schema.schema_text
+        heading: Database schema
+      - var: query
+        heading: User query
+      - text: |
+          Can you write a SQL statement to get data from the database, to help us answer the user query?
+          Wrap the statement in <sql> tags.
+  
+  # Extract the SQL statement from the generated response
+  extract_sql_statement:
+    action: extract_xml_tag
+    text:
+      link: generate_sql_statement.result
+    tag: sql
+  
+  # Execute the SQL statement
+  exec:
+    action: execute_db_statement
+    database_url:
+      env: DATABASE_URL
+    statement:
+      link: extract_sql_statement.result
+
+  # Answer the user query based on the result of the SQL statement
+  answer_user_query:
+    action: prompt
+    prompt:
+      - heading: SQL statement
+        link: extract_sql_statement.result
+      - text: |
+          Here is the result of executing the SQL statement:
+          ```
+          {{ exec.result }}
+          ```
+          Can you answer the user query based on this result?
+      - var: query
+        heading: User query
+
+default_output: answer_user_query.result
+```
+
+</details>
+
+<details>
+<summary>
+Running the flow (python and stdout)
+</summary>
+
+Python script that runs the flow:
+```python
+from asyncflows import AsyncFlows
+
+
+async def main():
+    # Load the chatbot flow
+    flow = AsyncFlows.from_file("sql_rag.yaml")
+
+    # Show the database schema
+    schema = await flow.run("get_db_schema")
+    print(schema.schema_text)
+
+    # Run the question answering flow
+    while True:
+        # Get the user's query via CLI interface (swap out with whatever input method you use)
+        try:
+            query = input("Ask me anything: ")
+        except EOFError:
+            break
+
+        # Set the query
+        question_flow = flow.set_vars(
+            query=query,
+        )
+
+        # Run the flow and get the result
+        result = await question_flow.run()
+        print(result)
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(main())
+
+```
+
+Output of the python script:
+
+---
+
+> What are the top 5 most expensive products in the database?
+
+Given the result of the SQL statement, the top 5 most expensive products in the database are:
+- Product A: $100
+- Product B: $90
+- Product C: $80
+- Product D: $70
+- Product E: $60
 
 ---
 
@@ -537,7 +679,7 @@ Output of the python script:
 
 ---
 
-Ask me anything: _What's something healthy I could make?_
+> What's something healthy I could make?
 
 The two provided recipes, Mexican Guacamole and Lebanese Hummus, offer healthy and flavorful options to prepare. The key points are:
 
