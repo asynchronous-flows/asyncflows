@@ -52,8 +52,8 @@ class File(BaseModel):
             file_stem = (
                 random_id + ".pdf"
             )  # pdffigures2 fails if it doesn't end in .pdf
-            temp_file = Path(temp_dir) / random_id / file_stem
-            os.makedirs(temp_file.parent, exist_ok=True)
+            temp_file = os.path.join(temp_dir, random_id, file_stem)
+            os.makedirs(temp_file, exist_ok=True)
 
             for source in self.sources:
                 if isinstance(source, Blob):
@@ -71,7 +71,7 @@ class File(BaseModel):
                         continue
                     with open(temp_file, "wb") as f:
                         f.write(response)
-                    filepath = str(temp_file)
+                    filepath = temp_file
                     break
                 else:
                     assert_never(source)
