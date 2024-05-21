@@ -1,8 +1,10 @@
 <div align="center">
 <h1>♾️ asyncflows 🌊</h1>
 
-Config-Driven Asynchronous AI Pipelines
+[![Discord](https://img.shields.io/badge/discord-7289da)](https://discord.gg/AGZ6GrcJCh)
+[![Try in Colab](https://img.shields.io/badge/colab-red)](https://colab.research.google.com/github/asynchronous-flows/asyncflows/blob/main/examples/hello_world.ipynb)
 
+Config-Driven Asynchronous AI Pipelines  
 Built with asyncio, pydantic, YAML, jinja  
 </div>
 
@@ -24,7 +26,7 @@ Built with asyncio, pydantic, YAML, jinja
 
 # Introduction
 
-Asyncflows is a tool for designing and running AI pipelines using simple YAML configuration.
+asyncflows is a framework for designing and running AI pipelines using simple YAML configuration.
 
 Here is a simple flow that prompts the LLM to say "hello world", and prints the result.
 
@@ -62,11 +64,15 @@ Output of the python script:
 Hello, world!
 ```
 
-Run the example yourself, with:
+Run the example yourself with:
 
 ```bash
 python -m asyncflows.examples.hello_world
 ```
+
+Or:
+
+[![Try in Colab](https://img.shields.io/badge/Run_it_in_Google_Colab-red)](https://colab.research.google.com/github/asynchronous-flows/asyncflows/blob/main/examples/hello_world.ipynb)
 
 # Installation
 
