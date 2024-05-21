@@ -55,7 +55,7 @@ def openai_mock(expected_response):
     # mock AsyncOpenAI
     openai_key_bak = os.environ.get("OPENAI_API_KEY")
     os.environ["OPENAI_API_KEY"] = "123"
-    with patch("asyncflows.actions.prompt.AsyncOpenAI") as mock_openai:
+    with patch("openai.AsyncOpenAI") as mock_openai:
         mock_openai().chat.completions.create = create_stream_chat_completion(
             expected_response
         )

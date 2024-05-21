@@ -208,7 +208,7 @@ files = [
 name = "anthropic"
 version = "0.21.3"
 description = "The official Python library for the anthropic API"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "anthropic-0.21.3-py3-none-any.whl", hash = "sha256:5869115453b543a46ded6515c9f29b8d610b6e94bbba3230ad80ac947d2b0862"},
@@ -501,7 +501,7 @@ botocore = ["botocore"]
 name = "cachetools"
 version = "5.3.3"
 description = "Extensible memoizing collections and decorators"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "cachetools-5.3.3-py3-none-any.whl", hash = "sha256:0abad1021d3f8325b2fc1d2e9c8b9c9d57b04c3932657a72465447332c24d945"},
@@ -1048,7 +1048,7 @@ websockets = ["websocket-client (>=1.3.0)"]
 name = "docstring-parser"
 version = "0.16"
 description = "Parse Python docstrings in reST, Google and Numpydoc format"
-optional = false
+optional = true
 python-versions = ">=3.6,<4.0"
 files = [
     {file = "docstring_parser-0.16-py3-none-any.whl", hash = "sha256:bf0a1387354d3691d102edef7ec124f219ef639982d096e26e3b60aeffa90637"},
@@ -1342,7 +1342,7 @@ files = [
 name = "google-api-core"
 version = "2.19.0"
 description = "Google API client core library"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "google-api-core-2.19.0.tar.gz", hash = "sha256:cf1b7c2694047886d2af1128a03ae99e391108a08804f87cfd35970e49c9cd10"},
@@ -1373,7 +1373,7 @@ grpcio-gcp = ["grpcio-gcp (>=0.2.2,<1.0.dev0)"]
 name = "google-auth"
 version = "2.29.0"
 description = "Google Authentication Library"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "google-auth-2.29.0.tar.gz", hash = "sha256:672dff332d073227550ffc7457868ac4218d6c500b155fe6cc17d2b13602c360"},
@@ -1396,7 +1396,7 @@ requests = ["requests (>=2.20.0,<3.0.0.dev0)"]
 name = "google-cloud-aiplatform"
 version = "1.51.0"
 description = "Vertex AI API client library"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "google-cloud-aiplatform-1.51.0.tar.gz", hash = "sha256:901993b4d14392452699c14cf23d72c01c5488ee36a7e00b23195e64d7d2f5ec"},
@@ -1443,7 +1443,7 @@ xai = ["tensorflow (>=2.3.0,<3.0.0dev)"]
 name = "google-cloud-bigquery"
 version = "3.23.0"
 description = "Google BigQuery API client library"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "google-cloud-bigquery-3.23.0.tar.gz", hash = "sha256:7ecdb207727d513b1bce1f213dbb926ed2e1d4f0122778de00f0e56d19d47a01"},
@@ -1474,7 +1474,7 @@ tqdm = ["tqdm (>=4.7.4,<5.0.0dev)"]
 name = "google-cloud-core"
 version = "2.4.1"
 description = "Google Cloud API client core library"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "google-cloud-core-2.4.1.tar.gz", hash = "sha256:9b7749272a812bde58fff28868d0c5e2f585b82f37e09a1f6ed2d4d10f134073"},
@@ -1492,7 +1492,7 @@ grpc = ["grpcio (>=1.38.0,<2.0dev)", "grpcio-status (>=1.38.0,<2.0.dev0)"]
 name = "google-cloud-resource-manager"
 version = "1.12.3"
 description = "Google Cloud Resource Manager API client library"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "google-cloud-resource-manager-1.12.3.tar.gz", hash = "sha256:809851824119834e4f2310b2c4f38621c1d16b2bb14d5b9f132e69c79d355e7f"},
@@ -1510,7 +1510,7 @@ protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.0 || >4.21.0,<4
 name = "google-cloud-storage"
 version = "2.16.0"
 description = "Google Cloud Storage API client library"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "google-cloud-storage-2.16.0.tar.gz", hash = "sha256:dda485fa503710a828d01246bd16ce9db0823dc51bbca742ce96a6817d58669f"},
@@ -1532,7 +1532,7 @@ protobuf = ["protobuf (<5.0.0dev)"]
 name = "google-crc32c"
 version = "1.5.0"
 description = "A python wrapper of the C library 'Google CRC32C'"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "google-crc32c-1.5.0.tar.gz", hash = "sha256:89284716bc6a5a415d4eaa11b1726d2d60a0cd12aadf5439828353662ede9dd7"},
@@ -1612,7 +1612,7 @@ testing = ["pytest"]
 name = "google-resumable-media"
 version = "2.7.0"
 description = "Utilities for Google Media Downloads and Resumable Uploads"
-optional = false
+optional = true
 python-versions = ">= 3.7"
 files = [
     {file = "google-resumable-media-2.7.0.tar.gz", hash = "sha256:5f18f5fa9836f4b083162064a1c2c98c17239bfda9ca50ad970ccf905f3e625b"},
@@ -1630,7 +1630,7 @@ requests = ["requests (>=2.18.0,<3.0.0dev)"]
 name = "googleapis-common-protos"
 version = "1.63.0"
 description = "Common protobufs used in Google APIs"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "googleapis-common-protos-1.63.0.tar.gz", hash = "sha256:17ad01b11d5f1d0171c06d3ba5c04c54474e883b66b949722b4938ee2694ef4e"},
@@ -1730,7 +1730,7 @@ test = ["objgraph", "psutil"]
 name = "grpc-google-iam-v1"
 version = "0.13.0"
 description = "IAM API client library"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "grpc-google-iam-v1-0.13.0.tar.gz", hash = "sha256:fad318608b9e093258fbf12529180f400d1c44453698a33509cc6ecf005b294e"},
@@ -1746,7 +1746,7 @@ protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.1 || >4.21.1,<4
 name = "grpcio"
 version = "1.63.0"
 description = "HTTP/2-based RPC framework"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "grpcio-1.63.0-cp310-cp310-linux_armv7l.whl", hash = "sha256:2e93aca840c29d4ab5db93f94ed0a0ca899e241f2e8aec6334ab3575dc46125c"},
@@ -1804,7 +1804,7 @@ protobuf = ["grpcio-tools (>=1.63.0)"]
 name = "grpcio-status"
 version = "1.62.2"
 description = "Status proto mapping for gRPC"
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "grpcio-status-1.62.2.tar.gz", hash = "sha256:62e1bfcb02025a1cd73732a2d33672d3e9d0df4d21c12c51e0bbcaf09bab742a"},
@@ -3750,7 +3750,7 @@ testing = ["pytest", "pytest-benchmark"]
 name = "proto-plus"
 version = "1.23.0"
 description = "Beautiful, Pythonic protocol buffers."
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "proto-plus-1.23.0.tar.gz", hash = "sha256:89075171ef11988b3fa157f5dbd8b9cf09d65fffee97e29ce403cd8defba19d2"},
@@ -3767,7 +3767,7 @@ testing = ["google-api-core[grpc] (>=1.31.5)"]
 name = "protobuf"
 version = "4.25.3"
 description = ""
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "protobuf-4.25.3-cp310-abi3-win32.whl", hash = "sha256:d4198877797a83cbfe9bffa3803602bbe1625dc30d8a097365dbc762e5790faa"},
@@ -3882,7 +3882,7 @@ files = [
 name = "pyasn1-modules"
 version = "0.4.0"
 description = "A collection of ASN.1-based protocols modules"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "pyasn1_modules-0.4.0-py3-none-any.whl", hash = "sha256:be04f15b66c206eed667e0bb5ab27e2b1855ea54a842e5037738099e8ca4ae0b"},
@@ -5039,7 +5039,7 @@ testing-integration = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "jar
 name = "shapely"
 version = "2.0.4"
 description = "Manipulation and analysis of geometric objects"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "shapely-2.0.4-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:011b77153906030b795791f2fdfa2d68f1a8d7e40bce78b029782ade3afe4f2f"},
@@ -6885,7 +6885,10 @@ docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.link
 testing = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-itertools", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
 
 [extras]
+anthropic = ["anthropic"]
+gcloud = ["google-cloud-aiplatform"]
 ocr = ["ocrmypdf"]
+openai = ["openai"]
 pg = ["asyncpg", "pandas", "psycopg2", "sqlalchemy"]
 sqlite = ["pandas", "sqlalchemy"]
 transfomers = ["infinity-emb", "sentence-transformers"]
@@ -6893,4 +6896,4 @@ transfomers = ["infinity-emb", "sentence-transformers"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "dcd3eb552c764b8650abf490501259492a240dce92868032fc64df997675ed4e"
+content-hash = "df4c9cb195f0fff8265006ed441f9fd10d5293f5a05c580ff7c50c2f196dab86"

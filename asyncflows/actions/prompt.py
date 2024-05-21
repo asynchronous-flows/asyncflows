@@ -5,10 +5,7 @@ import base64
 from typing import Optional, AsyncIterator
 
 import aiohttp
-import anthropic
 import tenacity
-from anthropic import NOT_GIVEN
-from openai import AsyncOpenAI
 
 from asyncflows.actions.base import (
     StreamingAction,
@@ -43,6 +40,15 @@ litellm.drop_params = True
 # disable litellm logger
 litellm_logger = logging.getLogger("LiteLLM")
 litellm_logger.setLevel(logging.ERROR)
+
+anthropic_retry_errors = (aiohttp.ClientError,)
+
+try:
+    import anthropic
+
+    anthropic_retry_errors += (anthropic.AnthropicError,)
+except ImportError:
+    pass
 
 
 class PromptEnvContext(SingletonContext):
@@ -180,12 +186,7 @@ class Prompt(StreamingAction[Inputs, Outputs]):
     @tenacity.retry(
         wait=tenacity.wait_exponential(multiplier=1, max=10),
         stop=tenacity.stop_after_attempt(5),
-        retry=tenacity.retry_if_exception_type(
-            (
-                anthropic.AnthropicError,
-                aiohttp.ClientError,
-            )
-        ),
+        retry=tenacity.retry_if_exception_type(anthropic_retry_errors),
     )
     async def _invoke_anthropic(
         self,
@@ -194,6 +195,7 @@ class Prompt(StreamingAction[Inputs, Outputs]):
     ):
         from anthropic import AsyncAnthropic
         from anthropic.types import MessageParam
+        from anthropic import NOT_GIVEN
 
         system_messages = [
             message for message in messages if message["role"] == "system"
@@ -252,6 +254,8 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         client = None
         try:
             if "gpt" in model_config.model:
+                from openai import AsyncOpenAI
+
                 client = AsyncOpenAI(api_key=openai_api_key)
 
             completion: litellm.ModelResponse
