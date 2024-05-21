@@ -16,16 +16,57 @@ Built with asyncio, pydantic, YAML, jinja
 3. [Guides](#guides)  
 3.1 [Swapping out the Language Model](#swapping-out-the-language-model)  
 4. [Examples](#examples)  
-4.1 [Hello world](#hello-world)  
-4.2 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
-4.3 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
-4.4 [SQL Retrieval](#sql-retrieval)  
-4.5 [Chatbot](#chatbot-planned)  
-4.6 [Writing your own actions](#writing-your-own-actions)
+4.1 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
+4.2 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
+4.3 [SQL Retrieval](#sql-retrieval)  
+4.4 [Chatbot](#chatbot-planned)  
+4.5 [Writing your own actions](#writing-your-own-actions)
 
 # Introduction
 
 Asyncflows is a tool for designing and running AI pipelines using simple YAML configuration.
+
+Here is a simple flow that prompts the LLM to say "hello world", and prints the result.
+
+<div align="center">
+
+<img width="465" alt="hello world" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/9ef8234d-f0d0-4ea7-a42e-92fe1650c19a">
+
+</div>
+
+YAML file that defines the flow:
+```yaml
+# hello_world.yaml
+
+default_model:
+  model: ollama/llama3
+flow:
+  hello_world:
+    action: prompt
+    prompt:
+      - text: Can you say hello world for me?
+default_output: hello_world.result
+```
+
+Python code that runs the flow:
+```python
+from asyncflows import AsyncFlows
+
+flow = AsyncFlows.from_file("hello_world.yaml")
+result = await flow.run()
+print(result)
+```
+
+Output of the python script:
+```python
+Hello, world!
+```
+
+Run the example yourself, with:
+
+```bash
+python -m asyncflows.examples.hello_world
+```
 
 # Installation
 
@@ -36,6 +77,97 @@ Get started with:
 ```bash
 pip install asyncflows
 ```
+
+Depending on what you need, consider installing extra dependencies for:
+
+### Model Providers
+
+<details>
+<summary>
+OpenAI
+</summary>
+
+```bash
+pip install asyncflows[openai]
+```
+
+</details>
+
+<details>
+<summary>
+Anthropic
+</summary>
+
+```bash
+pip install asyncflows[anthropic]
+```
+
+</details>
+
+<details>
+<summary>
+Google Cloud (Vertex AI)
+</summary>
+
+```bash
+pip install asyncflows[gcloud]
+```
+
+</details>
+
+### SQL Databases
+
+<details>
+<summary>
+Postgres
+</summary>
+
+```bash
+pip install asyncflows[pg]
+```
+
+</details>
+
+<details>
+<summary>
+SQLite
+</summary>
+
+```bash
+pip install asyncflows[sqlite]
+```
+
+</details>
+
+Any SQL database implemented in [sqlalchemy](https://docs.sqlalchemy.org/en/20/core/engines.html) is supported, 
+though you may need to install additional dependencies not shown here. 
+Please open an issue if you run into this, 
+we will happily add an extra category for your database. 
+
+
+### Miscellaneous
+
+<details>
+<summary>
+Retrieve and Rerank
+</summary>
+
+```bash
+pip install asyncflows[transformers]
+```
+
+</details>
+
+<details>
+<summary>
+PDF Extraction
+</summary>
+
+```bash
+pip install asyncflows[pdf]
+```
+
+</details>
 
 ## Local development
 
@@ -51,6 +183,12 @@ Install dependencies with:
 
 ```bash
 poetry install
+```
+
+To install all extra dependencies, run:
+
+```bash
+poetry install --all-extras
 ```
 
 # Guides
@@ -112,50 +250,6 @@ ANTHROPIC_API_KEY=... python -m asyncflows.examples.hello_world
 
 The examples default to llama3, and assume [ollama](https://ollama.com/) is running locally.  
 To use a different model or provider, see [Swapping out the Language Model](#swapping-out-the-language-model).
-
-## Hello world
-
-Here is a simple flow that prompts the LLM to say "hello world", and prints the result.
-
-Run the example with:
-
-```bash
-python -m asyncflows.examples.hello_world
-```
-
-<div align="center">
-
-<img width="465" alt="hello world" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/9ef8234d-f0d0-4ea7-a42e-92fe1650c19a">
-
-</div>
-
-YAML file that defines the flow:
-```yaml
-# hello_world.yaml
-
-default_model:
-  model: ollama/llama3
-flow:
-  hello_world:
-    action: prompt
-    prompt:
-      - text: Can you say hello world for me?
-default_output: hello_world.result
-```
-
-Python code that runs the flow:
-```python
-from asyncflows import AsyncFlows
-
-flow = AsyncFlows.from_file("hello_world.yaml")
-result = await flow.run()
-print(result)
-```
-
-Output of the python code:
-```python
-Hello, world!
-```
 
 ## De Bono's Six Thinking Hats
 
@@ -279,21 +373,14 @@ Python script that runs the flow:
 ```python
 from asyncflows import AsyncFlows
 
+query = input("Provide a problem to think about: ")
+flow = AsyncFlows.from_file("examples/debono.yaml").set_vars(
+    query=query,
+)
 
-async def main():
-    query = input("Provide a problem to think about: ")
-    flow = AsyncFlows.from_file("examples/debono.yaml").set_vars(
-        query=query,
-    )
-
-    # Run the flow and return the default output (result of the blue hat)
-    result = await flow.run()
-    print(result)
-
-
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+# Run the flow and return the default output (result of the blue hat)
+result = await flow.run()
+print(result)
 ```
 
 Output of the python script:
@@ -387,46 +474,36 @@ Running the flow (python and stdout)
 
 Python script that runs the flow:
 ```python
-import glob
-
 from asyncflows import AsyncFlows
 
+# Load text files from the `recipes` folder
+document_paths = glob.glob("recipes/*.md")
+texts = []
+for document_path in document_paths:
+    with open(document_path, "r") as f:
+        texts.append(f.read())
 
-async def main():
-    # Load text files from the `recipes` folder
-    document_paths = glob.glob("recipes/*.md")
-    texts = []
-    for document_path in document_paths:
-        with open(document_path, "r") as f:
-            texts.append(f.read())
+# Load the chatbot flow
+flow = AsyncFlows.from_file("rag.yaml").set_vars(
+    texts=texts,
+)
 
-    # Load the chatbot flow
-    flow = AsyncFlows.from_file("rag.yaml").set_vars(
-        texts=texts,
+# Run the flow
+while True:
+    # Get the user's query via CLI interface (swap out with whatever input method you use)
+    try:
+        question = input("Ask me anything: ")
+    except EOFError:
+        break
+
+    # Set the query
+    question_flow = flow.set_vars(
+        question=question,
     )
 
-    # Run the flow
-    while True:
-        # Get the user's query via CLI interface (swap out with whatever input method you use)
-        try:
-            question = input("Ask me anything: ")
-        except EOFError:
-            break
-
-        # Set the query
-        question_flow = flow.set_vars(
-            question=question,
-        )
-
-        # Run the flow and get the result
-        result = await question_flow.run()
-        print(result)
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(main())
+    # Run the flow and get the result
+    result = await question_flow.run()
+    print(result)
 ```
 
 Output of the python script:
@@ -451,35 +528,7 @@ Both recipes are healthy, vegetarian options that incorporate fresh ingredients 
 
 This flow facilitates asking questions over a SQL database.
 
-To use it with your database, install the corresponding extra package:
-
-<details>
-<summary>
-postgres
-</summary>
-
-```bash
-pip install asyncflows[pg]
-```
-
-</details>
-
-<details>
-<summary>
-sqlite
-</summary>
-
-```bash
-pip install asyncflows[sqlite]
-```
-
-</details>
-
-
-Any SQL database implemented in [sqlalchemy](https://docs.sqlalchemy.org/en/20/core/engines.html) is supported, 
-though you may need to install additional dependencies. 
-Please open an issue if you run into this, 
-we will add another dependency extra like `asyncflows[pg]`.
+To use it with your database, install the corresponding [extra packages](#databases) and set the `DATABASE_URL` environment variable.
 
 <div align="center">
 <img width="1363" alt="sql rag" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/26be8575-3618-4835-a96a-57906084516a">
@@ -567,38 +616,29 @@ Python script that runs the flow:
 ```python
 from asyncflows import AsyncFlows
 
+# Load the chatbot flow
+flow = AsyncFlows.from_file("sql_rag.yaml")
 
-async def main():
-    # Load the chatbot flow
-    flow = AsyncFlows.from_file("sql_rag.yaml")
+# Show the database schema
+schema = await flow.run("get_db_schema")
+print(schema.schema_text)
 
-    # Show the database schema
-    schema = await flow.run("get_db_schema")
-    print(schema.schema_text)
+# Run the question answering flow
+while True:
+    # Get the user's query via CLI interface (swap out with whatever input method you use)
+    try:
+        query = input("Ask me anything: ")
+    except EOFError:
+        break
 
-    # Run the question answering flow
-    while True:
-        # Get the user's query via CLI interface (swap out with whatever input method you use)
-        try:
-            query = input("Ask me anything: ")
-        except EOFError:
-            break
+    # Set the query
+    question_flow = flow.set_vars(
+        query=query,
+    )
 
-        # Set the query
-        question_flow = flow.set_vars(
-            query=query,
-        )
-
-        # Run the flow and get the result
-        result = await question_flow.run()
-        print(result)
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(main())
-
+    # Run the flow and get the result
+    result = await question_flow.run()
+    print(result)
 ```
 
 Output of the python script:
@@ -701,45 +741,42 @@ Running the flow (python and stdout)
 Python script that runs the flow:
 ```python
 import glob
-
 from asyncflows import AsyncFlows
 
+# Load PDFs from the `recipes` folder
+document_paths = glob.glob("recipes/*.pdf")
 
-async def main():
-    # Load PDFs from the `recipes` folder
-    document_paths = glob.glob("recipes/*.pdf")
-    
-    # Load the chatbot flow
-    flow = AsyncFlows.from_file("chatbot.yaml").set_vars(
-        pdf_filepaths=document_paths,
+# Load the chatbot flow
+flow = AsyncFlows.from_file("chatbot.yaml").set_vars(
+    pdf_filepaths=document_paths,
+)
+
+# Keep track of the conversation history
+conversation_history = []
+
+# Run the flow
+while True:
+    # Get the user's query via CLI interface (swap out with whatever input method you use)
+    try:
+        message = input("Ask me anything: ")
+    except EOFError:
+        break
+
+    # Set the query and conversation history
+    query_flow = flow.set_vars(
+        message=message,
+        conversation_history=conversation_history,
     )
-
-    # Keep track of the conversation history
-    conversation_history = []
-
-    # Run the flow
-    while True:
-        # Get the user's query via CLI interface (swap out with whatever input method you use)
-        try:
-            message = input("Ask me anything: ")
-        except EOFError:
-            break
     
-        # Set the query and conversation history
-        query_flow = flow.set_vars(
-            message=message,
-            conversation_history=conversation_history,
-        )
-        
-        # Run the flow and get the result
-        result = await query_flow.run()
-        print(result)
-        
-        # Update the conversation history
-        conversation_history.extend([
-            f"User: {message}", 
-            f"Assistant: {result}",
-        ])
+    # Run the flow and get the result
+    result = await query_flow.run()
+    print(result)
+    
+    # Update the conversation history
+    conversation_history.extend([
+        f"User: {message}", 
+        f"Assistant: {result}",
+    ])
 ```
 
 Output of the python script:
@@ -822,20 +859,13 @@ Python script that runs the flow:
 ```python
 from asyncflows import AsyncFlows
 
+flow = AsyncFlows.from_file("soup.yaml")
 
-async def main():
-    flow = AsyncFlows.from_file("soup.yaml")
-    
-    # run the flow
-    result = await flow.set_vars(
-        url="https://en.wikipedia.org/wiki/Python_(programming_language)",
-    ).run()
-    print(result)
-
-
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+# Run the flow and return the default output (result of the extract_title action)
+result = await flow.set_vars(
+    url="https://en.wikipedia.org/wiki/Python_(programming_language)",
+).run()
+print(result)
 ```
 
 Output of the python script:
