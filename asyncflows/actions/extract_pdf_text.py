@@ -1,5 +1,3 @@
-import pypdfium2 as pdfium
-
 from asyncflows.actions.base import Action, CacheControlOutputs, BlobRepoInputs
 from asyncflows.models.file import File
 
@@ -19,6 +17,8 @@ class ExtractPdfText(Action[Inputs, Outputs]):
     name = "extract_pdf_text"
 
     async def run(self, inputs: Inputs) -> Outputs:
+        import pypdfium2 as pdfium
+
         if isinstance(inputs.file, str):
             filepath = inputs.file
         else:

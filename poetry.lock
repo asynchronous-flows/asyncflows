@@ -4046,7 +4046,7 @@ diagrams = ["jinja2", "railroad-diagrams"]
 name = "pypdfium2"
 version = "4.30.0"
 description = "Python bindings to PDFium"
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "pypdfium2-4.30.0-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:b33ceded0b6ff5b2b93bc1fe0ad4b71aa6b7e7bd5875f1ca0cdfb6ba6ac01aab"},
@@ -6887,8 +6887,8 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more
 [extras]
 anthropic = ["anthropic"]
 gcloud = ["google-cloud-aiplatform"]
-ocr = ["ocrmypdf"]
 openai = ["openai"]
+pdf = ["ocrmypdf", "pypdfium2"]
 pg = ["asyncpg", "pandas", "psycopg2", "sqlalchemy"]
 sqlite = ["pandas", "sqlalchemy"]
 transfomers = ["infinity-emb", "sentence-transformers"]
@@ -6896,4 +6896,4 @@ transfomers = ["infinity-emb", "sentence-transformers"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "df4c9cb195f0fff8265006ed441f9fd10d5293f5a05c580ff7c50c2f196dab86"
+content-hash = "e433fb7cf8af609aa82173f814d55a38d085358853ee879f4266ca4d0574aefa"
