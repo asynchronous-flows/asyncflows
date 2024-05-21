@@ -246,12 +246,13 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         model_config: ModelConfig,
     ):
         openai_api_key = get_secret("OPENAI_API_KEY")
-        if openai_api_key is None:
+        if openai_api_key is None and "gpt" in model_config.model:
             self.log.warning("OpenAI API key not set")
 
         client = None
         try:
-            client = AsyncOpenAI(api_key=openai_api_key)
+            if "gpt" in model_config.model:
+                client = AsyncOpenAI(api_key=openai_api_key)
 
             completion: litellm.ModelResponse
             with prompt_env_context_singleton:
