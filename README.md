@@ -31,28 +31,11 @@ Asyncflows is a tool for designing and running AI pipelines using simple YAML co
 
 ## With pip
 
-Sorry, we haven't published on PyPi yet. 
-
-Provided you have an SSH key to your GitHub account set up locally, you can install from source:
+Get started with:
 
 ```bash
-pip install git+ssh://git@github.com/asynchronous-flows/asyncflows.git
+pip install asyncflows
 ```
-
-Alternatively, install with username/password authentication:
-
-```bash
-pip install git+https://github.com/asynchronous-flows/asyncflows.git
-```
-
-[//]: # (Get started with:)
-
-[//]: # ()
-[//]: # (```bash)
-
-[//]: # (pip install asyncflows)
-
-[//]: # (```)
 
 ## Local development
 
