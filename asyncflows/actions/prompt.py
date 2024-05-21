@@ -7,6 +7,7 @@ from typing import Optional, AsyncIterator
 import aiohttp
 import anthropic
 import tenacity
+from anthropic import NOT_GIVEN
 from openai import AsyncOpenAI
 
 from asyncflows.actions.base import (
@@ -222,14 +223,19 @@ class Prompt(StreamingAction[Inputs, Outputs]):
                 messages=outstanding_messages,
             )
 
+        if model_config.api_base is not None:
+            self.log.warning("Ignoring api_base for Claude models")
+
         client = AsyncAnthropic(api_key=get_secret("ANTHROPIC_API_KEY"))
         async with client.messages.stream(
             max_tokens=model_config.max_output_tokens,
             system=system_prompt,
             messages=anthropic_messages,
             model=model_config.model,
-            temperature=model_config.temperature,
-            top_p=model_config.top_p,
+            temperature=model_config.temperature
+            if model_config.temperature is not None
+            else NOT_GIVEN,
+            top_p=model_config.top_p if model_config.top_p is not None else NOT_GIVEN,
         ) as stream:
             async for completion in stream.text_stream:
                 yield completion
@@ -259,6 +265,7 @@ class Prompt(StreamingAction[Inputs, Outputs]):
                     top_p=model_config.top_p,
                     frequency_penalty=model_config.frequency_penalty,
                     presence_penalty=model_config.presence_penalty,
+                    base_url=model_config.api_base,
                     # **model_config.model_dump(),
                 ):
                     delta = completion.choices[0].delta.content  # type: ignore
@@ -334,11 +341,15 @@ class Prompt(StreamingAction[Inputs, Outputs]):
             output += partial_output
             yield Outputs(result=output)
 
-        estimated_cost_usd = self.estimate_cost(
-            model=resolved_model,
-            messages=messages,
-            completion=output,
-        )
+        try:
+            estimated_cost_usd = self.estimate_cost(
+                model=resolved_model,
+                messages=messages,
+                completion=output,
+            )
+        except litellm.NotFoundError:
+            self.log.warning("Failed to estimate cost", model=resolved_model.model)
+            estimated_cost_usd = None
 
         self.log.info(
             "Prompt completed",
