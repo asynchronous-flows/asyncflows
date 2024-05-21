@@ -1,10 +1,11 @@
 import ast
 import os
-from typing import Any, Union, Self
+from typing import Any, Union
 
 import pydantic
 import simpleeval
 from pydantic import Field
+from typing_extensions import Self
 
 from asyncflows.models.config.common import (
     StrictModel,

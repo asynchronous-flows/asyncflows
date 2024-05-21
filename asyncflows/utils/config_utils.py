@@ -14,6 +14,15 @@ from asyncflows.models.primitives import HintType
 from asyncflows.utils.type_utils import filter_none_from_type
 
 
+def is_subclass_of_basemodel(type_) -> typing.TypeGuard[type[BaseModel]]:
+    # 3.11 doesn't need this special case,
+    # but in 3.10 `issubclass(type_, BaseModel)` throws on GenericAlias-likes
+    origin_type = typing.get_origin(type_)
+    if origin_type is not None:
+        type_ = origin_type
+    return isinstance(type_, type) and issubclass(type_, BaseModel)
+
+
 def templatify_model(
     model: type[BaseModel],
     vars_: HintType | None,
@@ -39,7 +48,7 @@ def templatify_model(
                 is_none_union = True
 
         # templatify subfields
-        if isinstance(type_, type) and issubclass(type_, BaseModel):
+        if is_subclass_of_basemodel(type_):
             subfields = templatify_model(
                 type_,
                 vars_=vars_,

@@ -122,7 +122,7 @@ def resolve_transforms_from(
         _transformation_cache[cache_key] = type_
         return type_
 
-    if issubclass(type_, BaseModel):
+    if not isinstance(type_, types.GenericAlias) and issubclass(type_, BaseModel):
         fields = {}
         for field_name, field_ in type_.model_fields.items():
             # Annotate optional fields with a default of None

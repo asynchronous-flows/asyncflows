@@ -68,11 +68,9 @@ async def merge_iterators(
     queue = asyncio.Queue()
     workers = []  # List to keep track of worker tasks.
 
-    # TODO why is this task group throwing exceptions all the TIME ;-;
-    #  replace the task group with smth else i guess?
-    async with asyncio.TaskGroup() as group:
+    try:
         for id_, aiter in zip(ids, coros):
-            worker_task = group.create_task(worker(aiter, id_, queue))
+            worker_task = asyncio.create_task(worker(aiter, id_, queue))
             workers.append(worker_task)
 
         remaining_workers = len(workers)
@@ -102,14 +100,20 @@ async def merge_iterators(
                 # Yield the result.
                 try:
                     yield id_, value_or_exc
-                except GeneratorExit as e:
+                except GeneratorExit:
                     log.warning(
                         "Generator exited",
                         id=id_,
                     )
-                    # FIXME asyncio taskgroup seems bugged to only handle CancelledError properly
-                    #  e.g., see https://github.com/python/cpython/issues/95571
-                    raise CancelledError from e
+                except CancelledError:
+                    log.warning(
+                        "Generator cancelled",
+                        id=id_,
+                    )
+    finally:
+        for worker_task in workers:
+            worker_task.cancel()
+        await asyncio.gather(*workers, return_exceptions=True)
 
 
 async def iterator_to_coro(async_iterator: AsyncIterator[T | None]) -> T | None:

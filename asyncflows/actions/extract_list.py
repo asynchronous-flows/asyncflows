@@ -1,4 +1,5 @@
-from typing import Optional, Literal, assert_never
+from typing import Optional, Literal
+from typing_extensions import assert_never
 
 from asyncflows.actions.base import Action, BaseModel
 

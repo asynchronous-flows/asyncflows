@@ -1,7 +1,8 @@
 import asyncio
 import traceback
 from collections import defaultdict
-from typing import Any, AsyncIterator, assert_never, Iterable
+from typing import Any, AsyncIterator, Iterable
+from typing_extensions import assert_never
 
 import sentry_sdk
 import structlog

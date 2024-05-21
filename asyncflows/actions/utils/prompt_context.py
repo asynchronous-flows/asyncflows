@@ -1,6 +1,6 @@
 import enum
-import typing
 from typing import Union, Any, Literal
+from typing_extensions import assert_never
 
 import structlog.stdlib
 from pydantic import ConfigDict
@@ -129,7 +129,7 @@ class ContextElement(PromptElementBase, TransformsFrom):
 {valstr}
 </{self.heading}>"""
         else:
-            typing.assert_never(quote_style)
+            assert_never(quote_style)
 
 
 PromptElement = Union[

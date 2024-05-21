@@ -3,7 +3,7 @@ import os
 import typing
 import uuid
 from hashlib import sha256
-from typing import assert_never
+from typing_extensions import assert_never
 
 import structlog
 from pydantic import PrivateAttr
