@@ -664,7 +664,7 @@ Given the result of the SQL statement, the top 5 most expensive products in the 
 
 </details>
 
-## Chatbot (planned)
+## Chatbot
 
 This flow facilitates a chatbot over a set of documents.
 
@@ -672,6 +672,10 @@ Given a list of filepaths, it extracts their text, uses retrieval augmented gene
 
 The form of RAG we're using is **retrieval** followed by **reranking**.
 Retrieval is great for searching through a large dataset, while reranking is slower but better at matching against the query.
+
+<div align="center">
+<img width="1480" alt="big chatbot" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/3ac2b2fa-9a4b-4958-a02a-a87461a6fb1d">
+</div>
 
 <details>
 <summary>
@@ -709,7 +713,8 @@ flow:
     action: retrieve
     k: 5
     documents: 
-      lambda: [flow.extractor.full_text for flow in extract_pdf_texts]
+      lambda: |
+        [flow.extractor.full_text for flow in extract_pdf_texts]
     query: 
       var: message
   # `rerank` picks the most appropriate documents, it's slower than retrieve, but better at matching against the query
@@ -749,8 +754,8 @@ Python script that runs the flow:
 import glob
 from asyncflows import AsyncFlows
 
-# Load PDFs from the `recipes` folder
-document_paths = glob.glob("recipes/*.pdf")
+# Load PDFs from the `papers` folder
+document_paths = glob.glob("papers/*.pdf")
 
 # Load the chatbot flow
 flow = AsyncFlows.from_file("chatbot.yaml").set_vars(
