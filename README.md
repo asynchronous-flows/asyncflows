@@ -78,7 +78,7 @@ Get started with:
 pip install asyncflows
 ```
 
-Depending on what you need, consider installing extra dependencies for:
+Depending on what you need, consider installing **extra dependencies**:
 
 ### Model Providers
 
