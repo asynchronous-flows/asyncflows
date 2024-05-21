@@ -20,23 +20,21 @@ from asyncflows.models.config.flow import (
     NonActionExecutable,
     TestNonActionExecutable,
 )
-from asyncflows.services.config_service import ConfigService
+from asyncflows.utils.config_utils import load_config_file
 
 _cache = {}
 
 
 def _build_action_specs(
     config_class: type[ActionConfig],
-    config_service: ConfigService,
+    config_filename: str,
 ):
-    key = str((config_class.__dict__, config_service.__dict__))
+    key = str((config_class.__dict__, config_filename))
     if key in _cache:
         return _cache[key]
 
     try:
-        action_config = config_service._load_config_file(
-            config_class, config_service.filename
-        )
+        action_config = load_config_file(config_class, config_filename)
     except ValidationError:
         print("Failed to load action config")
         traceback.print_exc()
@@ -61,11 +59,11 @@ def _build_action_specs(
 
 def _build_vars(
     config_class: type[ActionConfig],
-    config_service: ConfigService,
+    config_filename: str,
 ):
     action_specs = _build_action_specs(
         config_class=config_class,
-        config_service=config_service,
+        config_filename=config_filename,
     )
     if action_specs is None:
         action_specs = []
@@ -77,13 +75,13 @@ def _build_hinted_action_model(
     action_names: list[str],
     non_action_executable: type,
     config_class: type[ActionConfig],
-    config_service: ConfigService | None,
+    config_filename: str | None,
     strict: bool,
 ):
-    if config_service:
+    if config_filename:
         links = _build_vars(
             config_class=config_class,
-            config_service=config_service,
+            config_filename=config_filename,
         )
     else:
         links = None
@@ -112,13 +110,13 @@ def _build_action_schema(
     config_class: type[ActionConfig],
     non_action_executable: type,
     strict: bool,
-    config_service: ConfigService | None = None,
+    config_filename: str | None = None,
 ):
     HintedActionConfig = _build_hinted_action_model(
         action_names=action_names,
         config_class=config_class,
         non_action_executable=non_action_executable,
-        config_service=config_service,
+        config_filename=config_filename,
         strict=strict,
     )
     workflow_schema = HintedActionConfig.model_json_schema()
@@ -131,14 +129,14 @@ def _build_and_save_action_schema(
     non_action_executable: type,
     output_file: str,
     strict: bool,
-    config_service: ConfigService | None = None,
+    config_filename: str | None = None,
 ):
     workflow_schema = _build_action_schema(
         action_names=action_names,
         config_class=config_class,
         non_action_executable=non_action_executable,
         strict=strict,
-        config_service=config_service,
+        config_filename=config_filename,
     )
     with open(os.path.join("schemas", output_file), "w") as f:
         json.dump(workflow_schema, f, indent=2)
@@ -159,7 +157,7 @@ if __name__ == "__main__":
             action_names=_action_names,
             config_class=ActionConfig,
             non_action_executable=NonActionExecutable,
-            config_service=ConfigService(args.flow),
+            config_filename=args.flow,
             strict=False,
         )
         # straight to stdout we go
