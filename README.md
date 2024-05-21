@@ -531,7 +531,7 @@ This flow facilitates asking questions over a SQL database.
 To use it with your database, install the corresponding [extra packages](#databases) and set the `DATABASE_URL` environment variable.
 
 <div align="center">
-<img width="1363" alt="sql rag" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/26be8575-3618-4835-a96a-57906084516a">
+<img width="1368" alt="sql rag" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/23e02843-f5c4-4b1d-b673-08b6d071351c">
 </div>
 
 Running the example with a database available at `DATABASE_URL` passed as an environment variable:
