@@ -1,7 +1,7 @@
 # debono.yaml
 
 default_model:
-  model: claude-3-sonnet-20240229
+  model: ollama/llama3
   temperature: 1
   max_output_tokens: 2000
 # De Bono's Six Thinking Hats is a powerful technique for creative problem-solving and decision-making.

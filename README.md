@@ -13,13 +13,15 @@ Built with asyncio, pydantic, YAML, jinja
 2. [Installation](#installation)  
 2.1 [With pip](#with-pip)  
 2.2 [Local development](#local-development)  
-3. [Examples](#examples)  
-3.1 [Hello world](#hello-world)  
-3.2 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
-3.3 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
-3.4 [SQL Retrieval](#sql-retrieval)  
-3.5 [Chatbot](#chatbot-planned)  
-3.6 [Writing your own actions](#writing-your-own-actions)
+3. [Guides](#guides)  
+3.1 [Swapping out the Language Model](#swapping-out-the-language-model)  
+4. [Examples](#examples)  
+4.1 [Hello world](#hello-world)  
+4.2 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
+4.3 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
+4.4 [SQL Retrieval](#sql-retrieval)  
+4.5 [Chatbot](#chatbot-planned)  
+4.6 [Writing your own actions](#writing-your-own-actions)
 
 # Introduction
 
@@ -68,25 +70,75 @@ Install dependencies with:
 poetry install
 ```
 
-# Examples
+# Guides
 
-Some examples shown below are not yet implemented, labeled as "planned". 
-The others are provided in the `examples` directory and can be run directly. 
+## Swapping out the Language Model
 
-The first run in a fresh environment may be slow due to pytorch initialization.
+You may set `api_base` under `default_model` to change the ollama API endpoint:
 
-The examples use Anthropic models, run them as:
+```yaml
+default_model:
+  model: ollama/llama3
+  api_base: ...
+```
 
+Alternatively, you can change the `model` in the corresponding YAML file to e.g., `gpt-3.5-turbo` (an OpenAI model), or `claude-3-haiku-20240307` (an Anthropic model).
+If you do, run the example with the corresponding api key environment variable.
+
+You may also use any other model available via [litellm](https://docs.litellm.ai/docs/providers).
+Please note that most litellm models do not have async support, and will block the event loop during inference.
+
+<details>
+<summary>
+OpenAI Example
+</summary>
+
+```yaml
+default_model:
+  model: gpt-3.5-turbo
+```
+
+Running the example with an OpenAI API key:
+
+```bash
+OPENAI_API_KEY=... python -m asyncflows.examples.hello_world
+```
+
+</details>
+
+
+
+<details>
+<summary>
+Anthropic Example
+</summary>
+
+```yaml
+default_model:
+  model: claude-3-haiku-20240307
+```
+
+Running the example with an Anthropic API key:
 ```bash
 ANTHROPIC_API_KEY=... python -m asyncflows.examples.hello_world
 ```
 
-You can change the `default_model` in the corresponding YAML file to e.g., `gpt-3.5-turbo`, 
-and provide an `OPENAI_API_KEY` environment variable instead.
+</details>
+
+# Examples
+
+The examples default to llama3, and assume [ollama](https://ollama.com/) is running locally.  
+To use a different model or provider, see [Swapping out the Language Model](#swapping-out-the-language-model).
 
 ## Hello world
 
 Here is a simple flow that prompts the LLM to say "hello world", and prints the result.
+
+Run the example with:
+
+```bash
+python -m asyncflows.examples.hello_world
+```
 
 <div align="center">
 
@@ -99,7 +151,7 @@ YAML file that defines the flow:
 # hello_world.yaml
 
 default_model:
-  model: claude-3-haiku-20240307
+  model: ollama/llama3
 flow:
   hello_world:
     action: prompt
@@ -136,7 +188,7 @@ This flow parallelizes the thinking under five hats, and synthesizes them under 
 
 Running the example (will prompt you for something to think about):
 ```bash
-ANTHROPIC_API_KEY=... python -m asyncflows.examples.debono
+python -m asyncflows.examples.debono
 ```
 
 <details>
@@ -149,7 +201,7 @@ YAML file that defines the flow – click to expand
 
 # Set the default model for the flow (can be overridden in individual actions)
 default_model:
-  model: claude-3-haiku-20240307
+  model: ollama/llama3
 # De Bono's Six Thinking Hats is a powerful technique for creative problem-solving and decision-making.
 flow:
 
@@ -293,7 +345,7 @@ Retrieval is great for searching through a large dataset, while reranking is slo
 
 Running the example, running transformers locally, over `examples/recipes/` (a folder with text files):
 ```bash
-ANTHROPIC_API_KEY=... python -m asyncflows.examples.rag
+python -m asyncflows.examples.rag
 ```
 
 <details>
@@ -305,7 +357,7 @@ YAML file that defines the flow – click to expand
 # rag.yaml
 
 default_model:
-  model: claude-3-haiku-20240307
+  model: ollama/llama3
 flow:
   # `retrieve` performs a vector search, fast for large datasets
   retrieval:
@@ -416,13 +468,43 @@ Both recipes are healthy, vegetarian options that incorporate fresh ingredients 
 
 This flow facilitates asking questions over a SQL database.
 
+To use it with your database, install the corresponding extra package:
+
+<details>
+<summary>
+postgres
+</summary>
+
+```bash
+pip install asyncflows[pg]
+```
+
+</details>
+
+<details>
+<summary>
+sqlite
+</summary>
+
+```bash
+pip install asyncflows[sqlite]
+```
+
+</details>
+
+
+Any SQL database implemented in [sqlalchemy](https://docs.sqlalchemy.org/en/20/core/engines.html) is supported, 
+though you may need to install additional dependencies. 
+Please open an issue if you run into this, 
+we will add another dependency extra like `asyncflows[pg]`.
+
 <div align="center">
 <img width="1363" alt="sql rag" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/26be8575-3618-4835-a96a-57906084516a">
 </div>
 
 Running the example with a database available at `DATABASE_URL` passed as an environment variable:
 ```bash
-ANTHROPIC_API_KEY=... DATABASE_URL=... python -m asyncflows.examples.sql_rag
+DATABASE_URL=... python -m asyncflows.examples.sql_rag
 ```
 
 <details>
@@ -434,7 +516,7 @@ YAML file that defines the flow – click to expand
 # sql_rag.yaml
 
 default_model:
-  model: claude-3-haiku-20240307
+  model: ollama/llama3
   temperature: 1
   max_output_tokens: 2000
 flow:
@@ -571,7 +653,7 @@ YAML file that defines the flow – click to expand
 # chatbot.yaml
 
 default_model:
-  model: claude-3-haiku-20240307
+  model: ollama/llama3
 flow:
   # Iterate over the PDF filepaths
   extract_pdf_texts:
@@ -732,7 +814,7 @@ YAML file of an example flow using this action:
 # get_page_title.yaml
 
 default_model:
-  model: claude-3-haiku-20240307
+  model: ollama/llama3
 flow:
   get_website:
     action: get_url

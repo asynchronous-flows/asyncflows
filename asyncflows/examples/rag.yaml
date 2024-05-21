@@ -1,5 +1,5 @@
 default_model:
-  model: claude-3-sonnet-20240229
+  model: ollama/llama3
   temperature: 1
   max_output_tokens: 2000
 flow:
