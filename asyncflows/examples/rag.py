@@ -13,12 +13,8 @@ async def main():
     rag_flow_path = examples_dir / "rag.yaml"
 
     # Find all the recipes in the `recipes` directory
-    recipes_glob = os.path.join(
-        examples_dir,
-        "recipes",
-        "*.md",
-    )
-    document_paths = glob.glob(recipes_glob)
+    recipes_glob = (examples_dir / "recipes" / "*.md",)
+    document_paths = glob.glob(str(recipes_glob))
 
     texts = []
     for document_path in document_paths:
