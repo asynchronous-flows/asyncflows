@@ -211,6 +211,8 @@ See [Using Any Language Model](#using-any-language-model) to use a different mod
 
 ## Text Style Transfer
 
+[![template](https://img.shields.io/badge/template-blue)](https://github.com/asynchronous-flows/text-style-transfer-example)
+
 This example takes a writing sample, and writes about a topic in the style of the sample.
 
 <div align="center">
@@ -727,6 +729,8 @@ Given the result of the SQL statement, the top 5 most expensive products in the 
 </details>
 
 ## Chatbot
+
+[![template](https://img.shields.io/badge/template-blue)](https://github.com/asynchronous-flows/pdf-chatbot-example)
 
 This flow facilitates a chatbot over a set of PDF documents.
 
