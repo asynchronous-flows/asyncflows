@@ -48,7 +48,7 @@ anthropic = ["anthropic"]
 gcloud = ["google-cloud-aiplatform"]
 pg = ["sqlalchemy", "psycopg2", "asyncpg", "pandas"]
 sqlite = ["sqlalchemy", "aiosqlite", "pandas"]
-transfomers = ["sentence-transformers", "infinity-emb"]
+transformers = ["sentence-transformers", "infinity-emb"]
 pdf = ["pypdfium2", "ocrmypdf"]
 
 

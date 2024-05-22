@@ -6891,9 +6891,9 @@ openai = ["openai"]
 pdf = ["ocrmypdf", "pypdfium2"]
 pg = ["asyncpg", "pandas", "psycopg2", "sqlalchemy"]
 sqlite = ["pandas", "sqlalchemy"]
-transfomers = ["infinity-emb", "sentence-transformers"]
+transformers = ["infinity-emb", "sentence-transformers"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "e433fb7cf8af609aa82173f814d55a38d085358853ee879f4266ca4d0574aefa"
+content-hash = "b1c3997248d1a132b512e17f76b0e6d0dd6c34f611eaf4cf52ff32df00e7d130"
