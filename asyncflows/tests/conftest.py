@@ -15,6 +15,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 from asyncflows.actions.prompt import Outputs as PromptOutputs, Prompt
 from asyncflows.actions.transformer import (
+    BaseTransformerInputs as TransformerInputs,
     Outputs as TransformerOutputs,
     Retrieve,
     Rerank,
@@ -338,22 +339,12 @@ def mock_prompt_action(mock_prompt_result):
         yield
 
 
-@pytest.fixture
-def mock_transformer_result():
-    return [
-        "a",
-        "b",
-    ]
-
-
 @pytest.fixture()
-def mock_transformer_action(mock_transformer_result):
-    outputs = TransformerOutputs(
-        result=mock_transformer_result,
-    )
-
-    async def outputs_ret(*args, **kwargs):
-        return outputs
+def mock_transformer_action():
+    async def outputs_ret(self, inputs: TransformerInputs):
+        return TransformerOutputs(
+            result=inputs.documents,
+        )
 
     with patch.object(Retrieve, "run", new=outputs_ret), patch.object(
         Rerank, "run", new=outputs_ret
