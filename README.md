@@ -416,7 +416,7 @@ See [Using Any Language Model](#using-any-language-model) to use a different mod
 This example takes a writing sample, and writes about a topic in the style of the sample.
 
 <div align="center">
-
+<img width="706" alt="style transfer" src="https://github.com/asynchronous-flows/asyncflows-internal/assets/24586651/a23e975f-efa6-44de-9b61-1cb80f3c0bc5">
 </div>
 
 Running the example (will prompt you for a topic):
