@@ -21,7 +21,7 @@ Built with asyncio, pydantic, YAML, jinja
 4.1 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
 4.2 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
 4.3 [SQL Retrieval](#sql-retrieval)  
-4.4 [Chatbot](#chatbot-planned)  
+4.4 [Chatbot](#chatbot)  
 4.5 [Writing your own actions](#writing-your-own-actions)
 
 # Introduction
@@ -451,7 +451,7 @@ flow:
       link: retrieval.result
     query:
       var: question
-  # `chatbot` prompts the LLM to summarize the top papers
+  # `chat` prompts the LLM to summarize the top recipes
   chat:
     action: prompt
     prompt:
@@ -489,7 +489,7 @@ for document_path in document_paths:
     with open(document_path, "r") as f:
         texts.append(f.read())
 
-# Load the chatbot flow
+# Load the rag flow
 flow = AsyncFlows.from_file("rag.yaml").set_vars(
     texts=texts,
 )
@@ -622,7 +622,7 @@ Python script that runs the flow:
 ```python
 from asyncflows import AsyncFlows
 
-# Load the chatbot flow
+# Load the sql flow
 flow = AsyncFlows.from_file("sql_rag.yaml")
 
 # Show the database schema
@@ -666,7 +666,7 @@ Given the result of the SQL statement, the top 5 most expensive products in the 
 
 ## Chatbot
 
-This flow facilitates a chatbot over a set of documents.
+This flow facilitates a chatbot over a set of PDF documents.
 
 Given a list of filepaths, it extracts their text, uses retrieval augmented generation (RAG) to find the ones relevant to the question, and generates an answer.
 
@@ -674,7 +674,7 @@ The form of RAG we're using is **retrieval** followed by **reranking**.
 Retrieval is great for searching through a large dataset, while reranking is slower but better at matching against the query.
 
 <div align="center">
-<img width="1480" alt="big chatbot" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/3ac2b2fa-9a4b-4958-a02a-a87461a6fb1d">
+<img width="1180" alt="chatbot" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/c594c10d-c618-4da5-a27a-c26d55e9fdcb">
 </div>
 
 <details>
@@ -691,48 +691,76 @@ flow:
   # Iterate over the PDF filepaths
   extract_pdf_texts:
     for: filepath
-    in: 
+    in:
       var: pdf_filepaths
     flow:
       # For each filepath, `extract_pdf_text` extracts text from PDF files
       extractor:
         action: extract_pdf_text
-        file: 
+        file:
           var: filepath
-  # Analyze the user's query and generate a question for the RAG system
+  # Analyze the user's query and generate a question for the retrieval system
   generate_query:
     action: prompt
+    quote_style: xml
     prompt:
       - heading: User's Message
         var: message
       - text: |
-          Carefully analyze the user's query below and generate a clear, focused question that captures the key information needed to answer the query. 
-          The question should be suitable for a retrieval system to find the most relevant documents.
+          Carefully analyze the user's message and generate a clear, focused query that captures the key information needed to answer the message. 
+          The query should be suitable for a vector search through relevant books.
+          Put the query between <query> and </query> tags.
+  # Extract the <query>{{query}}</query> from the generated response
+  extract_query:
+    action: extract_xml_tag
+    tag: query
+    text:
+      link: generate_query.result
   # `retrieve` performs a vector search, fast for large datasets
   retrieval:
     action: retrieve
-    k: 5
-    documents: 
+    k: 20
+    documents:
       lambda: |
-        [flow.extractor.full_text for flow in extract_pdf_texts]
-    query: 
-      var: message
+        [page
+         for flow in extract_pdf_texts
+         for page in flow.extractor.pages]
+    texts:
+      lambda: |
+        [page.title + "\n\n" + page.text  # Include the title in the embeddings
+         for flow in extract_pdf_texts
+         for page in flow.extractor.pages]
+    query:
+      link: extract_query.result
   # `rerank` picks the most appropriate documents, it's slower than retrieve, but better at matching against the query
   reranking:
     action: rerank
-    k: 2
-    documents: 
+    k: 5
+    documents:
       link: retrieval.result
-    query: 
-      var: message
+    texts:
+      lambda: |
+        [page.text
+         for page in retrieval.result]
+    query:
+      link: extract_query.result
   # `chatbot` prompts the LLM to summarize the top papers
   chatbot:
     action: prompt
     prompt:
-      - heading: Top papers
-        link: reranking.result
+      - heading: Relevant pages
+        text: |
+          {% for page in reranking.result -%}
+            {{ page.title }}, page number {{ page.page_number }}
+            ---
+            {{ page.text }}
+            ---
+          {% endfor %}
       - heading: Conversation history
-        var: conversation_history
+        text: |
+          {% for message in conversation_history -%}
+            {{ message }}
+          {% endfor %}
       - heading: New message
         var: message
       - text: |
