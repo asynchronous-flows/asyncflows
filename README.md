@@ -23,9 +23,10 @@ Built with asyncio, pydantic, YAML, jinja
 3.5 [Chatbot](#chatbot)  
 3.6 [Writing your own actions](#writing-your-own-actions)  
 4. [Guides](#guides)  
-4.1 [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference)  
-4.2 [Using Any Language Model](#using-any-language-model)  
-4.3 [Prompting in-depth](#prompting-in-depth)  
+4.1 [Writing Flows with Autocomplete](#writing-flows-with-autocomplete)  
+4.2 [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference)  
+4.3 [Using Any Language Model](#using-any-language-model)  
+4.4 [Prompting in-depth](#prompting-in-depth)  
 5. [License](#license)
 
 
@@ -991,6 +992,19 @@ The title of the webpage is "Python (programming language) - Wikipedia".
 </details>
 
 # Guides
+
+## Writing Flows with Autocomplete
+
+For an easier time writing flows, use YAML Language Server in your editor with our JsonSchema.
+
+Put the following at the top of your YAML flow config file:
+
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/asynchronous-flows/asyncflows/main/schemas/action_schema.json
+```
+
+The JsonSchema will only catch some errors, 
+stay tuned for a domain-specific language server that will provide more advanced features.
 
 ## Setting up Ollama for Local Inference
 

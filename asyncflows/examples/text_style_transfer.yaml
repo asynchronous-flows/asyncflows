@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../schemas/action_schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/asynchronous-flows/asyncflows/main/schemas/action_schema.json
 
 default_model:
   model: ollama/llama3
