@@ -1,4 +1,4 @@
-# debono.yaml
+# yaml-language-server: $schema=../../schemas/action_schema.json
 
 default_model:
   model: ollama/llama3

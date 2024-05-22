@@ -148,11 +148,12 @@ def get_names_from_ast(node: ast.AST, ignore_vars: None | frozenset = None) -> s
     if isinstance(node, ast.Name):
         if node.id not in ignore_vars and node.id not in builtins.__dict__:
             names.add(node.id)
-    elif isinstance(node, (ast.ListComp, ast.DictComp)):
+    elif isinstance(node, (ast.ListComp, ast.DictComp, ast.SetComp, ast.GeneratorExp)):
+        new_ignore_vars = ignore_vars
         for gen in node.generators:
             # The 'target' introduces loop variables, add them to ignore list
             loop_vars = {n.id for n in ast.walk(gen.target) if isinstance(n, ast.Name)}
-            new_ignore_vars = ignore_vars | loop_vars
+            new_ignore_vars |= loop_vars
 
             # Process 'iter' part which can include external dependencies
             names |= get_names_from_ast(gen.iter, new_ignore_vars)

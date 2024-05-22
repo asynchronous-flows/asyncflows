@@ -21,7 +21,7 @@ Built with asyncio, pydantic, YAML, jinja
 4.1 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
 4.2 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
 4.3 [SQL Retrieval](#sql-retrieval)  
-4.4 [Chatbot](#chatbot-planned)  
+4.4 [Chatbot](#chatbot)  
 4.5 [Writing your own actions](#writing-your-own-actions)
 
 # Introduction
@@ -451,7 +451,7 @@ flow:
       link: retrieval.result
     query:
       var: question
-  # `chatbot` prompts the LLM to summarize the top papers
+  # `chat` prompts the LLM to summarize the top recipes
   chat:
     action: prompt
     prompt:
@@ -489,7 +489,7 @@ for document_path in document_paths:
     with open(document_path, "r") as f:
         texts.append(f.read())
 
-# Load the chatbot flow
+# Load the rag flow
 flow = AsyncFlows.from_file("rag.yaml").set_vars(
     texts=texts,
 )
@@ -622,7 +622,7 @@ Python script that runs the flow:
 ```python
 from asyncflows import AsyncFlows
 
-# Load the chatbot flow
+# Load the sql flow
 flow = AsyncFlows.from_file("sql_rag.yaml")
 
 # Show the database schema
@@ -664,14 +664,18 @@ Given the result of the SQL statement, the top 5 most expensive products in the 
 
 </details>
 
-## Chatbot (planned)
+## Chatbot
 
-This flow facilitates a chatbot over a set of documents.
+This flow facilitates a chatbot over a set of PDF documents.
 
 Given a list of filepaths, it extracts their text, uses retrieval augmented generation (RAG) to find the ones relevant to the question, and generates an answer.
 
 The form of RAG we're using is **retrieval** followed by **reranking**.
 Retrieval is great for searching through a large dataset, while reranking is slower but better at matching against the query.
+
+<div align="center">
+<img width="1180" alt="chatbot" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/c594c10d-c618-4da5-a27a-c26d55e9fdcb">
+</div>
 
 <details>
 <summary>
@@ -687,54 +691,95 @@ flow:
   # Iterate over the PDF filepaths
   extract_pdf_texts:
     for: filepath
-    in: 
+    in:
       var: pdf_filepaths
     flow:
       # For each filepath, `extract_pdf_text` extracts text from PDF files
       extractor:
         action: extract_pdf_text
-        file: 
+        file:
           var: filepath
-  # Analyze the user's query and generate a question for the RAG system
+  # Analyze the user's query and generate a question for the retrieval system
   generate_query:
     action: prompt
+    quote_style: xml
     prompt:
       - heading: User's Message
         var: message
       - text: |
-          Carefully analyze the user's query below and generate a clear, focused question that captures the key information needed to answer the query. 
-          The question should be suitable for a retrieval system to find the most relevant documents.
+          Carefully analyze the user's message and generate a clear, focused query that captures the key information needed to answer the message. 
+          The query should be suitable for a vector search through relevant books.
+          Put the query between <query> and </query> tags.
+  # Extract the <query>{{query}}</query> from the generated response
+  extract_query:
+    action: extract_xml_tag
+    tag: query
+    text:
+      link: generate_query.result
   # `retrieve` performs a vector search, fast for large datasets
   retrieval:
     action: retrieve
-    k: 5
-    documents: 
-      lambda: [flow.extractor.full_text for flow in extract_pdf_texts]
-    query: 
-      var: message
+    k: 20
+    documents:
+      lambda: |
+        [page
+         for flow in extract_pdf_texts
+         for page in flow.extractor.pages]
+    texts:
+      lambda: |
+        [page.title + "\n\n" + page.text  # Include the title in the embeddings
+         for flow in extract_pdf_texts
+         for page in flow.extractor.pages]
+    query:
+      link: extract_query.result
   # `rerank` picks the most appropriate documents, it's slower than retrieve, but better at matching against the query
   reranking:
     action: rerank
-    k: 2
-    documents: 
+    k: 5
+    documents:
       link: retrieval.result
-    query: 
-      var: message
+    texts:
+      lambda: |
+        [page.text
+         for page in retrieval.result]
+    query:
+      link: extract_query.result
   # `chatbot` prompts the LLM to summarize the top papers
   chatbot:
     action: prompt
+    quote_style: xml
     prompt:
-      - heading: Top papers
-        link: reranking.result
-      - heading: Conversation history
-        var: conversation_history
-      - heading: New message
+      - role: system
+      - text: |
+          You are an expert literary theorist and critic analyzing several Relevant Pages with regards to a New Message. 
+          Remember what your Conversation History is as you write your response.
+      - role: user
+      - heading: Relevant Pages
+        text: |
+          {% for page in reranking.result -%}
+            {{ page.title }}, page number {{ page.page_number }}
+            ---
+            {{ page.text }}
+            ---
+          {% endfor %}
+      - heading: Conversation History
+        text: |
+          {% for message in conversation_history -%}
+            {{ message }}
+          {% endfor %}
+      - heading: New Message
         var: message
       - text: |
-          Based on the top papers, what is the most relevant information to the query?
-          Summarize the key points of the papers in a few sentences.
+          Clearly and concisely respond to the New Message keeping in mind the Relevant Pages and Conversation History if any.
+          Provide your response to the New Message between <response> and </response> tags.
 
-default_output: chatbot.result
+  extract_chatbot:
+    action: extract_xml_tag
+    tag: response
+    text:
+      link: chatbot.result
+      
+default_output: extract_chatbot.result
 ```
 
 </details>
@@ -749,8 +794,8 @@ Python script that runs the flow:
 import glob
 from asyncflows import AsyncFlows
 
-# Load PDFs from the `recipes` folder
-document_paths = glob.glob("recipes/*.pdf")
+# Load PDFs from the `books` folder
+document_paths = glob.glob("books/*.pdf")
 
 # Load the chatbot flow
 flow = AsyncFlows.from_file("chatbot.yaml").set_vars(
@@ -779,25 +824,23 @@ while True:
     print(result)
     
     # Update the conversation history
-    conversation_history.extend([
-        f"User: {message}", 
-        f"Assistant: {result}",
-    ])
+    conversation_history.extend(
+        [
+            f"User: {message}",
+            f"Assistant: {result}",
+        ]
+    )
 ```
 
 Output of the python script:
 
 ---
 
-> What's something healthy I could make?
+> How does the Red Queen's view of punishment shape the story?
 
-The two provided recipes, Mexican Guacamole and Lebanese Hummus, offer healthy and flavorful options to prepare. The key points are:
+The Red Queen's view of punishment is a significant theme that shapes the story of Wonderland. In the Relevant Pages, we see her ordering the beheading of Alice, three gardeners, and others without hesitation or remorse. Her fury is intense, and she screams "Off with her head!" with an air of absolute authority.
 
-1. Guacamole is made by mashing ripe avocados and mixing in fresh vegetables like onions, tomatoes, cilantro, and jalapeños, along with lime juice and salt. It can be served with tortilla chips or as a topping for tacos.
-
-2. Hummus is a blend of chickpeas, tahini (sesame seed paste), lemon juice, garlic, and olive oil, seasoned with salt and cumin. It is typically served as a dip with warm pita bread and garnished with paprika and parsley.
-
-Both recipes are healthy, vegetarian options that incorporate fresh ingredients and can be easily prepared at home.
+The Red Queen's perspective on punishment reveals a stark contrast between her cruel nature and the more benevolent attitudes of other characters, such as the King, who intervenes to save Alice from execution. The Queen's actions also create a sense of danger and chaos, making Wonderland an unpredictable and potentially deadly place for its inhabitants.
 
 ---
 

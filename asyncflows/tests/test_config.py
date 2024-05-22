@@ -201,6 +201,19 @@ async def test_jinja2_render(
             {"something", "grobid"},
         ),
         ("{a: b for a, b in grobid.sections.items()}", {"grobid"}),
+        (
+            """
+[page
+ for flow in extract_pdf_texts
+ for page in flow.extractor.pages]""",
+            {"extract_pdf_texts"},
+        ),
+        (
+            """
+[page.text
+ for page in retrieval.result]""",
+            {"retrieval"},
+        ),
     ],
 )
 def test_lambda_declaration_dependency_extraction(expr, expected_dependencies):

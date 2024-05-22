@@ -72,6 +72,10 @@ class Retrieve(Action[RetrieveInputs, Outputs]):
     async def run(self, inputs: RetrieveInputs) -> Outputs:
         texts = get_texts(inputs.documents, inputs.texts)
 
+        if not texts:
+            self.log.warning("No documents to retrieve")
+            return Outputs(result=[])
+
         # if inputs.server_url is not None:
         #     # call the transformer service
         #     trace_id = self.log._context["trace_id"]
@@ -103,6 +107,10 @@ class Rerank(Action[RerankInputs, Outputs]):
 
     async def run(self, inputs: RerankInputs) -> Outputs:
         texts = get_texts(inputs.documents, inputs.texts)
+
+        if not texts:
+            self.log.warning("No documents to rerank")
+            return Outputs(result=[])
 
         # if inputs.server_url is not None:
         #     # call the transformer service
