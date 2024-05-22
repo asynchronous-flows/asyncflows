@@ -15,17 +15,18 @@ Built with asyncio, pydantic, YAML, jinja
 2. [Installation](#installation)  
 2.1 [With pip](#with-pip)  
 2.2 [Local development](#local-development)  
-3. [Guides](#guides)  
-3.1 [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference)  
-3.2 [Using Any Language Model](#using-any-language-model)  
-3.3 [Prompting in-depth](#prompting-in-depth)
-4. [Examples](#examples)  
-4.1 [Text Style Transfer](#text-style-transfer)  
-4.2 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
-4.3 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
-4.4 [SQL Retrieval](#sql-retrieval)  
-4.5 [Chatbot](#chatbot)  
-4.6 [Writing your own actions](#writing-your-own-actions)
+3. [Examples](#examples)  
+3.1 [Text Style Transfer](#text-style-transfer)  
+3.2 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
+3.3 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
+3.4 [SQL Retrieval](#sql-retrieval)  
+3.5 [Chatbot](#chatbot)  
+3.6 [Writing your own actions](#writing-your-own-actions)  
+4. [Guides](#guides)  
+4.1 [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference)  
+4.2 [Using Any Language Model](#using-any-language-model)  
+4.3 [Prompting in-depth](#prompting-in-depth)  
+
 
 # Introduction
 
@@ -199,210 +200,6 @@ To install all extra dependencies, run:
 ```bash
 poetry install --all-extras
 ```
-
-# Guides
-
-## Setting up Ollama for Local Inference
-
-To run the examples, you need to have [Ollama](https://ollama.com/) running locally.
-
-1. [Download and Install Ollama](https://ollama.com/download) 
-2. On some platforms like macOS Ollama runs in the background automatically. 
-   If not, start it with:
-
-```bash
-ollama serve
-```
-
-3. Pull the `ollama/llama3` model (or the model you plan to use):
-
-```bash
-ollama pull ollama/llama3
-```
-
-That's it! You're ready to run the examples.
-
-## Using Any Language Model
-
-You may set `api_base` under `default_model` to change the Ollama API endpoint:
-
-```yaml
-default_model:
-  model: ollama/llama3
-  api_base: ...
-```
-
-Alternatively, you can change the `model` in the corresponding YAML file to e.g., `gpt-3.5-turbo` (an OpenAI model), or `claude-3-haiku-20240307` (an Anthropic model).
-If you do, run the example with the corresponding api key environment variable.
-
-You may also use any other model available via [litellm](https://docs.litellm.ai/docs/providers).
-Please note that most litellm models do not have async support, and will block the event loop during inference.
-
-<details>
-<summary>
-OpenAI Example
-</summary>
-
-```yaml
-default_model:
-  model: gpt-3.5-turbo
-```
-
-Running the example with an OpenAI API key:
-
-```bash
-OPENAI_API_KEY=... python -m asyncflows.examples.hello_world
-```
-
-</details>
-
-
-
-<details>
-<summary>
-Anthropic Example
-</summary>
-
-```yaml
-default_model:
-  model: claude-3-haiku-20240307
-```
-
-Running the example with an Anthropic API key:
-```bash
-ANTHROPIC_API_KEY=... python -m asyncflows.examples.hello_world
-```
-
-</details>
-
-## Prompting in-depth
-
-The `prompt` action constructs a prommpt from a list of text and variables, and sends it to the LLM.
-
-The simplest prompt contains a single string:
-
-```yaml
-my_prompt:
-  action: prompt
-  prompt: 
-    - text: "Can you say hello world for me?"
-```
-
-Each string in the prompt is a jinja template.
-A more complicated prompt includes a variable:
-    
-```yaml
-my_prompt:
-  action: prompt
-  prompt: 
-    - text: "Can you say hello to {{ name }}?"
-```
-
-It's also possible to reference other actions' results in the template:
-
-```yaml
-name_prompt:
-  action: prompt
-  prompt: 
-    - text: "What's your name?"
-my_prompt:
-  action: prompt
-  prompt: 
-    - text: "Can you say hello to {{ name_prompt.result }}?"
-```
-
-Often-times, the prompt is more complex, and includes multiple strings and variables in a multi-line string:
-
-```yaml
-my_prompt:
-  action: prompt
-  prompt: 
-    - text: |
-        A writing sample:
-        ```
-        {{ sample_text }}
-        ```
-
-        Write a story about {{ subject }} in the style of the sample.
-```
-
-The following prompt is **equivalent** to the prompt above, but using syntactic sugar for referring to the `sample_text` variable:
-
-```yaml
-my_prompt:
-  action: prompt
-  prompt: 
-    - heading: A writing sample
-      var: sample_text
-    - text: Write a story about {{ subject }} in the style of the sample.
-```
-
-For generating well-formatted output, it is often useful to persuade the language model to generate a response wrapped in XML tags.
-Prompting with XML tags often makes such a response better.
-
-The `prompt` action can use the `quote_style` parameter to specify how to format variables in a prompt.
-Specifically, `xml` will wrap the variable in XML tags instead of triple-backticks.
-
-The two prompts below are **equivalent**:
-
-```yaml
-my_prompt:
-  action: prompt
-  prompt: 
-    - text: |
-        <writing sample>
-        {{ sample_text }}
-        </writing sample>
-        
-        Write a story about {{ subject }} in the style of the sample, placing it between <story> and </story> tags.
-```
-
-```yaml
-my_prompt:
-  action: prompt
-  quote_style: xml
-  prompt: 
-    - heading: writing sample
-      var: sample_text
-    - text: |
-        Write a story about {{ subject }} in the style of the sample, placing it between <story> and </story> tags.
-```
-
-From this prompt, extract the story with the `extract_xml_tag` action:
-
-```yaml
-extract_story:
-  action: extract_xml_tag
-  tag: story
-  text:
-    link: my_prompt.result
-```
-
-Lastly, using roles (system and user messages) is easy. 
-Simply append `role: system` or `role: user` to a text element, or use it as a standalone element.
-
-The following two prompts are **equivalent**:
-
-```yaml
-my_prompt:
-  action: prompt
-  prompt: 
-    - role: system
-      text: You are a detective investigating a crime scene.
-    - role: user
-      text: What do you see?
-```
-
-```yaml
-my_prompt:
-  action: prompt
-  prompt: 
-    - role: system
-    - text: You are a detective investigating a crime scene.
-    - role: user
-    - text: What do you see?
-```
-
 
 # Examples
 
@@ -1187,3 +984,206 @@ The title of the webpage is "Python (programming language) - Wikipedia".
 ```
 
 </details>
+
+# Guides
+
+## Setting up Ollama for Local Inference
+
+To run the examples, you need to have [Ollama](https://ollama.com/) running locally.
+
+1. [Download and Install Ollama](https://ollama.com/download) 
+2. On some platforms like macOS Ollama runs in the background automatically. 
+   If not, start it with:
+
+```bash
+ollama serve
+```
+
+3. Pull the `ollama/llama3` model (or the model you plan to use):
+
+```bash
+ollama pull ollama/llama3
+```
+
+That's it! You're ready to run the examples.
+
+## Using Any Language Model
+
+You may set `api_base` under `default_model` to change the Ollama API endpoint:
+
+```yaml
+default_model:
+  model: ollama/llama3
+  api_base: ...
+```
+
+Alternatively, you can change the `model` in the corresponding YAML file to e.g., `gpt-3.5-turbo` (an OpenAI model), or `claude-3-haiku-20240307` (an Anthropic model).
+If you do, run the example with the corresponding api key environment variable.
+
+You may also use any other model available via [litellm](https://docs.litellm.ai/docs/providers).
+Please note that most litellm models do not have async support, and will block the event loop during inference.
+
+<details>
+<summary>
+OpenAI Example
+</summary>
+
+```yaml
+default_model:
+  model: gpt-3.5-turbo
+```
+
+Running the example with an OpenAI API key:
+
+```bash
+OPENAI_API_KEY=... python -m asyncflows.examples.hello_world
+```
+
+</details>
+
+
+
+<details>
+<summary>
+Anthropic Example
+</summary>
+
+```yaml
+default_model:
+  model: claude-3-haiku-20240307
+```
+
+Running the example with an Anthropic API key:
+```bash
+ANTHROPIC_API_KEY=... python -m asyncflows.examples.hello_world
+```
+
+</details>
+
+## Prompting in-depth
+
+The `prompt` action constructs a prommpt from a list of text and variables, and sends it to the LLM.
+
+The simplest prompt contains a single string:
+
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - text: "Can you say hello world for me?"
+```
+
+Each string in the prompt is a jinja template.
+A more complicated prompt includes a variable:
+    
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - text: "Can you say hello to {{ name }}?"
+```
+
+It's also possible to reference other actions' results in the template:
+
+```yaml
+name_prompt:
+  action: prompt
+  prompt: 
+    - text: "What's your name?"
+my_prompt:
+  action: prompt
+  prompt: 
+    - text: "Can you say hello to {{ name_prompt.result }}?"
+```
+
+Often-times, the prompt is more complex, and includes multiple strings and variables in a multi-line string:
+
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - text: |
+        A writing sample:
+        ```
+        {{ sample_text }}
+        ```
+
+        Write a story about {{ subject }} in the style of the sample.
+```
+
+The following prompt is **equivalent** to the prompt above, but using syntactic sugar for referring to the `sample_text` variable:
+
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - heading: A writing sample
+      var: sample_text
+    - text: Write a story about {{ subject }} in the style of the sample.
+```
+
+For generating well-formatted output, it is often useful to persuade the language model to generate a response wrapped in XML tags.
+Prompting with XML tags often makes such a response better.
+
+The `prompt` action can use the `quote_style` parameter to specify how to format variables in a prompt.
+Specifically, `xml` will wrap the variable in XML tags instead of triple-backticks.
+
+The two prompts below are **equivalent**:
+
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - text: |
+        <writing sample>
+        {{ sample_text }}
+        </writing sample>
+        
+        Write a story about {{ subject }} in the style of the sample, placing it between <story> and </story> tags.
+```
+
+```yaml
+my_prompt:
+  action: prompt
+  quote_style: xml
+  prompt: 
+    - heading: writing sample
+      var: sample_text
+    - text: |
+        Write a story about {{ subject }} in the style of the sample, placing it between <story> and </story> tags.
+```
+
+From this prompt, extract the story with the `extract_xml_tag` action:
+
+```yaml
+extract_story:
+  action: extract_xml_tag
+  tag: story
+  text:
+    link: my_prompt.result
+```
+
+Lastly, using roles (system and user messages) is easy. 
+Simply append `role: system` or `role: user` to a text element, or use it as a standalone element.
+
+The following two prompts are **equivalent**:
+
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - role: system
+      text: You are a detective investigating a crime scene.
+    - role: user
+      text: What do you see?
+```
+
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - role: system
+    - text: You are a detective investigating a crime scene.
+    - role: user
+    - text: What do you see?
+```
