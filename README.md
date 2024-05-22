@@ -1085,7 +1085,7 @@ ANTHROPIC_API_KEY=... python -m asyncflows.examples.hello_world
 
 ## Prompting in-depth
 
-The `prompt` action constructs a prommpt from a list of text and variables, and sends it to the LLM.
+The `prompt` action constructs a prompt from a list of text and variables, and sends it to the LLM.
 
 The simplest prompt contains a single string:
 
