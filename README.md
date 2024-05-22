@@ -18,6 +18,7 @@ Built with asyncio, pydantic, YAML, jinja
 3. [Guides](#guides)  
 3.1 [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference)  
 3.2 [Using Any Language Model](#using-any-language-model)  
+3.3 [Prompting in-depth](#prompting-in-depth)
 4. [Examples](#examples)  
 4.1 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
 4.2 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
@@ -272,6 +273,135 @@ ANTHROPIC_API_KEY=... python -m asyncflows.examples.hello_world
 ```
 
 </details>
+
+## Prompting in-depth
+
+The `prompt` action constructs a prommpt from a list of text and variables, and sends it to the LLM.
+
+The simplest prompt contains a single string:
+
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - text: "Can you say hello world for me?"
+```
+
+Each string in the prompt is a jinja template.
+A more complicated prompt includes a variable:
+    
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - text: "Can you say hello to {{ name }}?"
+```
+
+It's also possible to reference other actions' results in the template:
+
+```yaml
+name_prompt:
+  action: prompt
+  prompt: 
+    - text: "What's your name?"
+my_prompt:
+  action: prompt
+  prompt: 
+    - text: "Can you say hello to {{ name_prompt.result }}?"
+```
+
+Often-times, the prompt is more complex, and includes multiple strings and variables in a multi-line string:
+
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - text: |
+        A writing sample:
+        ```
+        {{ sample_text }}
+        ```
+
+        Write a story about {{ subject }} in the style of the sample.
+```
+
+The following prompt is equivalent to the prompt above, but using syntactic sugar for referring to the `sample_text` variable:
+
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - heading: A writing sample
+      var: sample_text
+    - text: Write a story about {{ subject }} in the style of the sample.
+```
+
+For generating well-formatted output, it is often useful to persuade the language model to generate a response wrapped in XML tags.
+Prompting with XML tags often makes such a response better.
+
+The `prompt` action can use the `quote_style` parameter to specify how to format variables in a prompt.
+Specifically, `xml` will wrap the variable in XML tags instead of triple-backticks.
+
+The two prompts below are equivalent:
+
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - text: |
+        <writing sample>
+        {{ sample_text }}
+        </writing sample>
+        
+        Write a story about {{ subject }} in the style of the sample, placing it between <story> and </story> tags.
+```
+
+```yaml
+my_prompt:
+  action: prompt
+  quote_style: xml
+  prompt: 
+    - heading: writing sample
+      var: sample_text
+    - text: |
+        Write a story about {{ subject }} in the style of the sample, placing it between <story> and </story> tags.
+```
+
+From this prompt, extract the story with the `extract_xml_tag` action:
+
+```yaml
+extract_story:
+  action: extract_xml_tag
+  tag: story
+  text:
+    link: my_prompt.result
+```
+
+Lastly, using roles (system and user messages) is easy. 
+Simply append `role: system` or `role: user` to a text element, or use it as a standalone element.
+
+The following two prompts are equivalent:
+
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - role: system
+      text: You are a detective investigating a crime scene.
+    - role: user
+      text: What do you see?
+```
+
+```yaml
+my_prompt:
+  action: prompt
+  prompt: 
+    - role: system
+    - text: You are a detective investigating a crime scene.
+    - role: user
+    - text: What do you see?
+```
+
 
 # Examples
 

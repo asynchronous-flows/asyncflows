@@ -107,17 +107,46 @@ async def test_with_openai_mock(action, expected_response, openai_mock, log, tem
                 )
             ],
             QuoteStyle.BACKTICKS,
-            """What I have in my kitchen:
+            [
+                {
+                    "role": "user",
+                    "content": """What I have in my kitchen:
 ```
 Apples
 ```""",
+                }
+            ],
         ),
         (
             apples,
             QuoteStyle.XML,
-            """<What I have in my kitchen>
+            [
+                {
+                    "role": "user",
+                    "content": """<What I have in my kitchen>
 Apples
 </What I have in my kitchen>""",
+                }
+            ],
+        ),
+        (
+            [
+                TextElement(
+                    text="This is a test.",
+                ),
+                TextElement(
+                    role="user",
+                    text="This is another test.",
+                ),
+                TextElement(
+                    text="And a third",
+                ),
+            ],
+            QuoteStyle.BACKTICKS,
+            [
+                {"role": "user", "content": "This is a test."},
+                {"role": "user", "content": "This is another test.\n\nAnd a third"},
+            ],
         ),
     ],
 )
@@ -133,8 +162,7 @@ def test_build_messages(action, message_config, quote_style, expected_text):
         ),
         quote_style=quote_style,
     )
-    assert len(messages) == 1
-    assert messages[0]["content"] == expected_text
+    assert messages == expected_text
 
 
 def test_trim_messages(action):

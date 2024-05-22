@@ -18,6 +18,7 @@ from asyncflows.actions.utils.prompt_context import (
     RoleElement,
     PromptElement,
     QuoteStyle,
+    TextElement,
 )
 from asyncflows.models.config.model import OptionalModelConfig, ModelConfig
 
@@ -134,18 +135,30 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         messages = []
         current_role = "user"
         current_message_elements = []
+
+        def deposit_messages(new_role: str):
+            nonlocal messages
+            nonlocal current_role
+            nonlocal current_message_elements
+
+            if current_message_elements:
+                messages.append(
+                    {
+                        "role": current_role,
+                        "content": "\n\n".join(current_message_elements),
+                    }
+                )
+            current_message_elements = []
+            current_role = new_role
+
         for prompt_element in message_config:
             if isinstance(prompt_element, RoleElement):
-                if current_message_elements:
-                    messages.append(
-                        {
-                            "role": current_role,
-                            "content": "\n\n".join(current_message_elements),
-                        }
-                    )
-                current_message_elements = []
-                current_role = prompt_element.role
+                deposit_messages(prompt_element.role)
                 continue
+            elif isinstance(prompt_element, TextElement):
+                role = prompt_element.role
+                if role is not None:
+                    deposit_messages(role)
 
             current_message_elements.append(prompt_element.as_string(quote_style))
         if current_message_elements:
@@ -167,19 +180,20 @@ class Prompt(StreamingAction[Inputs, Outputs]):
                 token_count=token_count,
                 max_prompt_tokens=max_prompt_tokens,
             )
-            messages: None | list[dict[str, str]] = litellm.utils.trim_messages(
+            trimmed_messages: None | list[dict[str, str]] = litellm.utils.trim_messages(
                 messages=messages,
                 max_tokens=max_prompt_tokens,
                 model=model_config.model,
                 trim_ratio=1,
             )  # litellm is badly typed  # type: ignore
-            if messages is None:
+            if trimmed_messages is None:
                 self.log.error(
                     "Failed to trim messages",
                     token_count=token_count,
                     max_prompt_tokens=max_prompt_tokens,
                 )
                 raise ValueError("Failed to trim messages")
+            messages = trimmed_messages
 
         return messages
 

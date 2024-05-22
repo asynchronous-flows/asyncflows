@@ -47,6 +47,7 @@ class RoleElement(PromptElementBase):
 
 class TextElement(PromptElementBase):
     text: str
+    role: Literal["user", "system", "assistant"] | None = None
 
     def as_string(
         self,

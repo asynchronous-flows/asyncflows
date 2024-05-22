@@ -253,10 +253,13 @@
           "anyOf": [
             {
               "enum": [
+                "ollama/llama3",
                 "ollama/llama3:8b",
                 "ollama/llama3:70b",
+                "ollama/gemma",
                 "ollama/gemma:2b",
                 "ollama/gemma:7b",
+                "ollama/mixtral",
                 "ollama/mixtral:8x7b",
                 "ollama/mixtral:8x22b"
               ],
@@ -481,10 +484,13 @@
           "anyOf": [
             {
               "enum": [
+                "ollama/llama3",
                 "ollama/llama3:8b",
                 "ollama/llama3:70b",
+                "ollama/gemma",
                 "ollama/gemma:2b",
                 "ollama/gemma:7b",
+                "ollama/mixtral",
                 "ollama/mixtral:8x7b",
                 "ollama/mixtral:8x22b"
               ],
@@ -726,6 +732,23 @@
         "text": {
           "title": "Text",
           "type": "string"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "system",
+                "assistant"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Role"
         }
       },
       "required": [
