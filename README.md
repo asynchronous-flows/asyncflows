@@ -16,7 +16,8 @@ Built with asyncio, pydantic, YAML, jinja
 2.1 [With pip](#with-pip)  
 2.2 [Local development](#local-development)  
 3. [Guides](#guides)  
-3.1 [Using Any Language Model](#using-any-language-model)  
+3.1 [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference)  
+3.2 [Using Any Language Model](#using-any-language-model)  
 4. [Examples](#examples)  
 4.1 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
 4.2 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
@@ -199,9 +200,29 @@ poetry install --all-extras
 
 # Guides
 
+## Setting up Ollama for Local Inference
+
+To run the examples, you need to have [Ollama](https://ollama.com/) running locally.
+
+1. [Download and Install Ollama](https://ollama.com/download) 
+2. On some platforms like macOS Ollama runs in the background automatically. 
+   If not, start it with:
+
+```bash
+ollama serve
+```
+
+3. Pull the `ollama/llama3` model (or the model you plan to use):
+
+```bash
+ollama pull ollama/llama3
+```
+
+That's it! You're ready to run the examples.
+
 ## Using Any Language Model
 
-You may set `api_base` under `default_model` to change the ollama API endpoint:
+You may set `api_base` under `default_model` to change the Ollama API endpoint:
 
 ```yaml
 default_model:
@@ -254,8 +275,10 @@ ANTHROPIC_API_KEY=... python -m asyncflows.examples.hello_world
 
 # Examples
 
-The examples default to llama3, and assume [ollama](https://ollama.com/) is running locally.  
-To use a different model or provider, see [Using Any Language Model](#using-any-language-model).
+The examples default to Llama 3, and assume [Ollama](https://ollama.com/) is running locally.
+
+See [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference) to setup Ollama.  
+See [Using Any Language Model](#using-any-language-model) to use a different model or provider.
 
 ## De Bono's Six Thinking Hats
 
