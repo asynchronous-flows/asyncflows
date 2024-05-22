@@ -38,7 +38,7 @@ Here is a simple flow that prompts the LLM to say "hello world", and prints the 
 
 <div align="center">
 
-<img width="465" alt="hello world" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/9ef8234d-f0d0-4ea7-a42e-92fe1650c19a">
+<img width="465" alt="hello world" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/b02a447b-7e86-4abc-a94a-5e276eff5dd6">
 
 </div>
 
@@ -217,7 +217,7 @@ See [Using Any Language Model](#using-any-language-model) to use a different mod
 This example takes a writing sample, and writes about a topic in the style of the sample.
 
 <div align="center">
-<img width="706" alt="style transfer" src="https://github.com/asynchronous-flows/asyncflows-internal/assets/24586651/a23e975f-efa6-44de-9b61-1cb80f3c0bc5">
+<img width="706" alt="style transfer" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/f0e2a9ef-d714-48c4-9e03-96dfc5bde5f1">
 </div>
 
 Running the example (will prompt you for a topic):
@@ -320,7 +320,8 @@ The concept is based on the idea of using different colored hats to represent di
 This flow parallelizes the thinking under five hats, and synthesizes them under the blue hat.
 
 <div align="center">
-<img width="1079" alt="debono" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/1a6efeeb-d8b2-41cf-a79b-0ff0b692f3db">
+
+<img width="1079" alt="debono" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/0768b653-efbf-44ce-b9ae-53dae6266a30">
 
 </div>
 
@@ -482,7 +483,8 @@ The form of RAG we're using is **retrieval** followed by **reranking**.
 Retrieval is great for searching through a large dataset, while reranking is slower but better at matching against the query.
 
 <div align="center">
-<img width="1104" alt="rag" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/93e7bade-3ee3-4da8-bf3d-18affdc8f874">
+<img width="1104" alt="rag" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/a309f16a-7a84-4d73-be75-c4d0bb5abbe2">
+
 </div>
 
 Running the example, running transformers locally, over `examples/recipes/` (a folder with text files):
@@ -603,7 +605,7 @@ This flow facilitates asking questions over a SQL database.
 To use it with your database, install the corresponding [extra packages](#sql-databases) and set the `DATABASE_URL` environment variable.
 
 <div align="center">
-<img width="1368" alt="sql rag" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/23e02843-f5c4-4b1d-b673-08b6d071351c">
+<img width="1368" alt="sql rag" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/96241659-d470-4dac-a459-b63222db4670">
 </div>
 
 Running the example with a database available at `DATABASE_URL` passed as an environment variable:
@@ -743,7 +745,7 @@ The form of RAG we're using is **retrieval** followed by **reranking**.
 Retrieval is great for searching through a large dataset, while reranking is slower but better at matching against the query.
 
 <div align="center">
-<img width="1180" alt="chatbot" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/c594c10d-c618-4da5-a27a-c26d55e9fdcb">
+<img width="1180" alt="chatbot" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/9c426b7a-9802-4924-a251-071cceb05705">
 </div>
 
 <details>
