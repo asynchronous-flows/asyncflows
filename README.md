@@ -16,7 +16,7 @@ Built with asyncio, pydantic, YAML, jinja
 2.1 [With pip](#with-pip)  
 2.2 [Local development](#local-development)  
 3. [Guides](#guides)  
-3.1 [Swapping out the Language Model](#swapping-out-the-language-model)  
+3.1 [Using Any Language Model](#using-any-language-model)  
 4. [Examples](#examples)  
 4.1 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
 4.2 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
@@ -199,7 +199,7 @@ poetry install --all-extras
 
 # Guides
 
-## Swapping out the Language Model
+## Using Any Language Model
 
 You may set `api_base` under `default_model` to change the ollama API endpoint:
 
@@ -255,7 +255,7 @@ ANTHROPIC_API_KEY=... python -m asyncflows.examples.hello_world
 # Examples
 
 The examples default to llama3, and assume [ollama](https://ollama.com/) is running locally.  
-To use a different model or provider, see [Swapping out the Language Model](#swapping-out-the-language-model).
+To use a different model or provider, see [Using Any Language Model](#using-any-language-model).
 
 ## De Bono's Six Thinking Hats
 
