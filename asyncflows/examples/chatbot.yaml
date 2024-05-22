@@ -63,14 +63,13 @@ flow:
   chatbot:
     action: prompt
     quote_style: xml
-
     prompt:
       - role: system
       - text: |
-          You are an expert literary theorist and critic analyzing several <Relevant pages> with regards to a <New message>. 
-          Remember what your <Conversation history> is as you write your response. 
+          You are an expert literary theorist and critic analyzing several Relevant Pages with regards to a New Message. 
+          Remember what your Conversation History is as you write your response.
       - role: user
-      - heading: Relevant pages
+      - heading: Relevant Pages
         text: |
           {% for page in reranking.result -%}
             {{ page.title }}, page number {{ page.page_number }}
@@ -78,16 +77,16 @@ flow:
             {{ page.text }}
             ---
           {% endfor %}
-      - heading: Conversation history
+      - heading: Conversation History
         text: |
           {% for message in conversation_history -%}
             {{ message }}
           {% endfor %}
-      - heading: New message
+      - heading: New Message
         var: message
       - text: |
-          Clearly and concisely respond to the <New message> keeping in mind the <Relevant pages> and <Conversation history> if any.
-          Denote your <response> with tags clearly.
+          Clearly and concisely respond to the New Message keeping in mind the Relevant Pages and Conversation History if any.
+          Provide your response to the New Message between <response> and </response> tags.
 
   extract_chatbot:
     action: extract_xml_tag

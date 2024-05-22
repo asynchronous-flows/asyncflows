@@ -747,8 +747,14 @@ flow:
   # `chatbot` prompts the LLM to summarize the top papers
   chatbot:
     action: prompt
+    quote_style: xml
     prompt:
-      - heading: Relevant pages
+      - role: system
+      - text: |
+          You are an expert literary theorist and critic analyzing several Relevant Pages with regards to a New Message. 
+          Remember what your Conversation History is as you write your response.
+      - role: user
+      - heading: Relevant Pages
         text: |
           {% for page in reranking.result -%}
             {{ page.title }}, page number {{ page.page_number }}
@@ -756,18 +762,24 @@ flow:
             {{ page.text }}
             ---
           {% endfor %}
-      - heading: Conversation history
+      - heading: Conversation History
         text: |
           {% for message in conversation_history -%}
             {{ message }}
           {% endfor %}
-      - heading: New message
+      - heading: New Message
         var: message
       - text: |
-          Based on the top papers, what is the most relevant information to the query?
-          Summarize the key points of the papers in a few sentences.
+          Clearly and concisely respond to the New Message keeping in mind the Relevant Pages and Conversation History if any.
+          Provide your response to the New Message between <response> and </response> tags.
 
-default_output: chatbot.result
+  extract_chatbot:
+    action: extract_xml_tag
+    tag: response
+    text:
+      link: chatbot.result
+      
+default_output: extract_chatbot.result
 ```
 
 </details>
@@ -782,8 +794,8 @@ Python script that runs the flow:
 import glob
 from asyncflows import AsyncFlows
 
-# Load PDFs from the `papers` folder
-document_paths = glob.glob("papers/*.pdf")
+# Load PDFs from the `books` folder
+document_paths = glob.glob("books/*.pdf")
 
 # Load the chatbot flow
 flow = AsyncFlows.from_file("chatbot.yaml").set_vars(
@@ -812,25 +824,23 @@ while True:
     print(result)
     
     # Update the conversation history
-    conversation_history.extend([
-        f"User: {message}", 
-        f"Assistant: {result}",
-    ])
+    conversation_history.extend(
+        [
+            f"User: {message}",
+            f"Assistant: {result}",
+        ]
+    )
 ```
 
 Output of the python script:
 
 ---
 
-> What's something healthy I could make?
+> How does the Red Queen's view of punishment shape the story?
 
-The two provided recipes, Mexican Guacamole and Lebanese Hummus, offer healthy and flavorful options to prepare. The key points are:
+The Red Queen's view of punishment is a significant theme that shapes the story of Wonderland. In the Relevant Pages, we see her ordering the beheading of Alice, three gardeners, and others without hesitation or remorse. Her fury is intense, and she screams "Off with her head!" with an air of absolute authority.
 
-1. Guacamole is made by mashing ripe avocados and mixing in fresh vegetables like onions, tomatoes, cilantro, and jalapeños, along with lime juice and salt. It can be served with tortilla chips or as a topping for tacos.
-
-2. Hummus is a blend of chickpeas, tahini (sesame seed paste), lemon juice, garlic, and olive oil, seasoned with salt and cumin. It is typically served as a dip with warm pita bread and garnished with paprika and parsley.
-
-Both recipes are healthy, vegetarian options that incorporate fresh ingredients and can be easily prepared at home.
+The Red Queen's perspective on punishment reveals a stark contrast between her cruel nature and the more benevolent attitudes of other characters, such as the King, who intervenes to save Alice from execution. The Queen's actions also create a sense of danger and chaos, making Wonderland an unpredictable and potentially deadly place for its inhabitants.
 
 ---
 
