@@ -20,11 +20,12 @@ Built with asyncio, pydantic, YAML, jinja
 3.2 [Using Any Language Model](#using-any-language-model)  
 3.3 [Prompting in-depth](#prompting-in-depth)
 4. [Examples](#examples)  
-4.1 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
-4.2 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
-4.3 [SQL Retrieval](#sql-retrieval)  
-4.4 [Chatbot](#chatbot)  
-4.5 [Writing your own actions](#writing-your-own-actions)
+4.1 [Text Style Transfer](#text-style-transfer)  
+4.2 [De Bono's Six Thinking Hats](#de-bonos-six-thinking-hats)  
+4.3 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
+4.4 [SQL Retrieval](#sql-retrieval)  
+4.5 [Chatbot](#chatbot)  
+4.6 [Writing your own actions](#writing-your-own-actions)
 
 # Introduction
 
@@ -409,6 +410,104 @@ The examples default to Llama 3, and assume [Ollama](https://ollama.com/) is run
 
 See [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference) to setup Ollama.  
 See [Using Any Language Model](#using-any-language-model) to use a different model or provider.
+
+## Text Style Transfer
+
+This example takes a writing sample, and writes about a topic in the style of the sample.
+
+<div align="center">
+
+</div>
+
+Running the example (will prompt you for a topic):
+```bash
+python -m asyncflows.examples.text_style_transfer
+```
+
+<details>
+<summary>
+YAML file that defines the flow – click to expand
+</summary>
+
+```yaml
+default_model:
+  model: ollama/llama3
+
+flow:
+   
+  # The `prompt` action asks the LLM to generate a writing sample
+  text_style_transfer:
+    action: prompt
+    prompt:
+      # We include a system message asking the LLM to respond in the style of the example
+      - role: system
+        text: You're a helpful assistant. Respond only in the style of the example.
+      # And a user message asking the LLM to write about the query
+      # This is a jinja template; the variables `writing_sample` and `query` will be replaced with 
+      #  values provided upon running the flow
+      - role: user
+        text: |
+          Here is a writing example:
+          ```
+          {{ writing_sample }}
+          ```
+          In the style of the example, write about {{ topic }}.
+
+default_output: text_style_transfer.result
+```
+
+</details>
+
+<details>
+<summary>
+Running the flow (python and stdout)
+</summary>
+
+Python script that runs the flow:
+
+```python
+from asyncflows import AsyncFlows
+
+writing_sample = """
+Hullo mai neyms Kruubi Duubi, aI'm hear to rite yu a fanfic abowt enyting yu want. 
+"""
+
+# Load the flow
+flow = AsyncFlows.from_file("text_style_transfer.yaml").set_vars(
+   writing_sample=writing_sample,
+)
+
+# Run the flow
+while True:
+   # Get the user's query via CLI interface (swap out with whatever input method you use)
+   try:
+      message = input("Write about: ")
+   except EOFError:
+      break
+
+   # Set the query and conversation history
+   topic_flow = flow.set_vars(
+      topic=message,
+   )
+
+   # Run the flow and get the result
+   result = await topic_flow.run()
+   print(result)
+```
+
+Output of the python script:
+
+---
+
+Heya spacie peeps! Its me, Zlorg, yer favret pizza enthusiast from Andromeda! Im here to rite a tale abowt da most tubular pizzas eva sent into da cosmos!
+
+In da year 3050, da Pizza Federation (ya, thats what we call dem) launched its first-ever space-bound pizzaria, aptly named "Crust-ial Velocity." Captain Zara and her trusty crew of pizza artisans, including da infamous topping master, Rizzo, set off on a quest to deliver da most cosmic pies to da galaxy's most distant planets.
+
+First stop: da planet Zorvath, where da alien inhabitants were famished for some good ol' Earth-style pepperoni. Captain Zara and crew whipped up a "Galactic Garage Band" pizza, topped with spicy peppers from da swamps of Saturn, mozzarella from da moon of Ganymede, and a drizzle of da finest olive oil from da vineyards of Mars. Da Zorvathians went wild, chanting "Pizza-za-zee!" in their native tongue.
+
+---
+
+</details>
 
 ## De Bono's Six Thinking Hats
 
