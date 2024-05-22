@@ -4,7 +4,7 @@
 name = "aioboto3"
 version = "12.4.0"
 description = "Async boto3 wrapper"
-optional = true
+optional = false
 python-versions = "<4.0,>=3.8"
 files = [
     {file = "aioboto3-12.4.0-py3-none-any.whl", hash = "sha256:a8d5a60852482cc7a472f3544e5ad7d2f5a911054ffa066357140dc6690da94b"},
@@ -22,7 +22,7 @@ s3cse = ["cryptography (>=2.3.1)"]
 name = "aiobotocore"
 version = "2.12.3"
 description = "Async client for aws services using botocore and aiohttp"
-optional = true
+optional = false
 python-versions = ">=3.8"
 files = [
     {file = "aiobotocore-2.12.3-py3-none-any.whl", hash = "sha256:86737685f4625e8f05c4e7a608a07cc97607263279f66cf6b02b640c4eafd324"},
@@ -140,7 +140,7 @@ speedups = ["Brotli", "aiodns", "brotlicffi"]
 name = "aioitertools"
 version = "0.11.0"
 description = "itertools and builtins for AsyncIO and mixed iterables"
-optional = true
+optional = false
 python-versions = ">=3.6"
 files = [
     {file = "aioitertools-0.11.0-py3-none-any.whl", hash = "sha256:04b95e3dab25b449def24d7df809411c10e62aab0cbe31a50ca4e68748c43394"},
@@ -484,7 +484,7 @@ crt = ["awscrt (==0.19.19)"]
 name = "botocore-stubs"
 version = "1.34.94"
 description = "Type annotations and code completion for botocore"
-optional = true
+optional = false
 python-versions = "<4.0,>=3.8"
 files = [
     {file = "botocore_stubs-1.34.94-py3-none-any.whl", hash = "sha256:b0345f55babd8b901c53804fc5c326a4a0bd2e23e3b71f9ea5d9f7663466e6ba"},
@@ -5666,7 +5666,7 @@ tutorials = ["matplotlib", "pandas", "tabulate", "torch"]
 name = "types-aioboto3"
 version = "12.4.0"
 description = "Type annotations for aioboto3 12.4.0 generated with mypy-boto3-builder 7.23.2"
-optional = true
+optional = false
 python-versions = ">=3.8"
 files = [
     {file = "types_aioboto3-12.4.0-py3-none-any.whl", hash = "sha256:004091ac00b71622637dd272b91a55be3fa9d1ce8b04285d8bbe9d74cf828bf2"},
@@ -6068,7 +6068,7 @@ xray = ["types-aiobotocore-xray"]
 name = "types-aiobotocore"
 version = "2.13.0"
 description = "Type annotations for aiobotocore 2.13.0 generated with mypy-boto3-builder 7.24.0"
-optional = true
+optional = false
 python-versions = ">=3.8"
 files = [
     {file = "types_aiobotocore-2.13.0-py3-none-any.whl", hash = "sha256:32f6a5c0ad892d4e9d64561b464c20d167edf3b8ba18df89f0d5e985bab56c30"},
@@ -6471,7 +6471,7 @@ xray = ["types-aiobotocore-xray (>=2.13.0,<2.14.0)"]
 name = "types-aiobotocore-s3"
 version = "2.13.0"
 description = "Type annotations for aiobotocore.S3 2.13.0 service generated with mypy-boto3-builder 7.24.0"
-optional = true
+optional = false
 python-versions = ">=3.8"
 files = [
     {file = "types_aiobotocore_s3-2.13.0-py3-none-any.whl", hash = "sha256:97e6e61b68684bf994faca3c29536255d68c41bdc979c2d6b3fb4cbf26e6aa21"},
@@ -6485,7 +6485,7 @@ typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.12\""}
 name = "types-awscrt"
 version = "0.20.9"
 description = "Type annotations and code completion for awscrt"
-optional = true
+optional = false
 python-versions = "<4.0,>=3.7"
 files = [
     {file = "types_awscrt-0.20.9-py3-none-any.whl", hash = "sha256:3ae374b553e7228ba41a528cf42bd0b2ad7303d806c73eff4aaaac1515e3ea4e"},
@@ -6496,7 +6496,7 @@ files = [
 name = "types-s3transfer"
 version = "0.10.1"
 description = "Type annotations and code completion for s3transfer"
-optional = true
+optional = false
 python-versions = "<4.0,>=3.8"
 files = [
     {file = "types_s3transfer-0.10.1-py3-none-any.whl", hash = "sha256:49a7c81fa609ac1532f8de3756e64b58afcecad8767933310228002ec7adff74"},
@@ -6890,11 +6890,10 @@ gcloud = ["google-cloud-aiplatform"]
 openai = ["openai"]
 pdf = ["ocrmypdf", "pypdfium2"]
 pg = ["asyncpg", "pandas", "psycopg2", "sqlalchemy"]
-s3 = ["aioboto3", "types-aioboto3"]
 sqlite = ["pandas", "sqlalchemy"]
 transformers = ["infinity-emb", "sentence-transformers"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "7dedecdb3235a95d2ffe7cad819634f3e12b46f7d2a484ce41704ad9ed7fa2f1"
+content-hash = "b31bd47b77a9a6b0e759acd74c41d3a8d7ebd770f7a4d92f6164d019529b8690"
