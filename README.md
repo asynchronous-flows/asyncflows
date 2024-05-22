@@ -1119,7 +1119,9 @@ my_prompt:
     - text: "Can you say hello to {{ name_prompt.result }}?"
 ```
 
-Often-times, the prompt is more complex, and includes multiple strings and variables in a multi-line string:
+Often-times, the prompt is more complex, and includes multiple variables in a multi-line string.
+
+The following two prompts are **equivalent**, but the second one uses syntactic sugar for referring to the `sample_text` variable:
 
 ```yaml
 my_prompt:
@@ -1133,8 +1135,6 @@ my_prompt:
 
         Write a story about {{ subject }} in the style of the sample.
 ```
-
-The following prompt is **equivalent** to the prompt above, but using syntactic sugar for referring to the `sample_text` variable:
 
 ```yaml
 my_prompt:
@@ -1176,7 +1176,7 @@ my_prompt:
         Write a story about {{ subject }} in the style of the sample, placing it between <story> and </story> tags.
 ```
 
-From this prompt, extract the story with the `extract_xml_tag` action:
+From this prompt's response, extract the story with the `extract_xml_tag` action:
 
 ```yaml
 extract_story:
