@@ -445,9 +445,14 @@ flow:
   white_hat:
     action: prompt
     prompt:
-      - heading: Problem
-        var: query
+      # This is a jinja template; 
+      # the variable `query` will be replaced with the value provided upon running the flow
       - text: |
+          Problem:
+          ```
+          {{ query }}
+          ```
+
           List all the factual information you know about the problem. 
           What data and numbers are available? 
           Identify any gaps in your knowledge and consider how you might obtain this missing information.
@@ -456,6 +461,8 @@ flow:
   red_hat:
     action: prompt
     prompt:
+      # This is syntactic sugar for referencing a variable, 
+      # equivalent to the white hat's jinja template
       - heading: Problem
         var: query
       - text: |
@@ -500,8 +507,11 @@ flow:
   blue_hat:
     action: prompt
     prompt:
+      # Var references an input variable provided when running the flow
       - heading: Problem
         var: query
+      
+      # Link references another action's output 
       - heading: White Hat
         link: white_hat.result
       - heading: Red Hat
@@ -512,6 +522,7 @@ flow:
         link: yellow_hat.result
       - heading: Green Hat
         link: green_hat.result
+
       - text: |
           Review and synthesize the information and ideas generated from the other hats. 
           Assess which ideas are most feasible and effective based on the facts (White Hat), emotions (Red Hat), risks (Black Hat), benefits (Yellow Hat), and creative solutions (Green Hat). 
