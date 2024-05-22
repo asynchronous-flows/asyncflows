@@ -8,10 +8,13 @@ ModelType = (
     # ollama models
     Annotated[
         Literal[
+            "ollama/llama3",
             "ollama/llama3:8b",
             "ollama/llama3:70b",
+            "ollama/gemma",
             "ollama/gemma:2b",
             "ollama/gemma:7b",
+            "ollama/mixtral",
             "ollama/mixtral:8x7b",
             "ollama/mixtral:8x22b",
         ],
