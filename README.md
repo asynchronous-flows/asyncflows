@@ -326,7 +326,7 @@ my_prompt:
         Write a story about {{ subject }} in the style of the sample.
 ```
 
-The following prompt is equivalent to the prompt above, but using syntactic sugar for referring to the `sample_text` variable:
+The following prompt is **equivalent** to the prompt above, but using syntactic sugar for referring to the `sample_text` variable:
 
 ```yaml
 my_prompt:
@@ -343,7 +343,7 @@ Prompting with XML tags often makes such a response better.
 The `prompt` action can use the `quote_style` parameter to specify how to format variables in a prompt.
 Specifically, `xml` will wrap the variable in XML tags instead of triple-backticks.
 
-The two prompts below are equivalent:
+The two prompts below are **equivalent**:
 
 ```yaml
 my_prompt:
@@ -381,7 +381,7 @@ extract_story:
 Lastly, using roles (system and user messages) is easy. 
 Simply append `role: system` or `role: user` to a text element, or use it as a standalone element.
 
-The following two prompts are equivalent:
+The following two prompts are **equivalent**:
 
 ```yaml
 my_prompt:
