@@ -12,8 +12,8 @@ async def main():
     examples_dir = Path(os.path.dirname(__file__))
     chatbot_flow_path = examples_dir / "chatbot.yaml"
 
-    # Load PDFs from the `recipes` folder
-    recipes_glob = examples_dir / "recipes" / "*.pdf"
+    # Load PDFs from the `books` folder
+    recipes_glob = examples_dir / "books" / "*.pdf"
     document_paths = glob.glob(str(recipes_glob))
 
     # Load the chatbot flow

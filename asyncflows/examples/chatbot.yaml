@@ -12,40 +12,68 @@ flow:
         action: extract_pdf_text
         file:
           var: filepath
-  # Analyze the user's query and generate a question for the RAG system
+  # Analyze the user's query and generate a question for the retrieval system
   generate_query:
     action: prompt
+    quote_style: xml
     prompt:
       - heading: User's Message
         var: message
       - text: |
-          Carefully analyze the user's query below and generate a clear, focused question that captures the key information needed to answer the query. 
-          The question should be suitable for a retrieval system to find the most relevant documents.
+          Carefully analyze the user's message and generate a clear, focused query that captures the key information needed to answer the message. 
+          The query should be suitable for a vector search through relevant books.
+          Put the query between <query> and </query> tags.
+  # Extract the <query>{{query}}</query> from the generated response
+  extract_query:
+    action: extract_xml_tag
+    tag: query
+    text:
+      link: generate_query.result
   # `retrieve` performs a vector search, fast for large datasets
   retrieval:
     action: retrieve
-    k: 5
+    k: 20
     documents:
       lambda: |
-        [flow.extractor.full_text for flow in extract_pdf_texts]
+        [page
+         for flow in extract_pdf_texts
+         for page in flow.extractor.pages]
+    texts:
+      lambda: |
+        [page.title + "\n\n" + page.text  # Include the title in the embeddings
+         for flow in extract_pdf_texts
+         for page in flow.extractor.pages]
     query:
-      var: message
+      link: extract_query.result
   # `rerank` picks the most appropriate documents, it's slower than retrieve, but better at matching against the query
   reranking:
     action: rerank
-    k: 2
+    k: 5
     documents:
       link: retrieval.result
+    texts:
+      lambda: |
+        [page.text
+         for page in retrieval.result]
     query:
-      var: message
+      link: extract_query.result
   # `chatbot` prompts the LLM to summarize the top papers
   chatbot:
     action: prompt
     prompt:
-      - heading: Top papers
-        link: reranking.result
+      - heading: Relevant pages
+        text: |
+          {% for page in reranking.result -%}
+            {{ page.title }}, page number {{ page.page_number }}
+            ---
+            {{ page.text }}
+            ---
+          {% endfor %}
       - heading: Conversation history
-        var: conversation_history
+        text: |
+          {% for message in conversation_history -%}
+            {{ message }}
+          {% endfor %}
       - heading: New message
         var: message
       - text: |
