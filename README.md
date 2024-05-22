@@ -580,23 +580,24 @@ default_model:
   model: ollama/llama3
   temperature: 1
   max_output_tokens: 2000
+  
 flow:
   
   # Get the database schema as CREATE TABLE statements
   get_db_schema:
+    action: get_db_schema
     database_url:
       env: DATABASE_URL
-    action: get_db_schema
   
   # Generate a SQL statement to get data from the database
   generate_sql_statement:
     action: prompt
     quote_style: xml
     prompt:
-      - link: get_db_schema.schema_text
-        heading: Database schema
-      - var: query
-        heading: User query
+      - heading: Database schema
+        link: get_db_schema.schema_text
+      - heading: User query
+        var: query
       - text: |
           Can you write a SQL statement to get data from the database, to help us answer the user query?
           Wrap the statement in <sql> tags.
@@ -628,8 +629,8 @@ flow:
           {{ exec.result }}
           ```
           Can you answer the user query based on this result?
-      - var: query
-        heading: User query
+      - heading: User query
+        var: query
 
 default_output: answer_user_query.result
 ```
