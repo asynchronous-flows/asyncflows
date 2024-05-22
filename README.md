@@ -2,7 +2,7 @@
 <h1>♾️ asyncflows 🌊</h1>
 
 [![Discord](https://img.shields.io/badge/discord-7289da)](https://discord.gg/AGZ6GrcJCh)
-[![Try in Colab](https://img.shields.io/badge/colab-red)](https://colab.research.google.com/github/asynchronous-flows/asyncflows/blob/main/examples/hello_world.ipynb)
+[![Try in Colab](https://img.shields.io/badge/colab-red)](https://colab.research.google.com/github/asynchronous-flows/asyncflows/blob/main/asyncflows/examples/hello_world.ipynb)
 
 Config-Driven Asynchronous AI Pipelines  
 Built with asyncio, pydantic, YAML, jinja  
@@ -78,7 +78,7 @@ python -m asyncflows.examples.hello_world
 
 Or:
 
-[![Try in Colab](https://img.shields.io/badge/Run_it_in_Google_Colab-red)](https://colab.research.google.com/github/asynchronous-flows/asyncflows/blob/main/examples/hello_world.ipynb)
+[![Try in Colab](https://img.shields.io/badge/Run_it_in_Google_Colab-red)](https://colab.research.google.com/github/asynchronous-flows/asyncflows/blob/main/asyncflows/examples/hello_world.ipynb)
 
 # Installation
 
