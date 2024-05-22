@@ -26,6 +26,7 @@ Built with asyncio, pydantic, YAML, jinja
 4.1 [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference)  
 4.2 [Using Any Language Model](#using-any-language-model)  
 4.3 [Prompting in-depth](#prompting-in-depth)  
+5. [License](#license)
 
 
 # Introduction
@@ -1187,3 +1188,16 @@ my_prompt:
     - role: user
     - text: What do you see?
 ```
+
+# License
+
+asyncflows is licensed under the Business Source License 1.1 (BSL-1.1).
+
+As we evolve our licensing, we will only ever become **more permissive**.
+
+We do not intend to charge for production use of asyncflows, 
+and are in the process of drafting an additional use grant.
+
+If you wish to use asyncflows in a way that is not covered by the BSL-1.1,
+please reach out to us at [legal@asyncflows.com](mailto:legal@asyncflows.com).
+We will be happy to work with you to find a solution that makes your lawyers happy.
