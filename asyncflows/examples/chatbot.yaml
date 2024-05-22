@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=../../schemas/action_schema.json
+
 default_model:
   model: ollama/llama3
 flow:
@@ -60,7 +62,14 @@ flow:
   # `chatbot` prompts the LLM to summarize the top papers
   chatbot:
     action: prompt
+    quote_style: xml
+
     prompt:
+      - role: system
+      - text: |
+          You are an expert literary theorist and critic analyzing several <Relevant pages> with regards to a <New message>. 
+          Remember what your <Conversation history> is as you write your response. 
+      - role: user
       - heading: Relevant pages
         text: |
           {% for page in reranking.result -%}
@@ -77,7 +86,13 @@ flow:
       - heading: New message
         var: message
       - text: |
-          Based on the top papers, what is the most relevant information to the query?
-          Summarize the key points of the papers in a few sentences.
+          Clearly and concisely respond to the <New message> keeping in mind the <Relevant pages> and <Conversation history> if any.
+          Denote your <response> with tags clearly.
 
-default_output: chatbot.result
+  extract_chatbot:
+    action: extract_xml_tag
+    tag: response
+    text:
+      link: chatbot.result
+      
+default_output: extract_chatbot.result
