@@ -1004,7 +1004,7 @@ For an easier time writing flows, use YAML Language Server in your editor with o
 Put the following at the top of your YAML flow config file:
 
 ```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/asynchronous-flows/asyncflows/main/schemas/action_schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/asynchronous-flows/asyncflows/main/schemas/asyncflows_schema.json
 ```
 
 The JsonSchema will only catch some errors, 

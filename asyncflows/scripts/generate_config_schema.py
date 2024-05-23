@@ -121,7 +121,7 @@ def build_hinted_flow_model(
     return HintedActionConfig
 
 
-def _build_action_schema(
+def _build_asyncflows_schema(
     action_names: list[str],
     config_class: type[ActionConfig],
     strict: bool,
@@ -137,14 +137,14 @@ def _build_action_schema(
     return workflow_schema
 
 
-def _build_and_save_action_schema(
+def _build_and_save_asyncflows_schema(
     action_names: list[str],
     config_class: type[ActionConfig],
     output_file: str,
     strict: bool,
     config_filename: str | None = None,
 ):
-    workflow_schema = _build_action_schema(
+    workflow_schema = _build_asyncflows_schema(
         action_names=action_names,
         config_class=config_class,
         strict=strict,
@@ -165,7 +165,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.flow:
-        schema = _build_action_schema(
+        schema = _build_asyncflows_schema(
             action_names=_action_names,
             config_class=ActionConfig,
             config_filename=args.flow,
@@ -175,16 +175,16 @@ if __name__ == "__main__":
         print(json.dumps(schema, indent=2))
     else:
         # build default action and test action schemas
-        _build_and_save_action_schema(
+        _build_and_save_asyncflows_schema(
             action_names=_action_names,
             config_class=ActionConfig,
-            output_file="action_schema.json",
+            output_file="asyncflows_schema.json",
             strict=False,
         )
 
-        _build_and_save_action_schema(
+        _build_and_save_asyncflows_schema(
             action_names=_testing_action_names,
             config_class=TestActionConfig,
-            output_file="testing_action_schema.json",
+            output_file="testing_asyncflows_schema.json",
             strict=False,
         )

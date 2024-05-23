@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../../schemas/testing_action_schema.json
+# yaml-language-server: $schema=../../../../schemas/testing_asyncflows_schema.json
 
 default_model:
   model: gpt-3.5-turbo-1106
