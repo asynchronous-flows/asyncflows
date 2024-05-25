@@ -600,6 +600,8 @@ Both recipes are healthy, vegetarian options that incorporate fresh ingredients 
 
 ## SQL Retrieval
 
+[![template](https://img.shields.io/badge/template-blue)](https://github.com/asynchronous-flows/sql-rag-example)
+
 This flow facilitates asking questions over a SQL database.
 
 To use it with your database, install the corresponding [extra packages](#sql-databases) and set the `DATABASE_URL` environment variable.
