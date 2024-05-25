@@ -362,10 +362,11 @@ class ActionService:
             try:
                 yield inputs_type.model_validate(rendered)
             except Exception as e:
+                tb = traceback.format_exception(type(e), e, e.__traceback__)
                 log.exception(
                     "Invalid inputs",
-                    exc_info=True,
                     inputs_dict=rendered,
+                    traceback="".join(tb),
                 )
                 sentry_sdk.capture_exception(e)
             return
@@ -391,10 +392,11 @@ class ActionService:
             try:
                 yield inputs_type.model_validate(inputs_dict)
             except Exception as e:
+                tb = traceback.format_exception(type(e), e, e.__traceback__)
                 log.exception(
                     "Invalid inputs",
-                    exc_info=True,
                     inputs_dict=inputs_dict,
+                    traceback="".join(tb),
                 )
                 sentry_sdk.capture_exception(e)
 
