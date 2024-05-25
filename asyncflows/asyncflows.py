@@ -117,3 +117,27 @@ class AsyncFlows:
         }
 
         return await declaration.render(context)
+
+    async def stream(self, target_output: None | str = None):
+        if target_output is None:
+            target_output = self.action_config.default_output
+
+        declaration = VarDeclaration(
+            var=target_output,
+        )
+
+        dependencies = declaration.get_dependencies()
+        if len(dependencies) != 1:
+            raise NotImplementedError("Only one dependency is supported for now")
+        executable_id = list(dependencies)[0]
+
+        async for outputs in self.action_service.stream_executable(
+            self.log,
+            executable_id=executable_id,
+            variables=self.variables,
+        ):
+            context = {
+                executable_id: outputs,
+            }
+
+            yield await declaration.render(context)
