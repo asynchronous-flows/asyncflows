@@ -269,8 +269,8 @@ class Prompt(StreamingAction[Inputs, Outputs]):
     ):
         api_base = (
             model_config.api_base
-            or os.environ.get("OLLAMA_API_BASE")
-            or "http://localhost:8000"
+            or get_secret("OLLAMA_API_BASE")
+            or "http://localhost:11434"
         )
 
         api_url = os.path.join(
