@@ -67,6 +67,7 @@ class ModelConfig(StrictModel):
     presence_penalty: float | None = None
     model: ModelType = "gpt-3.5-turbo-1106"
     api_base: Optional[str] = None
+    auth_token: Optional[str] = None
 
 
 class OptionalModelConfig(ModelConfig):
@@ -78,6 +79,7 @@ class OptionalModelConfig(ModelConfig):
     presence_penalty: Optional[float] = None
     model: Optional[ModelType] = None
     api_base: Optional[str] = None
+    auth_token: Optional[str] = None
 
 
 BiEncoderModelType = Literal[

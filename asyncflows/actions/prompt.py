@@ -265,6 +265,10 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         if openai_api_key is None and "gpt" in model_config.model:
             self.log.warning("OpenAI API key not set")
 
+        headers = {}
+        if model_config.auth_token is not None:
+            headers["Authorization"] = f"Bearer {model_config.auth_token}"
+
         client = None
         try:
             if "gpt" in model_config.model:
@@ -285,6 +289,7 @@ class Prompt(StreamingAction[Inputs, Outputs]):
                     frequency_penalty=model_config.frequency_penalty,
                     presence_penalty=model_config.presence_penalty,
                     base_url=model_config.api_base,
+                    extra_headers=headers,
                     # **model_config.model_dump(),
                 ):
                     delta = completion.choices[0].delta.content  # type: ignore
