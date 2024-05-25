@@ -88,7 +88,9 @@ async def test_with_openai_mock(action, expected_response, openai_mock, log, tem
             )
         ],
     )
-    inputs._default_model = ModelConfig()
+    inputs._default_model = ModelConfig(
+        model="gpt-3.5-turbo",
+    )
     async for outputs in action.run(inputs):
         result = outputs.result
         assert expected_response.startswith(result)

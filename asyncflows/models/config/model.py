@@ -58,6 +58,16 @@ ModelType = (
 )
 
 
+BiEncoderModelType = Literal[
+    "sentence-transformers/all-mpnet-base-v2",
+    "BAAI/bge-small-en-v1.5",
+]
+CrossEncoderModelType = Literal[
+    "cross-encoder/ms-marco-TinyBERT-L-2-v2",
+    "BAAI/bge-reranker-base",
+]
+
+
 class ModelConfig(StrictModel):
     max_output_tokens: int = 2000
     max_prompt_tokens: int = 8000
@@ -65,7 +75,7 @@ class ModelConfig(StrictModel):
     top_p: float | None = None
     frequency_penalty: float | None = None
     presence_penalty: float | None = None
-    model: ModelType = "gpt-3.5-turbo-1106"
+    model: ModelType = "ollama/llama3"
     api_base: Optional[str] = None
     auth_token: Optional[str] = None
 
@@ -80,13 +90,3 @@ class OptionalModelConfig(ModelConfig):
     model: Optional[ModelType] = None
     api_base: Optional[str] = None
     auth_token: Optional[str] = None
-
-
-BiEncoderModelType = Literal[
-    "sentence-transformers/all-mpnet-base-v2",
-    "BAAI/bge-small-en-v1.5",
-]
-CrossEncoderModelType = Literal[
-    "cross-encoder/ms-marco-TinyBERT-L-2-v2",
-    "BAAI/bge-reranker-base",
-]

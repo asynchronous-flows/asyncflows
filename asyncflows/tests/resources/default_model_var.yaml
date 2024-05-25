@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../../schemas/testing_asyncflows_schema.json
+
+default_model:
+  model:
+    var: some_model
+action_timeout: 5
+flow:
+  first_sum:
+    action: prompt
+    prompt:
+      - text: Can you add 1 and 2?
+default_output: first_sum.result
