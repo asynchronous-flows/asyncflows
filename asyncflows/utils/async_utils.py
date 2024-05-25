@@ -159,6 +159,7 @@ async def measure_coro(
 ) -> T:
     coro_wrapper = f.__await__()
     arg = None
+    exc = None
     fut = None
     first_run = True
 
@@ -203,11 +204,15 @@ async def measure_coro(
                     log.warning(
                         "Subcoroutine raised exception",
                         arg=arg,
-                        exc_info=e,
+                        # exc_info=e,
                     )
-                    coro_wrapper.throw(e)
+                    exc = e
             timer.start()
-            fut = coro_wrapper.send(arg)
+            if exc is not None:
+                fut = coro_wrapper.throw(exc)
+                exc = None
+            else:
+                fut = coro_wrapper.send(arg)
         except StopIteration as e:
             return e.value
         finally:
