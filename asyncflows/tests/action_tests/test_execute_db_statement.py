@@ -17,11 +17,11 @@ def action(log, temp_dir):
                 statement="SELECT * FROM users",
             ),
             Outputs(
-                result=""" id name fullname nickname   
+                text=""" id name fullname nickname   
 1   ed   Ed Jones edsnickname""",
                 headers=["id", "name", "fullname", "nickname"],
                 data=[
-                    ['1', "ed", "Ed Jones", "edsnickname"],
+                    ["1", "ed", "Ed Jones", "edsnickname"],
                 ],
             ),
         ),

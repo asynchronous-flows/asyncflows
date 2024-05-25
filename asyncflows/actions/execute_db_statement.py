@@ -20,7 +20,7 @@ class Inputs(BaseModel):
 
 
 class Outputs(BaseModel):
-    result: str = Field(description="Result of the SQL statement")
+    text: str = Field(description="Result of the SQL statement")
     data: list[list[Any]]
     headers: list[str]
 
@@ -65,7 +65,7 @@ class ExecuteDBStatement(Action[Inputs, Outputs]):
         data = [[str(cell) for cell in row] for row in data]
 
         return Outputs(
-            result=result_str,
+            text=result_str,
             data=data,
             headers=headers,
         )

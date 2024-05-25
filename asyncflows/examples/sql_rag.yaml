@@ -49,7 +49,7 @@ flow:
       - text: |
           Here is the result of executing the SQL statement:
           ```
-          {{ exec.result }}
+          {{ exec.text }}
           ```
           Can you answer the user query based on this result?
       - var: query
