@@ -269,8 +269,8 @@ class Prompt(StreamingAction[Inputs, Outputs]):
     ):
         api_base = (
             model_config.api_base
-            or os.environ.get("OLLAMA_API_BASE")
-            or "http://localhost:8000"
+            or get_secret("OLLAMA_API_BASE")
+            or "http://localhost:11434"
         )
 
         api_url = os.path.join(
@@ -305,6 +305,24 @@ class Prompt(StreamingAction[Inputs, Outputs]):
             "options": options,
         }
 
+        def process_completion(completion):
+            if not completion:
+                return None
+            try:
+                data = json.loads(completion)
+            except json.JSONDecodeError:
+                return None
+            if (
+                not isinstance(data, dict)
+                or "message" not in data
+                or not isinstance(data["message"], dict)
+                or "content" not in data["message"]
+            ):
+                return None
+            delta = data["message"]["content"]
+            if delta:
+                return delta
+
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 api_url,
@@ -314,24 +332,18 @@ class Prompt(StreamingAction[Inputs, Outputs]):
                 response.raise_for_status()
 
                 # can't use `response.json` cus of unexpected mimetype: application/x-ndjson
-                text = await response.text()
-                for completion in text.split("\n"):
-                    if not completion:
-                        continue
-                    try:
-                        data = json.loads(completion)
-                    except json.JSONDecodeError:
-                        continue
-                    if (
-                        not isinstance(data, dict)
-                        or "message" not in data
-                        or not isinstance(data["message"], dict)
-                        or "content" not in data["message"]
-                    ):
-                        continue
-                    delta = data["message"]["content"]
-                    if delta:
-                        yield delta
+                buffer = ""
+                async for completion in response.content.iter_any():
+                    buffer += completion.decode()
+                    while "\n" in buffer:
+                        json_, buffer = buffer.split("\n", 1)
+                        completion = process_completion(json_)
+                        if completion is not None:
+                            yield completion
+                if buffer:
+                    completion = process_completion(buffer)
+                    if completion is not None:
+                        yield completion
 
     async def _invoke_litellm(
         self,
