@@ -33,6 +33,9 @@ class GetDBSchema(Action[Inputs, Outputs]):
             table = metadata.tables[table_name]
             create_statements.append(str(CreateTable(table).compile(engine)))
 
+        if not create_statements:
+            self.log.warning("No tables found in the database")
+
         schema_text = "\n".join(create_statements)
 
         return Outputs(schema_text=schema_text)
