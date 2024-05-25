@@ -22,6 +22,7 @@ from asyncflows.actions.base import (
 from asyncflows.models.blob import Blob
 from asyncflows.models.config.action import ActionInvocation
 from asyncflows.models.config.flow import ActionConfig, Loop, FlowConfig
+from asyncflows.models.config.model import ModelConfig
 from asyncflows.models.config.transform import TransformsInto
 from asyncflows.models.config.value_declarations import (
     TextDeclaration,
@@ -106,6 +107,7 @@ class ActionService:
         action_id: ExecutableId,
         inputs: Inputs | None,
         flow: FlowConfig,
+        variables: dict[str, Any],
     ) -> AsyncIterator[Outputs | None]:
         # Prepare inputs
         if isinstance(inputs, RedisUrlInputs):
@@ -113,7 +115,14 @@ class ActionService:
         if isinstance(inputs, BlobRepoInputs):
             inputs._blob_repo = self.blob_repo
         if isinstance(inputs, DefaultModelInputs):
-            inputs._default_model = self.config.default_model
+            # default_model is a special case,
+            # allows ValueDeclaration union except for links and lambdas
+            model_config_dict = await self._collect_inputs_from_context(
+                log,
+                self.config.default_model,
+                variables,
+            )
+            inputs._default_model = ModelConfig.model_validate(model_config_dict)
 
         # Get the action instance
         action = self._get_action_instance(log, action_id, flow=flow)
@@ -674,6 +683,7 @@ class ActionService:
                 action_id=action_id,
                 inputs=inputs,
                 flow=flow,
+                variables=variables,
             ):
                 # TODO are there any race conditions here, between result caching and in-progress action awaiting?
                 #  also consider paradigm of multiple workers, indexing tasks in a database and pulling from cache instead
@@ -695,6 +705,7 @@ class ActionService:
                 action_id=task_id,
                 inputs=inputs,
                 flow=flow,
+                variables=variables,
             ):
                 self._broadcast_outputs(log, task_id, outputs)
 

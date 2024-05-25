@@ -37,27 +37,32 @@ def build_hinted_value_declaration(
     vars_: HintType | None = None,
     links: HintType | None = None,
     strict: bool = False,
+    excluded_declaration_types: None | list[type[ValueDeclaration]] = None,
 ):
+    if excluded_declaration_types is None:
+        excluded_declaration_types = []
+
     union_elements = []
 
     if vars_:
         union_elements.append(
             VarDeclaration.from_vars(vars_, strict),
         )
-    if not vars_ or not strict:
+    if not vars_ or not strict and VarDeclaration not in excluded_declaration_types:
         union_elements.append(VarDeclaration)
 
     if links:
         union_elements.append(
             LinkDeclaration.from_vars(links, strict),
         )
-    if not links or not strict:
+    if not links or not strict and LinkDeclaration not in excluded_declaration_types:
         union_elements.append(LinkDeclaration)
 
     other_elements = [
         element
         for element in typing.get_args(ValueDeclaration)
         if element not in (VarDeclaration, LinkDeclaration)
+        and element not in excluded_declaration_types
     ]
     union_elements.extend(other_elements)
 

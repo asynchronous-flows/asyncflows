@@ -74,7 +74,7 @@ def templatify_model(
         if not field_.is_required() or (
             add_union is not None and isinstance(None, add_union)
         ):
-            kwargs["default"] = None
+            kwargs["default"] = field_.default
         if field_.alias is not None:
             kwargs["alias"] = field_.alias
         # else:

@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import tempfile
@@ -256,6 +257,82 @@ class Prompt(StreamingAction[Inputs, Outputs]):
             async for completion in stream.text_stream:
                 yield completion
 
+    @tenacity.retry(
+        wait=tenacity.wait_exponential(multiplier=1, max=10),
+        stop=tenacity.stop_after_attempt(5),
+        retry=tenacity.retry_if_exception_type(aiohttp.ClientError),
+    )
+    async def _invoke_ollama(
+        self,
+        messages: list[dict[str, str]],
+        model_config: ModelConfig,
+    ):
+        api_base = (
+            model_config.api_base
+            or os.environ.get("OLLAMA_API_BASE")
+            or "http://localhost:8000"
+        )
+
+        api_url = os.path.join(
+            api_base,
+            "api",
+            "chat",
+        )
+
+        model_name = model_config.model.removeprefix("ollama/")
+
+        headers = {}
+        if model_config.auth_token is not None:
+            headers["Authorization"] = f"Bearer {model_config.auth_token}"
+
+        options = {}
+
+        if model_config.temperature is not None:
+            options["temperature"] = model_config.temperature
+        if model_config.max_output_tokens is not None:
+            options["num_predict"] = model_config.max_output_tokens
+
+        # TODO support the other optional parameters
+        # if model_config.top_p is not None:
+        #     options["top_p"] = model_config.top_p
+        # if model_config.frequency_penalty is not None:
+        #     options["frequency_penalty"] = model_config.frequency_penalty
+
+        data = {
+            "model": model_name,
+            "messages": messages,
+            "stream": True,
+            "options": options,
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                api_url,
+                json=data,
+                headers=headers,
+            ) as response:
+                response.raise_for_status()
+
+                # can't use `response.json` cus of unexpected mimetype: application/x-ndjson
+                text = await response.text()
+                for completion in text.split("\n"):
+                    if not completion:
+                        continue
+                    try:
+                        data = json.loads(completion)
+                    except json.JSONDecodeError:
+                        continue
+                    if (
+                        not isinstance(data, dict)
+                        or "message" not in data
+                        or not isinstance(data["message"], dict)
+                        or "content" not in data["message"]
+                    ):
+                        continue
+                    delta = data["message"]["content"]
+                    if delta:
+                        yield delta
+
     async def _invoke_litellm(
         self,
         messages: list[dict[str, str]],
@@ -264,6 +341,10 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         openai_api_key = get_secret("OPENAI_API_KEY")
         if openai_api_key is None and "gpt" in model_config.model:
             self.log.warning("OpenAI API key not set")
+
+        headers = {}
+        if model_config.auth_token is not None:
+            headers["Authorization"] = f"Bearer {model_config.auth_token}"
 
         client = None
         try:
@@ -285,6 +366,7 @@ class Prompt(StreamingAction[Inputs, Outputs]):
                     frequency_penalty=model_config.frequency_penalty,
                     presence_penalty=model_config.presence_penalty,
                     base_url=model_config.api_base,
+                    extra_headers=headers,
                     # **model_config.model_dump(),
                 ):
                     delta = completion.choices[0].delta.content  # type: ignore
@@ -302,6 +384,11 @@ class Prompt(StreamingAction[Inputs, Outputs]):
     ) -> AsyncIterator[str]:
         if "claude" in model_config.model:
             iterator = self._invoke_anthropic(
+                messages=messages,
+                model_config=model_config,
+            )
+        elif model_config.model.startswith("ollama/"):
+            iterator = self._invoke_ollama(
                 messages=messages,
                 model_config=model_config,
             )
