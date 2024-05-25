@@ -19,6 +19,10 @@ def action(log, temp_dir):
             Outputs(
                 result=""" id name fullname nickname   
 1   ed   Ed Jones edsnickname""",
+                headers=["id", "name", "fullname", "nickname"],
+                data=[
+                    ['1', "ed", "Ed Jones", "edsnickname"],
+                ],
             ),
         ),
     ],

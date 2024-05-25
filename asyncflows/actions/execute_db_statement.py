@@ -1,3 +1,6 @@
+from typing import Any
+
+
 from asyncflows.actions.base import Action, BaseModel, Field
 from asyncflows.utils.db_utils import get_async_db_url
 
@@ -18,6 +21,8 @@ class Inputs(BaseModel):
 
 class Outputs(BaseModel):
     result: str = Field(description="Result of the SQL statement")
+    data: list[list[Any]]
+    headers: list[str]
 
 
 class ExecuteDBStatement(Action[Inputs, Outputs]):
@@ -55,4 +60,12 @@ class ExecuteDBStatement(Action[Inputs, Outputs]):
         df = pd.DataFrame(rows, columns=Index(column_names))
         result_str = df.to_string(index=False, justify="left")
 
-        return Outputs(result=result_str)
+        headers = list(df.columns)
+        data = df.values.tolist()
+        data = [[str(cell) for cell in row] for row in data]
+
+        return Outputs(
+            result=result_str,
+            data=data,
+            headers=headers,
+        )
