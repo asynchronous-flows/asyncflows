@@ -219,6 +219,7 @@ _allowed_ast_types = (
     ast.ListComp,
     ast.comprehension,
     ast.List,
+    ast.Dict,
     ast.Subscript,
     ast.Tuple,
     ast.BinOp,
