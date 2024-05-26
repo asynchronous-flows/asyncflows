@@ -9,12 +9,10 @@ def get_actions_dict() -> dict[ExecutableName, Type[InternalActionBase[Any, Any]
     import os
     import importlib
 
-    files = os.listdir(os.path.dirname(__file__))
+    if "ACTIONS_MODULE" in os.environ:
+        importlib.import_module(os.environ["ACTIONS_MODULE"])
 
-    if "ACTIONS_PATH" in os.environ:
-        files += os.listdir(os.environ["ACTIONS_PATH"])
-
-    for filename in files:
+    for filename in os.listdir(os.path.dirname(__file__)):
         if filename in ["__init__.py", "base.py"] or filename[-3:] != ".py":
             continue
         module_name = filename.removesuffix(".py")
