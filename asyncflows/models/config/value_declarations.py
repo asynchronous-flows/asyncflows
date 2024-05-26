@@ -163,6 +163,8 @@ class LambdaDeclaration(Declaration):
     async def render(self, context: dict[str, Any]) -> Any:
         verify_ast(ast.parse(self.lambda_))
 
+        simpleeval.MAX_COMPREHENSION_LENGTH = 9999999999999
+
         evaluator = simpleeval.EvalWithCompoundTypes(
             names=context,
             functions={
