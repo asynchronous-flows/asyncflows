@@ -155,7 +155,7 @@ async def measure_coro(
     log: structlog.stdlib.BoundLogger,
     f: Awaitable[T],
     timer: Timer,
-    timeout: int = 180,
+    timeout: float = 180,
 ) -> T:
     coro_wrapper = f.__await__()
     arg = None
@@ -224,7 +224,7 @@ async def measure_async_iterator(
     log: structlog.stdlib.BoundLogger,
     f: AsyncIterator[T],
     timer: Timer,
-    timeout: int = 180,
+    timeout: float = 180,
 ) -> AsyncIterator[T]:
     iter_wrapper = f.__aiter__()
     while True:

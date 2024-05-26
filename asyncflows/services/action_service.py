@@ -146,6 +146,7 @@ class ActionService:
                     log,
                     action.run(inputs),
                     timer,
+                    timeout=self.config.action_timeout,
                 ):
                     # async for outputs in action.run(inputs):
                     log.debug(
