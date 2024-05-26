@@ -1,7 +1,7 @@
 import asyncio
 import contextlib
 from collections import defaultdict
-from typing import AsyncIterator, Any
+from typing import AsyncIterator, Any, Literal
 
 import numpy as np
 # from infinity_emb import AsyncEmbeddingEngine, EngineArgs
@@ -29,9 +29,13 @@ async def shutdown_engine(log, delay: float, model: str, engine: AsyncEmbeddingE
 
 @contextlib.asynccontextmanager
 async def get_engine(
-    log, model: str, keep_engine_alive_delay: float
+    log,
+    model: str,
+    device: Literal["cpu", "cuda", "mps", "tensorrt"] | None,
+    keep_engine_alive_delay: float,
 ) -> AsyncIterator[AsyncEmbeddingEngine]:
     from infinity_emb import AsyncEmbeddingEngine, EngineArgs
+    from infinity_emb.primitives import Device
 
     if model in active_engines:
         engine = active_engines[model]
@@ -42,7 +46,10 @@ async def get_engine(
             if not engine.running:
                 raise ValueError("Engine not starting up, something is wrong")
     else:
-        args = EngineArgs(model_name_or_path=model)
+        args = EngineArgs(
+            model_name_or_path=model,
+            device=Device(device),
+        )
         engine = AsyncEmbeddingEngine.from_args(args)
         active_engines[model] = engine
         log.info("Starting engine", model=model)
@@ -61,6 +68,7 @@ async def get_engine(
 async def retrieve_indices(
     log,
     model: str,
+    device: Literal["cpu", "cuda", "mps", "tensorrt"] | None,
     documents: list[str],
     query: str,
     k: int,
@@ -68,7 +76,7 @@ async def retrieve_indices(
 ) -> list[int]:
     # embed query and documents
     documents.append(query)
-    async with get_engine(log, model, keep_engine_alive_delay) as engine:
+    async with get_engine(log, model, device, keep_engine_alive_delay) as engine:
         embeddings, usage = await engine.embed(sentences=documents)
     log.info("Embedded documents", usage=usage)
     query_embedding = embeddings.pop()
@@ -88,13 +96,14 @@ async def retrieve_indices(
 async def rerank_indices(
     log,
     model: str,
+    device: Literal["cpu", "cuda", "mps", "tensorrt"] | None,
     documents: list[str],
     query: str,
     k: int,
     keep_engine_alive_delay: float = DEFAULT_KEEP_ENGINE_ALIVE_DELAY,
 ) -> list[int]:
     # rerank documents based on query
-    async with get_engine(log, model, keep_engine_alive_delay) as engine:
+    async with get_engine(log, model, device, keep_engine_alive_delay) as engine:
         scores, usage = await engine.rerank(query=query, docs=documents)
     log.info("Reranked documents", usage=usage)
 

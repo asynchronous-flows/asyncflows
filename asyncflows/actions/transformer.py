@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Literal
 
 from asyncflows.actions.base import Action, BaseModel
 from asyncflows.models.config.model import BiEncoderModelType, CrossEncoderModelType
@@ -9,6 +9,7 @@ from asyncflows.utils.transformers_utils import retrieve_indices, rerank_indices
 
 class BaseTransformerInputs(BaseModel):
     model: str
+    device: Literal["cpu", "cuda", "mps", "tensorrt"] | None = None
     # TODO use typevar
     documents: list[Any]
     texts: None | list[str] = None
@@ -93,6 +94,7 @@ class Retrieve(Action[RetrieveInputs, Outputs]):
         indices = await retrieve_indices(
             log=self.log,
             model=inputs.model,
+            device=inputs.device,
             documents=texts,
             query=inputs.query,
             k=inputs.k,
@@ -129,6 +131,7 @@ class Rerank(Action[RerankInputs, Outputs]):
         indices = await rerank_indices(
             log=self.log,
             model=inputs.model,
+            device=inputs.device,
             documents=texts,
             query=inputs.query,
             k=inputs.k,
