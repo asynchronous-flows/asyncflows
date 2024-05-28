@@ -21,13 +21,13 @@ Built with asyncio, pydantic, YAML, jinja
 3.3 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
 3.4 [SQL Retrieval](#sql-retrieval)  
 3.5 [Chatbot](#chatbot)  
-3.6 [Writing your own actions](#writing-your-own-actions)  
 4. [Guides](#guides)  
-4.1 [Writing Flows with Autocomplete](#writing-flows-with-autocomplete)  
-4.2 [Caching with Redis](#caching-with-redis)  
-4.3 [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference)  
-4.4 [Using Any Language Model](#using-any-language-model)  
-4.5 [Prompting in-depth](#prompting-in-depth)  
+4.1 [Custom Actions](#custom-actions)  
+4.2 [Writing Flows with Autocomplete](#writing-flows-with-autocomplete)  
+4.3 [Caching with Redis](#caching-with-redis)  
+4.4 [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference)  
+4.5 [Using Any Language Model](#using-any-language-model)  
+4.6 [Prompting in-depth](#prompting-in-depth)  
 5. [License](#license)
 
 
@@ -213,7 +213,8 @@ See [Using Any Language Model](#using-any-language-model) to use a different mod
 
 ## Text Style Transfer
 
-[![template](https://img.shields.io/badge/template-blue)](https://github.com/asynchronous-flows/text-style-transfer-example)
+[![template repo](https://img.shields.io/badge/template_repo-blue)](https://github.com/asynchronous-flows/text-style-transfer-example)
+[![Try in Colab](https://img.shields.io/badge/colab-red)](https://colab.research.google.com/github/asynchronous-flows/text-style-transfer-example/blob/main/text_style_transfer.ipynb)
 
 This example takes a writing sample, and writes about a topic in the style of the sample.
 
@@ -601,7 +602,7 @@ Both recipes are healthy, vegetarian options that incorporate fresh ingredients 
 
 ## SQL Retrieval
 
-[![template](https://img.shields.io/badge/template-blue)](https://github.com/asynchronous-flows/sql-rag-example)
+[![template repo](https://img.shields.io/badge/template_repo-blue)](https://github.com/asynchronous-flows/sql-rag-example)
 
 This flow facilitates asking questions over a SQL database.
 
@@ -738,7 +739,7 @@ Given the result of the SQL statement, the top 5 most expensive products in the 
 
 ## Chatbot
 
-[![template](https://img.shields.io/badge/template-blue)](https://github.com/asynchronous-flows/pdf-chatbot-example)
+[![template repo](https://img.shields.io/badge/template_repo-blue)](https://github.com/asynchronous-flows/pdf-chatbot-example)
 
 This flow facilitates a chatbot over a set of PDF documents.
 
@@ -920,11 +921,16 @@ The Red Queen's perspective on punishment reveals a stark contrast between her c
 
 </details>
 
-## Writing your own actions
+# Guides
 
-You can create custom actions by subclassing `Action` and defining the input and output models using Pydantic.
+## Custom Actions
 
-Python code for the custom action:
+[![template repo](https://img.shields.io/badge/template_repo-blue)](https://github.com/asynchronous-flows/api-call-example)
+
+You can create custom actions by subclassing `Action`, and defining the input and output models using Pydantic.
+
+Here is an example action that visits a webpage and returns its text content:
+
 ```python
 from asyncflows import Action, BaseModel, Field
 
@@ -952,7 +958,11 @@ class GetURL(Action[Inputs, Outputs]):
                 return Outputs(result=await response.text())
 ```
 
-YAML file of an example flow using this action:
+<details>
+<summary>
+YAML file of an example flow using this action – click to expand
+</summary>
+
 ```yaml
 # get_page_title.yaml
 
@@ -972,6 +982,8 @@ flow:
           What is the title of the webpage?
 default_output: extract_title.result
 ```
+
+</details>
 
 <details>
 <summary>
@@ -998,7 +1010,21 @@ The title of the webpage is "Python (programming language) - Wikipedia".
 
 </details>
 
-# Guides
+As long as your custom actions are imported before instantiating the flow,
+they will be available for use.
+
+Alternatively, to ensure the action is always available, 
+and for it to show up when using the language server for YAML autocomplete,
+register an entrypoint for the module that contains your actions.  
+For example, using poetry, with your actions located in `my_package.actions`,
+include the following at the end of your `pyproject.toml`:
+
+```toml
+[tool.poetry.plugins."asyncflows"]
+actions = "my_package.actions"
+```
+
+See the [API Call Example](https://github.com/asynchronous-flows/api-call-example) for a custom actions template repository.
 
 ## Writing Flows with Autocomplete
 
