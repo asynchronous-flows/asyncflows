@@ -70,7 +70,7 @@ def build_hinted_value_declaration(
 
 
 def build_actions(
-    action_names: list[str],
+    action_names: list[str] | None = None,
     vars_: HintType | None = None,
     links: HintType | None = None,
     strict: bool = False,
@@ -79,6 +79,9 @@ def build_actions(
     # for best typehints and autocompletion possible in the jsonschema
 
     HintedValueDeclaration = build_hinted_value_declaration(vars_, links, strict)
+
+    if action_names is None:
+        action_names = list(get_actions_dict().keys())
 
     actions_dict = get_actions_dict()
     action_models = []
@@ -108,20 +111,9 @@ def build_actions(
             __module__=__name__,
             model_config=ConfigDict(
                 arbitrary_types_allowed=True,
+                extra="forbid",
             ),
             **fields,  # pyright: ignore[reportGeneralTypeIssues]
         )
         action_models.append(action_basemodel)
     return action_models
-
-
-_action_names = list(get_actions_dict().keys())
-ActionInvocationUnion = Union[tuple(build_actions(_action_names))]  # pyright: ignore
-
-
-# TODO assert tests not imported before this line
-import asyncflows.tests.resources.actions  # noqa
-
-
-_testing_action_names = list(get_actions_dict().keys())
-TestingActionInvocationUnion = Union[tuple(build_actions(_testing_action_names))]  # pyright: ignore

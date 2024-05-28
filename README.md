@@ -982,7 +982,7 @@ Python script that runs the flow:
 ```python
 from asyncflows import AsyncFlows
 
-flow = AsyncFlows.from_file("soup.yaml")
+flow = AsyncFlows.from_file("get_page_title.yaml")
 
 # Run the flow and return the default output (result of the extract_title action)
 result = await flow.set_vars(

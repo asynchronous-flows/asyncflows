@@ -214,7 +214,7 @@
           "additionalProperties": {
             "anyOf": [
               {
-                "$ref": "#/$defs/HintedLoop"
+                "$ref": "#/$defs/execute_db_statementActionInvocation"
               },
               {
                 "$ref": "#/$defs/extract_listActionInvocation"
@@ -226,28 +226,25 @@
                 "$ref": "#/$defs/extract_xml_tagActionInvocation"
               },
               {
-                "$ref": "#/$defs/execute_db_statementActionInvocation"
+                "$ref": "#/$defs/get_db_schemaActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/get_urlActionInvocation"
               },
               {
                 "$ref": "#/$defs/ocrActionInvocation"
               },
               {
-                "$ref": "#/$defs/get_db_schemaActionInvocation"
+                "$ref": "#/$defs/promptActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/scoreActionInvocation"
               },
               {
                 "$ref": "#/$defs/retrieveActionInvocation"
               },
               {
                 "$ref": "#/$defs/rerankActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/promptActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/get_urlActionInvocation"
-              },
-              {
-                "$ref": "#/$defs/scoreActionInvocation"
               },
               {
                 "$ref": "#/$defs/test_addActionInvocation"
@@ -290,6 +287,9 @@
               },
               {
                 "$ref": "#/$defs/test_finishActionInvocation"
+              },
+              {
+                "$ref": "#/$defs/HintedLoop"
               }
             ]
           },
@@ -3750,7 +3750,7 @@
       "additionalProperties": {
         "anyOf": [
           {
-            "$ref": "#/$defs/HintedLoop"
+            "$ref": "#/$defs/execute_db_statementActionInvocation"
           },
           {
             "$ref": "#/$defs/extract_listActionInvocation"
@@ -3762,28 +3762,25 @@
             "$ref": "#/$defs/extract_xml_tagActionInvocation"
           },
           {
-            "$ref": "#/$defs/execute_db_statementActionInvocation"
+            "$ref": "#/$defs/get_db_schemaActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/get_urlActionInvocation"
           },
           {
             "$ref": "#/$defs/ocrActionInvocation"
           },
           {
-            "$ref": "#/$defs/get_db_schemaActionInvocation"
+            "$ref": "#/$defs/promptActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/scoreActionInvocation"
           },
           {
             "$ref": "#/$defs/retrieveActionInvocation"
           },
           {
             "$ref": "#/$defs/rerankActionInvocation"
-          },
-          {
-            "$ref": "#/$defs/promptActionInvocation"
-          },
-          {
-            "$ref": "#/$defs/get_urlActionInvocation"
-          },
-          {
-            "$ref": "#/$defs/scoreActionInvocation"
           },
           {
             "$ref": "#/$defs/test_addActionInvocation"
@@ -3826,6 +3823,9 @@
           },
           {
             "$ref": "#/$defs/test_finishActionInvocation"
+          },
+          {
+            "$ref": "#/$defs/HintedLoop"
           }
         ]
       },

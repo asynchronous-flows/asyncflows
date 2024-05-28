@@ -9,7 +9,7 @@ from asyncflows.log_config import get_logger
 from asyncflows.models.config.value_declarations import VarDeclaration
 from asyncflows.repos.blob_repo import InMemoryBlobRepo, BlobRepo
 from asyncflows.repos.cache_repo import ShelveCacheRepo, CacheRepo
-from asyncflows.utils.config_utils import load_config_file, load_config_text
+from asyncflows.utils.loader_utils import load_config_file, load_config_text
 
 
 class AsyncFlows:
@@ -69,7 +69,7 @@ class AsyncFlows:
         cache_repo: CacheRepo | type[CacheRepo] = ShelveCacheRepo,
         blob_repo: BlobRepo | type[BlobRepo] = InMemoryBlobRepo,
     ):
-        config = load_config_text(ActionConfig, text)
+        config = load_config_text(text)
         return AsyncFlows(
             config=config,
             cache_repo=cache_repo,
@@ -85,7 +85,7 @@ class AsyncFlows:
     ) -> "AsyncFlows":
         if isinstance(file, Path):
             file = file.as_posix()
-        config = load_config_file(ActionConfig, file)
+        config = load_config_file(file)
         return AsyncFlows(
             config=config,
             cache_repo=cache_repo,

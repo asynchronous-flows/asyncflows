@@ -4,19 +4,41 @@ from asyncflows.actions.base import ActionMeta, InternalActionBase
 from asyncflows.models.primitives import ExecutableName
 
 
-def get_actions_dict() -> dict[ExecutableName, Type[InternalActionBase[Any, Any]]]:
-    # import all Action subclass declarations in the folder
-    import os
+def recursive_import(package_name):
+    import pkgutil
     import importlib
 
-    if "ACTIONS_MODULE" in os.environ:
-        importlib.import_module(os.environ["ACTIONS_MODULE"])
+    package = importlib.import_module(package_name)
+    if not hasattr(package, "__path__"):
+        print(f"Package {package_name} has no __path__ attribute")
+        raise ImportError
+    for _, module_name, is_pkg in pkgutil.walk_packages(
+        package.__path__, package.__name__ + "."
+    ):
+        try:
+            importlib.import_module(module_name)
+            if is_pkg:
+                recursive_import(module_name)
+        except ImportError as e:
+            print(f"Failed to import {module_name}: {e}")
 
-    for filename in os.listdir(os.path.dirname(__file__)):
-        if filename in ["__init__.py", "base.py"] or filename[-3:] != ".py":
+
+_processed_entrypoints = set()
+
+
+def get_actions_dict() -> dict[ExecutableName, Type[InternalActionBase[Any, Any]]]:
+    import importlib_metadata
+
+    # import all action entrypoints, including `asyncflows.actions` and other installed packages
+    entrypoints = importlib_metadata.entry_points(group="asyncflows")
+    for entrypoint in entrypoints.select(name="actions"):
+        if entrypoint.name in _processed_entrypoints:
             continue
-        module_name = filename.removesuffix(".py")
-        importlib.import_module(f"asyncflows.actions.{module_name}")
+        _processed_entrypoints.add(entrypoint.name)
+        try:
+            recursive_import(entrypoint.value)
+        except Exception as e:
+            print(f"Failed to import entrypoint {entrypoint.name}: {e}")
 
     # return all subclasses of Action as registered in the metaclass
     return ActionMeta.actions_registry

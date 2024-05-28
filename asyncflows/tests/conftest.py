@@ -13,6 +13,7 @@ from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 
+from asyncflows.actions import get_actions_dict
 from asyncflows.actions.prompt import Outputs as PromptOutputs, Prompt
 from asyncflows.actions.transformer import (
     BaseTransformerInputs as TransformerInputs,
@@ -22,7 +23,7 @@ from asyncflows.actions.transformer import (
 )
 from asyncflows.log_config import configure_logging, get_logger
 from asyncflows.models.blob import Blob
-from asyncflows.models.config.flow import TestActionConfig
+from asyncflows.models.config.flow import build_hinted_action_config
 from asyncflows.repos.blob_repo import (
     InMemoryBlobRepo,
     RedisBlobRepo,
@@ -257,8 +258,16 @@ def blocking_func():
     return block
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def testing_actions():
+    # TODO assert tests not imported before this line
+    import asyncflows.tests.resources.actions  # noqa
+
+    testing_action_names = list(get_actions_dict().keys())
+
+    TestActionConfig = build_hinted_action_config(
+        action_names=testing_action_names,
+    )
     with open("asyncflows/tests/resources/testing_actions.yaml") as f:
         return TestActionConfig.model_validate(yaml.safe_load(f))
 
