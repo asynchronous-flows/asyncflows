@@ -86,3 +86,6 @@ markers = [
 testpaths = [
     "asyncflows/tests",
 ]
+
+[tool.poetry.plugins."asyncflows"]
+actions = "asyncflows.actions"
