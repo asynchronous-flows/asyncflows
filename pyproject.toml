@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "asyncflows"
-version = "0.1.5"
+version = "0.1.6"
 description = ""
 authors = ["Rafael Irgolic <hello@irgolic.com>"]
 readme = "README.md"
