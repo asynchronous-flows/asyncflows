@@ -201,7 +201,7 @@ async def measure_coro(
                     )
                     # fut.set_exception(e)
                 except Exception as e:
-                    log.warning(
+                    log.debug(
                         "Subcoroutine raised exception",
                         arg=arg,
                         # exc_info=e,
