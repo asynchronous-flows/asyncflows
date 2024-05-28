@@ -2,6 +2,7 @@ import asyncio
 import traceback
 from collections import defaultdict
 from typing import Any, AsyncIterator, Iterable
+
 from typing_extensions import assert_never
 
 import sentry_sdk
@@ -343,13 +344,6 @@ class ActionService:
             for key in action_config.model_fields
             if key not in ("id", "action") and getattr(action_config, key) is not None
         }
-
-        # FIXME remove this,
-        #  unnecessary since all strings are interpreted as templates in _dependency_ids_from_input_spec
-        # for key, value in input_spec.items():
-        #     if isinstance(value, str):
-        #         value = TemplateDeclaration(text=value)
-        #     input_spec[key] = value
 
         dependencies = self._get_dependency_ids_and_stream_flag_from_input_spec(
             input_spec

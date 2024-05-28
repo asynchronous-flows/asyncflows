@@ -4,13 +4,18 @@ import pydantic
 from pydantic import Field
 
 from asyncflows.models.config.action import (
-    ActionInvocationUnion,
-    TestingActionInvocationUnion,
+    ActionInvocation,
+    build_actions,
 )
 from asyncflows.models.config.common import StrictModel
 from asyncflows.models.config.model import ModelConfig
 from asyncflows.models.config.value_declarations import ValueDeclaration
-from asyncflows.models.primitives import ContextVarName, ContextVarPath, ExecutableId
+from asyncflows.models.primitives import (
+    ContextVarName,
+    ContextVarPath,
+    ExecutableId,
+    HintType,
+)
 from asyncflows.models.config.action import build_hinted_value_declaration
 from asyncflows.models.config.value_declarations import (
     LinkDeclaration,
@@ -29,10 +34,6 @@ class Loop(StrictModel):
         alias="in",
     )
     flow: "FlowConfig"
-
-
-class TestLoop(Loop):
-    flow: "TestFlowConfig"
 
 
 def build_model_config(
@@ -70,15 +71,49 @@ class ActionConfig(StrictModel):
     default_model: ModelConfigDeclaration  # type: ignore
     action_timeout: float = 360
     flow: "FlowConfig"
-    default_output: ContextVarPath
+    default_output: ContextVarPath  # TODO `| ValueDeclaration`
 
 
-class TestActionConfig(ActionConfig):
-    flow: "TestFlowConfig"
-
-
-Executable = Union[ActionInvocationUnion, Loop]
+Executable = Union[ActionInvocation, Loop]
 FlowConfig = dict[ExecutableId, Executable]
 
-TestExecutable = Union[TestingActionInvocationUnion, TestLoop]
-TestFlowConfig = dict[ExecutableId, TestExecutable]
+
+def build_hinted_action_config(
+    action_names: list[str] | None = None,
+    vars_: HintType | None = None,
+    links: HintType | None = None,
+    strict: bool = False,
+):
+    HintedValueDeclaration = build_hinted_value_declaration(
+        # vars_=vars_,
+        links=links,
+        strict=strict,
+    )
+
+    ActionInvocationUnion = Union[
+        tuple(
+            build_actions(
+                action_names=action_names,
+                vars_=vars_,
+                links=links,
+                strict=strict,
+            )
+        )  # pyright: ignore
+    ]
+
+    class HintedLoop(Loop):
+        in_: HintedValueDeclaration = Field(  # type: ignore
+            ...,
+            alias="in",
+        )
+        flow: "HintedFlowConfig"  # type: ignore
+
+    class HintedActionConfig(ActionConfig):
+        flow: "HintedFlowConfig"  # type: ignore
+
+    HintedExecutable = Union[ActionInvocationUnion, HintedLoop]
+    HintedFlowConfig = dict[ExecutableId, HintedExecutable]
+
+    HintedActionConfig.model_rebuild()  # TODO is this necessary?
+
+    return HintedActionConfig

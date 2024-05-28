@@ -1,12 +1,10 @@
 import ast
 import builtins
-import os
 import types
 import typing
 from typing import Optional, Any, Union
 
 import pydantic
-import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
 from asyncflows.models.config.transform import resolve_transforms_from
@@ -245,18 +243,3 @@ def collect_ast_types(node: ast.AST) -> set[type]:
         for child in ast.iter_child_nodes(node):
             types |= collect_ast_types(child)
     return types
-
-
-T = typing.TypeVar("T", bound=BaseModel)
-
-
-def load_config_text(model: type[T], config_text: str) -> T:
-    return model.model_validate(yaml.safe_load(config_text))
-
-
-def load_config_file(model: type[T], filename: str) -> T:
-    if not os.path.exists(filename):
-        raise FileNotFoundError(f"Could not find {filename}")
-
-    with open(filename, "r") as f:
-        return model.model_validate(yaml.safe_load(f))

@@ -5,8 +5,8 @@ default_model:
     var: some_model
 action_timeout: 5
 flow:
-  first_sum:
+  prompt_sum:
     action: prompt
     prompt:
       - text: Can you add 1 and 2?
-default_output: first_sum.result
+default_output: prompt_sum.result

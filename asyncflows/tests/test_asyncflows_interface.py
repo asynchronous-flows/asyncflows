@@ -1,8 +1,7 @@
 from unittest.mock import patch
 
 from asyncflows import AsyncFlows
-from asyncflows.models.config.flow import TestActionConfig
-from asyncflows.utils.config_utils import load_config_file
+from asyncflows.utils.loader_utils import load_config_file
 
 from asyncflows.actions.prompt import (
     Outputs as PromptOutputs,
@@ -12,9 +11,7 @@ from asyncflows.actions.prompt import (
 
 
 async def test_default_model_var(log_history):
-    config = load_config_file(
-        TestActionConfig, "asyncflows/tests/resources/default_model_var.yaml"
-    )
+    config = load_config_file("asyncflows/tests/resources/default_model_var.yaml")
     af = AsyncFlows(config=config).set_vars(
         some_model="hi",
     )
