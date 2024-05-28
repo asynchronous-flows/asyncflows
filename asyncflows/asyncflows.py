@@ -66,22 +66,30 @@ class AsyncFlows:
     def from_text(
         cls,
         text: str,
+        cache_repo: CacheRepo | type[CacheRepo] = ShelveCacheRepo,
+        blob_repo: BlobRepo | type[BlobRepo] = InMemoryBlobRepo,
     ):
         config = load_config_text(ActionConfig, text)
         return AsyncFlows(
             config=config,
+            cache_repo=cache_repo,
+            blob_repo=blob_repo,
         )
 
     @classmethod
     def from_file(
         cls,
         file: str | Path,
+        cache_repo: CacheRepo | type[CacheRepo] = ShelveCacheRepo,
+        blob_repo: BlobRepo | type[BlobRepo] = InMemoryBlobRepo,
     ) -> "AsyncFlows":
         if isinstance(file, Path):
             file = file.as_posix()
         config = load_config_file(ActionConfig, file)
         return AsyncFlows(
             config=config,
+            cache_repo=cache_repo,
+            blob_repo=blob_repo,
         )
 
     def set_vars(self, **kwargs) -> "AsyncFlows":

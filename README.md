@@ -24,9 +24,10 @@ Built with asyncio, pydantic, YAML, jinja
 3.6 [Writing your own actions](#writing-your-own-actions)  
 4. [Guides](#guides)  
 4.1 [Writing Flows with Autocomplete](#writing-flows-with-autocomplete)  
-4.2 [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference)  
-4.3 [Using Any Language Model](#using-any-language-model)  
-4.4 [Prompting in-depth](#prompting-in-depth)  
+4.2 [Caching with Redis](#caching-with-redis)  
+4.3 [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference)  
+4.4 [Using Any Language Model](#using-any-language-model)  
+4.5 [Prompting in-depth](#prompting-in-depth)  
 5. [License](#license)
 
 
@@ -1011,6 +1012,32 @@ Put the following at the top of your YAML flow config file:
 
 The JsonSchema will only catch some errors, 
 stay tuned for a domain-specific language server that will provide more advanced features.
+
+## Caching with Redis
+
+By default, AsyncFlows caches action outputs with a shelve file in a temporary directory.
+
+To cache between runs, we support Redis as a backend:
+
+1. Run [Redis](https://redis.io/download) locally or use a cloud provider.
+
+2. Set the following environment variables:
+
+- `REDIS_HOST` (required)
+- `REDIS_PASSWORD` (required)
+- `REDIS_PORT` (optional, defaults to 6379)
+- `REDIS_USERNAME` (optional, defaults to empty string)
+
+3. Override the default cache with:
+
+```python
+from asyncflows import AsyncFlows, RedisCacheRepo
+
+flow = AsyncFlows.from_file(
+   "flow.yaml",
+   cache_repo=RedisCacheRepo,
+)
+```
 
 ## Setting up Ollama for Local Inference
 

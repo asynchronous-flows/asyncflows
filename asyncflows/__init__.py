@@ -7,4 +7,8 @@ __all__ = [
     "BaseModel",
     "Field",
     "PrivateAttr",
+    "ShelveCacheRepo",
+    "RedisCacheRepo",
 ]
+
+from asyncflows.repos.cache_repo import ShelveCacheRepo, RedisCacheRepo
