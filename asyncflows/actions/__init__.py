@@ -32,9 +32,9 @@ def get_actions_dict() -> dict[ExecutableName, Type[InternalActionBase[Any, Any]
     # import all action entrypoints, including `asyncflows.actions` and other installed packages
     entrypoints = importlib_metadata.entry_points(group="asyncflows")
     for entrypoint in entrypoints.select(name="actions"):
-        if entrypoint.name in _processed_entrypoints:
+        if entrypoint.dist.name in _processed_entrypoints:
             continue
-        _processed_entrypoints.add(entrypoint.name)
+        _processed_entrypoints.add(entrypoint.dist.name)
         try:
             recursive_import(entrypoint.value)
         except Exception as e:
