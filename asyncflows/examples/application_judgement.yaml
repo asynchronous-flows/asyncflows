@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../schemas/action_schema.json
+
 
 
 default_model:
@@ -45,7 +45,7 @@ flow:
           var: application
         - heading: judgement
           link: judgement.result
-
+        
 
 
 default_output: judgement.result suggestions.result
