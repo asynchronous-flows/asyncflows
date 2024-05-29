@@ -1,8 +1,7 @@
-
-
+# yaml-language-server: $schema=https://raw.githubusercontent.com/asynchronous-flows/asyncflows/main/schemas/asyncflows_schema.json
 
 default_model:
-  model: claude-3-opus-20240229
+  model: ollama/llama3
 
 flow:
   judgement:

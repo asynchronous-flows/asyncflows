@@ -931,17 +931,16 @@ The Red Queen's perspective on punishment reveals a stark contrast between her c
 
 ## Application Judgement
 
-This is a flow that analyzes an application for a startup accelerator. 
+[![template repo](https://img.shields.io/badge/template_repo-blue)](https://github.com/asynchronous-flows/application-judgement-example)
+
+This flow analyzes an application for a startup accelerator. 
 
 Provide two text files in the application_information folder, the application.txt containing your responses to an application, and application_criteria which contains information about how the application is to be judged. 
 
-The output of the flow will be a detailed scoring and then a set of suggestions on how to improve. 
-
-[![template repo](https://img.shields.io/badge/template_repo-blue)](https://github.com/asynchronous-flows/application-judgement-example)
-
+The output of the flow will be a detailed scoring and a set of suggestions on how to improve. 
 
 <div align="center">
-<img width="1180" alt="application-judgment" src=>
+
 </div>
 
 <details>
@@ -950,11 +949,10 @@ YAML file that defines the flow – click to expand
 </summary>
 
 ```yaml
-
-
+# application_judgement.yaml
 
 default_model:
-  model: claude-3-opus-20240229
+  model: ollama/llama3
 
 flow:
   judgement:
@@ -1012,20 +1010,12 @@ Running the flow (python and stdout)
 </summary>
 
 ```python
-import os
-from pathlib import Path
 from asyncflows import AsyncFlows
 
 async def main():
-    # Find the `application_judgement` file in the `examples` directory
-    # This is to make sure the example can be run from any directory,
-    # e.g., `python -m asyncflows.examples.rag`
-    examples_dir = Path(os.path.dirname(__file__))
-    info_flow_path = examples_dir / "application_judgement.yaml"
-
     # Find the application and application criteria files
-    application_path = examples_dir / "application_information" / "application.txt"
-    application_criteria_path = examples_dir / "application_information" / "application_criteria.txt"
+    application_path = "application_information/application.txt"
+    application_criteria_path = "application_information/application_criteria.txt"
 
     # Read the contents of the application and application criteria files
     with open(application_path, "r") as f:
@@ -1034,20 +1024,18 @@ async def main():
         application_criteria = f.read()
 
     # Load the application analysis flow
-    flow = AsyncFlows.from_file(info_flow_path).set_vars(
+    flow = AsyncFlows.from_file("application_judgement.yaml").set_vars(
         application=application,
         application_criteria=application_criteria,
     )
 
-
     # Run the flow and get the result
     result_judge = await flow.run("judgement.result")
     print(result_judge)
-    # Optionally run for feedback
 
+    # Optionally run for feedback
     result_suggest = await flow.run("suggestions.result")
     print(result_suggest)
-
 
 
 if __name__ == "__main__":
@@ -1058,6 +1046,7 @@ if __name__ == "__main__":
 Output of the python script:
 
 ---
+
 Judgement:
 Strengths:
 1. Clear and honest description of their business and goals (1 point)
@@ -1112,6 +1101,7 @@ Research our accelerator's focus areas, portfolio, and values to ensure that you
 By addressing these areas and refining your application, you can present a stronger case for your startup's potential and increase your chances of being selected for our accelerator program. Focus on showcasing your startup's unique value proposition, market potential, and growth prospects, while emphasizing the strengths of your team and your fit with our accelerator.
 
 We encourage you to revise your application based on this feedback and resubmit it for further consideration. We appreciate your interest in our accelerator program and wish you the best of luck in your entrepreneurial journey.
+
 ---
 
 </details>
