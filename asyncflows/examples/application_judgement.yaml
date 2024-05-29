@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/asynchronous-flows/asyncflows/main/schemas/asyncflows_schema.json
+
+default_model:
+  model: ollama/llama3
+
+flow:
+  judgement:
+    action: prompt
+    quote_style: xml
+    prompt:
+        - role: system 
+        - text: | 
+            You are evaluating the answers given on an application to a start-up accelerator in San Francisco. 
+            This is a very prestigious and selective application.
+
+            criteria about the application is as follows:
+        - heading: criteria
+          var: application_criteria
+        - role: user
+        - text: |
+            Critically evaluate the following application, determine if this is worth inclusion in your prestigious startup accelerator and the quality of the application.
+            You only have the ability to fund 5 companies and will be presented with over 200 applications.
+            Be careful, wasting your funding opportunities on the wrong companies could lead to bankruptcy and you have a family at home to take care of.
+            Provide a detailed score based accounting of the strengths and weaknesses.
+        - heading: application
+          var: application
+  suggestions: 
+    action: prompt
+    quote_style: xml
+    prompt: 
+        - role: system
+        - text: |
+            You are a seasoned expert in the startup scene who truly believes in the startup who submitted their application.
+            To ensure success in their application in a prestigious startup accelerator you sent the application to an experienced friend who passed judgement on the application.
+            Now you are trying to figure out actionable methods for how to boost their application based on the scores received. 
+            You do have some criteria on what the startup accelerator is looking for:
+        - heading: criteria
+          var: application_criteria
+
+        - role: user
+        - text: |
+            Provide ideas on how to improve this application based on the judgement it received and the criteria you have on the process
+        - heading: application
+          var: application
+        - heading: judgement
+          link: judgement.result
+        
+
+
+default_output: judgement.result

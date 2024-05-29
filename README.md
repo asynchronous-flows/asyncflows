@@ -21,14 +21,15 @@ Built with asyncio, pydantic, YAML, jinja
 3.3 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
 3.4 [SQL Retrieval](#sql-retrieval)  
 3.5 [Chatbot](#chatbot)  
-4. [Guides](#guides)  
+3.6 [Application Judgement](#application-judgement)  
+5. [Guides](#guides)  
 4.1 [Custom Actions](#custom-actions)  
 4.2 [Writing Flows with Autocomplete](#writing-flows-with-autocomplete)  
 4.3 [Caching with Redis](#caching-with-redis)  
 4.4 [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference)  
 4.5 [Using Any Language Model](#using-any-language-model)  
 4.6 [Prompting in-depth](#prompting-in-depth)  
-5. [License](#license)
+6. [License](#license)
 
 
 # Introduction
@@ -922,6 +923,185 @@ Output of the python script:
 The Red Queen's view of punishment is a significant theme that shapes the story of Wonderland. In the Relevant Pages, we see her ordering the beheading of Alice, three gardeners, and others without hesitation or remorse. Her fury is intense, and she screams "Off with her head!" with an air of absolute authority.
 
 The Red Queen's perspective on punishment reveals a stark contrast between her cruel nature and the more benevolent attitudes of other characters, such as the King, who intervenes to save Alice from execution. The Queen's actions also create a sense of danger and chaos, making Wonderland an unpredictable and potentially deadly place for its inhabitants.
+
+---
+
+</details>
+
+
+
+## Application Judgement
+
+[![template repo](https://img.shields.io/badge/template_repo-blue)](https://github.com/asynchronous-flows/application-judgement-example)
+
+This flow analyzes an application for a startup accelerator. 
+
+Provide two text files in the application_information folder, the application.txt containing your responses to an application, and application_criteria which contains information about how the application is to be judged. 
+
+The output of the flow will be a detailed scoring and a set of suggestions on how to improve. 
+
+<div align="center">
+<img width="955" alt="application judgement" src="https://github.com/asynchronous-flows/asyncflows-internal/assets/24586651/6a39d417-80b6-4cde-99c4-2ac26edfa4d3">
+</div>
+
+<details>
+<summary>
+YAML file that defines the flow – click to expand
+</summary>
+
+```yaml
+# application_judgement.yaml
+
+default_model:
+  model: ollama/llama3
+
+flow:
+  judgement:
+    action: prompt
+    quote_style: xml
+    prompt:
+        - role: system 
+        - text: | 
+            You are evaluating the answers given on an application to a start-up accelerator in San Francisco. 
+            This is a very prestigious and selective application.
+
+            criteria about the application is as follows:
+        - heading: criteria
+          var: application_criteria
+        - role: user
+        - text: |
+            Critically evaluate the following application, determine if this is worth inclusion in your prestigious startup accelerator and the quality of the application.
+            You only have the ability to fund 5 companies and will be presented with over 200 applications.
+            Be careful, wasting your funding opportunities on the wrong companies could lead to bankruptcy and you have a family at home to take care of.
+            Provide a detailed score based accounting of the strengths and weaknesses.
+        - heading: application
+          var: application
+  suggestions: 
+    action: prompt
+    quote_style: xml
+    prompt: 
+        - role: system
+        - text: |
+            You are a seasoned expert in the startup scene who truly believes in the startup who submitted their application.
+            To ensure success in their application in a prestigious startup accelerator you sent the application to an experienced friend who passed judgement on the application.
+            Now you are trying to figure out actionable methods for how to boost their application based on the scores received. 
+            You do have some criteria on what the startup accelerator is looking for:
+        - heading: criteria
+          var: application_criteria
+
+        - role: user
+        - text: |
+            Provide ideas on how to improve this application based on the judgement it received and the criteria you have on the process
+        - heading: application
+          var: application
+        - heading: judgement
+          link: judgement.result
+        
+
+
+default_output: judgement.result
+
+```
+
+</details>
+
+<details>
+<summary>
+Running the flow (python and stdout)
+</summary>
+
+```python
+from asyncflows import AsyncFlows
+
+async def main():
+    # Find the application and application criteria files
+    application_path = "application_information/application.txt"
+    application_criteria_path = "application_information/application_criteria.txt"
+
+    # Read the contents of the application and application criteria files
+    with open(application_path, "r") as f:
+        application = f.read()
+    with open(application_criteria_path, "r") as f:
+        application_criteria = f.read()
+
+    # Load the application analysis flow
+    flow = AsyncFlows.from_file("application_judgement.yaml").set_vars(
+        application=application,
+        application_criteria=application_criteria,
+    )
+
+    # Run the flow and get the result
+    result_judge = await flow.run("judgement.result")
+    print(result_judge)
+
+    # Optionally run for feedback
+    result_suggest = await flow.run("suggestions.result")
+    print(result_suggest)
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(main())
+```
+Output of the python script:
+
+---
+
+Judgement:
+Strengths:
+1. Clear and honest description of their business and goals (1 point)
+2. Identified a specific target market (1 point)
+3. Defined revenue model through advertisements and in-app purchases (1 point)
+4. Presented a marketing and customer acquisition strategy (1 point)
+
+Weaknesses:
+1. Lack of innovation and unique selling proposition (-3 points)
+2. Aiming for mediocrity, which may not attract a significant user base (-3 points)
+3. Unremarkable team with average skills and experience (-2 points)
+4. Uninspiring rewards and lackluster influencer partnerships (-2 points)
+5. Unclear competitive advantage in the market (-2 points)
+6. Moderate funding request without a compelling plan for growth and success (-2 points)
+
+Total Score: -9 points
+
+Based on the provided application, MediocreApp Inc. does not present a compelling case for inclusion in the prestigious startup accelerator. The company's focus on delivering a mediocre experience and maintaining a level of ordinariness is not aligned with the goals of funding innovative and high-potential startups.
+
+The lack of a unique selling proposition and the absence of a clear competitive advantage in the market raise concerns about the company's ability to attract and retain users. The team's average skills and experience further contribute to the uncertainty surrounding the startup's potential for success.
+
+Moreover, the moderate funding request without a compelling plan for growth and success does not instill confidence in the company's ability to effectively utilize the accelerator's resources and support.
+
+Given the limited funding opportunities and the need to select the most promising startups, it is not recommended to include MediocreApp Inc. in the accelerator's portfolio. The application's weaknesses significantly outweigh its strengths, and the company's overall approach does not demonstrate the level of innovation, market potential, and growth prospects required to justify the investment.
+
+In conclusion, considering the competitive nature of the startup accelerator and the responsibility to allocate funds wisely, MediocreApp Inc. does not meet the criteria for inclusion in the program.
+
+Thank you for submitting your application to our prestigious startup accelerator. After carefully reviewing your application and considering the judgement provided, we have identified several areas where your application could be improved to increase your chances of being selected for our program.
+
+Suggestions:
+1. Focus on Innovation and Unique Selling Proposition:
+Your application currently lacks a strong emphasis on innovation and a clear unique selling proposition. To stand out in a competitive market, it's crucial to highlight how your app offers something truly unique and valuable to users. Instead of aiming for mediocrity, focus on identifying and showcasing the features or benefits that set your app apart from the competition.
+
+2. Target Market and User Engagement:
+While you have identified a target market, aiming for users who are content with mediocrity may not be a sustainable approach. Consider repositioning your target market to focus on users who are looking for a specific benefit or solution that your app provides. Demonstrate how your app can engage users and provide them with a compelling reason to continue using it.
+
+3. Team Strengths and Expertise:
+The current description of your team suggests average skills and experience. To instill confidence in your startup's ability to execute and succeed, highlight the specific strengths, expertise, and track record of your team members. Emphasize any relevant experience, achievements, or skills that make your team well-suited to tackle the challenges in your market.
+
+4. Competitive Advantage and Market Potential:
+Your application would benefit from a clearer articulation of your competitive advantage and the potential of your target market. Conduct thorough market research to identify the size, growth potential, and opportunities within your market. Explain how your app addresses a specific pain point or need better than existing solutions, and provide evidence to support your claims.
+
+5. Growth and Success Strategy:
+While you have outlined a revenue model and marketing strategy, your application lacks a compelling plan for growth and success. Provide more details on how you plan to scale your user base, increase revenue, and achieve key milestones. Discuss any partnerships, customer acquisition strategies, or product development plans that will drive your startup's growth.
+
+6. Funding Utilization and Milestones:
+Your funding request would be strengthened by providing a more detailed breakdown of how the funds will be utilized and the specific milestones you aim to achieve. Clarify how the funding will be allocated across different areas of your business, such as product development, marketing, and team expansion. Set clear and measurable milestones that demonstrate your startup's progress and potential.
+
+7. Fit with Accelerator's Focus and Values:
+Research our accelerator's focus areas, portfolio, and values to ensure that your startup aligns well with our program. Highlight how your app and team fit with our accelerator's objectives and how our resources and support can help you achieve your goals. Demonstrate your commitment to growth, learning, and making a positive impact.
+
+By addressing these areas and refining your application, you can present a stronger case for your startup's potential and increase your chances of being selected for our accelerator program. Focus on showcasing your startup's unique value proposition, market potential, and growth prospects, while emphasizing the strengths of your team and your fit with our accelerator.
+
+We encourage you to revise your application based on this feedback and resubmit it for further consideration. We appreciate your interest in our accelerator program and wish you the best of luck in your entrepreneurial journey.
 
 ---
 
