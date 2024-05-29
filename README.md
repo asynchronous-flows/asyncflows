@@ -104,6 +104,8 @@ OpenAI
 pip install 'asyncflows[openai]'
 ```
 
+See also [Using Any Language Model](#using-any-language-model).
+
 </details>
 
 <details>
@@ -115,6 +117,8 @@ Anthropic
 pip install 'asyncflows[anthropic]'
 ```
 
+See also [Using Any Language Model](#using-any-language-model).
+
 </details>
 
 <details>
@@ -125,6 +129,8 @@ Google Cloud (Vertex AI)
 ```bash
 pip install 'asyncflows[gcloud]'
 ```
+
+See also [Using Any Language Model](#using-any-language-model).
 
 </details>
 
