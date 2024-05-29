@@ -3,34 +3,36 @@ from pathlib import Path
 from asyncflows import AsyncFlows
 
 async def main():
-    # Find the `rag.yaml` file in the `examples` directory
+    # Find the `application_judgement` file in the `examples` directory
     # This is to make sure the example can be run from any directory,
     # e.g., `python -m asyncflows.examples.rag`
     examples_dir = Path(os.path.dirname(__file__))
-    rag_flow_path = examples_dir / "application_judgement.yaml"
+    info_flow_path = examples_dir / "application_judgement.yaml"
 
-    # Find the application and application info files
+    # Find the application and application criteria files
     application_path = examples_dir / "application_information" / "application.txt"
-    application_info_path = examples_dir / "application_information" / "application_info.txt"
+    application_criteria_path = examples_dir / "application_information" / "application_criteria.txt"
 
-    # Read the contents of the application and application info files
+    # Read the contents of the application and application criteria files
     with open(application_path, "r") as f:
         application = f.read()
-    with open(application_info_path, "r") as f:
-        application_info = f.read()
+    with open(application_criteria_path, "r") as f:
+        application_criteria = f.read()
 
     # Load the application analysis flow
-    flow = AsyncFlows.from_file(rag_flow_path).set_vars(
+    flow = AsyncFlows.from_file(info_flow_path).set_vars(
         application=application,
-        application_info=application_info,
+        application_criteria=application_criteria,
     )
 
 
     # Run the flow and get the result
-    result = await flow.run()
+    result_judge = await flow.run("judgement.result")
+    print(result_judge)
     # Optionally run for feedback
-    # result = await flow.run(suggestions   )
-    print(result)
+
+    result_suggest = await flow.run("suggestions.result")
+    print(result_suggest)
 
 
 
