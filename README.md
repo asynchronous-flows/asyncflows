@@ -21,14 +21,15 @@ Built with asyncio, pydantic, YAML, jinja
 3.3 [Retrieval Augmented Generation (RAG)](#retrieval-augmented-generation-rag)  
 3.4 [SQL Retrieval](#sql-retrieval)  
 3.5 [Chatbot](#chatbot)  
-4. [Guides](#guides)  
+3.6 [Application Judgement](#application-judgement)  
+5. [Guides](#guides)  
 4.1 [Custom Actions](#custom-actions)  
 4.2 [Writing Flows with Autocomplete](#writing-flows-with-autocomplete)  
 4.3 [Caching with Redis](#caching-with-redis)  
 4.4 [Setting up Ollama for Local Inference](#setting-up-ollama-for-local-inference)  
 4.5 [Using Any Language Model](#using-any-language-model)  
 4.6 [Prompting in-depth](#prompting-in-depth)  
-5. [License](#license)
+6. [License](#license)
 
 
 # Introduction
@@ -940,7 +941,7 @@ Provide two text files in the application_information folder, the application.tx
 The output of the flow will be a detailed scoring and a set of suggestions on how to improve. 
 
 <div align="center">
-
+<img width="955" alt="application judgement" src="https://github.com/asynchronous-flows/asyncflows-internal/assets/24586651/6a39d417-80b6-4cde-99c4-2ac26edfa4d3">
 </div>
 
 <details>
