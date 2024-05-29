@@ -101,7 +101,7 @@ OpenAI
 </summary>
 
 ```bash
-pip install asyncflows[openai]
+pip install 'asyncflows[openai]'
 ```
 
 </details>
@@ -112,7 +112,7 @@ Anthropic
 </summary>
 
 ```bash
-pip install asyncflows[anthropic]
+pip install 'asyncflows[anthropic]'
 ```
 
 </details>
@@ -123,7 +123,7 @@ Google Cloud (Vertex AI)
 </summary>
 
 ```bash
-pip install asyncflows[gcloud]
+pip install 'asyncflows[gcloud]'
 ```
 
 </details>
@@ -136,7 +136,7 @@ Postgres
 </summary>
 
 ```bash
-pip install asyncflows[pg]
+pip install 'asyncflows[pg]'
 ```
 
 </details>
@@ -147,7 +147,7 @@ SQLite
 </summary>
 
 ```bash
-pip install asyncflows[sqlite]
+pip install 'asyncflows[sqlite]'
 ```
 
 </details>
@@ -166,7 +166,7 @@ Retrieve and Rerank
 </summary>
 
 ```bash
-pip install asyncflows[transformers]
+pip install 'asyncflows[transformers]'
 ```
 
 </details>
@@ -177,7 +177,7 @@ PDF Extraction
 </summary>
 
 ```bash
-pip install asyncflows[pdf]
+pip install 'asyncflows[pdf]'
 ```
 
 </details>
