@@ -1214,16 +1214,18 @@ See the [API Call Example](https://github.com/asynchronous-flows/api-call-exampl
 
 ## Writing Flows with Autocomplete
 
-For an easier time writing flows, use YAML Language Server in your editor with our JsonSchema.
+[![language server](https://img.shields.io/badge/language_server-blue)](https://github.com/asynchronous-flows/asyncflows-lsp)
 
-Put the following at the top of your YAML flow config file:
+For an easier time writing flows, use YAML Language Server in your editor with the [asyncflows Language Server](https://github.com/asynchronous-flows/asyncflows-lsp).
+
+1. Install the [asyncflows Language Server](https://github.com/asynchronous-flows/asyncflows-lsp)
+
+2. Put the following line at the top of your YAML flow config file.
+This will trigger the language server, but also provide rudimentary JsonSchema checks if it's not enabled.
 
 ```yaml
 # yaml-language-server: $schema=https://raw.githubusercontent.com/asynchronous-flows/asyncflows/main/schemas/asyncflows_schema.json
 ```
-
-The JsonSchema will only catch some errors, 
-stay tuned for a domain-specific language server that will provide more advanced features.
 
 ## Caching with Redis
 
