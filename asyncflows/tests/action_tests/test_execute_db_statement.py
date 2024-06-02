@@ -13,7 +13,7 @@ def action(log, temp_dir):
     [
         (
             Inputs(
-                database_url="DUMMY",
+                database_url="sqlite:///dummy_this_is_mocked.db",
                 statement="SELECT * FROM users",
             ),
             Outputs(

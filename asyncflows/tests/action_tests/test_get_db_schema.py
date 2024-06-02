@@ -12,7 +12,7 @@ def action(log, temp_dir):
     "inputs, expected_outputs",
     [
         (
-            Inputs(database_url="DUMMY"),
+            Inputs(database_url="sqlite:///dummy_this_is_mocked.db"),
             Outputs(
                 schema_text="""
 CREATE TABLE users (

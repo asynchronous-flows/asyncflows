@@ -16,10 +16,10 @@ class GetDBSchema(Action[Inputs, Outputs]):
     name = "get_db_schema"
 
     async def run(self, inputs: Inputs) -> Outputs:
-        from sqlalchemy import create_engine, MetaData
+        from sqlalchemy import create_engine, MetaData, URL
         from sqlalchemy.sql.ddl import CreateTable
 
-        database_url = get_sync_db_url(inputs.database_url)
+        database_url: URL = get_sync_db_url(inputs.database_url)
         engine = create_engine(database_url)
         if engine is None:
             raise ValueError("Could not connect to the database")

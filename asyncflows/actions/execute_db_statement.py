@@ -1,6 +1,5 @@
 from typing import Any
 
-
 from asyncflows.actions.base import Action, BaseModel, Field
 from asyncflows.utils.db_utils import get_async_db_url
 
@@ -29,7 +28,7 @@ class ExecuteDBStatement(Action[Inputs, Outputs]):
     name = "execute_db_statement"
 
     async def run(self, inputs: Inputs) -> Outputs:
-        from sqlalchemy import text
+        from sqlalchemy import text, URL
         from sqlalchemy.ext.asyncio import create_async_engine
 
         import pandas as pd
@@ -47,7 +46,7 @@ class ExecuteDBStatement(Action[Inputs, Outputs]):
 
         statement = text(statement)
 
-        database_url = get_async_db_url(inputs.database_url)
+        database_url: URL = get_async_db_url(inputs.database_url)
         engine = create_async_engine(database_url)
         if engine is None:
             raise ValueError("Could not connect to the database")
