@@ -1,49 +1,57 @@
 import typing
-from typing import Any, Literal
+from typing import Any, Literal, Union, Annotated
 
 import pydantic
+from pydantic import Field
 
 from asyncflows.models.primitives import HintType
 
 
-def _get_recursive_subfields(obj: dict | pydantic.BaseModel | Any) -> list[str]:
+def _get_recursive_subfields(
+    obj: dict | pydantic.BaseModel | Any, prefix: str = ""
+) -> list[type[str]]:
     out = []
     if isinstance(obj, dict):
         for name, field in obj.items():
             # out.append(name)
-            sub_out = _get_recursive_subfields(field)
-            out.extend([name + "." + sub_name for sub_name in sub_out])
+            out.extend(_get_recursive_subfields(field, prefix=f"{name}."))
     elif isinstance(obj, type) and issubclass(obj, pydantic.BaseModel):
         for name, field in obj.model_fields.items():
-            out.append(name)
-            sub_out = _get_recursive_subfields(field.annotation)
-            out.extend([name + "." + sub_name for sub_name in sub_out])
+            field_annotation = Field(...)
+            if field.description:
+                field_annotation.description = field.description
+            out.append(
+                Annotated[
+                    Literal[f"{prefix}{name}"],  # type: ignore
+                    field_annotation,
+                ]
+            )
+            out.extend(_get_recursive_subfields(field.annotation, prefix=f"{name}."))
     return out
 
 
 def get_path_literal(
     vars_: HintType,
     strict: bool,
-) -> type[str | None]:
+) -> type[str]:
+    union_elements = []
+
     if not strict:
-        var_type = str
-    else:
-        # TODO it doesn't really make sense to include NoneType, but starting the type with Never breaks pydantic
-        var_type = type(None)
+        union_elements.append(str)
 
     # if there are any strings, then that's the name of the var
     string_vars = [var for var in vars_ if isinstance(var, str)]
     if string_vars:
-        var_type = var_type | Literal[tuple(string_vars)]  # type: ignore
+        union_elements.append(Literal[tuple(string_vars)])  # type: ignore
 
     # if there are any models, then each recursive subfield is a var, like jsonpath
     model_vars = [var for var in vars_ if isinstance(var, (pydantic.BaseModel, dict))]
     for model_var in model_vars:
         subfields = _get_recursive_subfields(model_var)
         if subfields:
-            var_type = var_type | Literal[tuple(subfields)]  # type: ignore
+            union_elements.extend(subfields)
 
-    return var_type
+    return Union[tuple(union_elements)]  # type: ignore
 
 
 def get_var_string(
@@ -78,4 +86,4 @@ def filter_none_from_type(
     if len(type_args) == 1:
         return type_args[0]
     else:
-        return typing.Union[new_type_args]  # type: ignore
+        return Union[new_type_args]  # type: ignore
