@@ -111,7 +111,9 @@ class Inputs(DefaultModelInputs):
 
 
 class Outputs(BaseModel):
-    result: str
+    result: str = Field(
+        description="Response given by the LLM",
+    )
 
 
 class Prompt(StreamingAction[Inputs, Outputs]):
