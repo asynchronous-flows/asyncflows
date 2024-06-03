@@ -3,12 +3,15 @@ from typing import Any, assert_never
 import structlog
 
 from asyncflows.models.config.action import ActionInvocation
+from asyncflows.models.config.common import extract_root_var
 from asyncflows.models.config.flow import (
     ActionConfig,
     Loop,
     FlowConfig,
+    Executable,
 )
 from asyncflows.models.config.model import ModelConfig
+from asyncflows.models.primitives import ContextVarPath, ExecutableId
 from asyncflows.services.action_service import ActionService
 
 
@@ -39,6 +42,31 @@ def check_default_model_consistency(
     return pass_
 
 
+def check_flow_consistency(
+    log: structlog.stdlib.BoundLogger,
+    nodes: list[ExecutableId],
+    variables: set[str],
+    flow: FlowConfig,
+):
+    pass_ = True
+
+    for executable_id in nodes:
+        log = log.bind(
+            dependency_path=f"{log._context['dependency_path']}.{executable_id}"
+        )
+        invocation = flow[executable_id]
+        if isinstance(invocation, Loop):
+            if not check_loop_consistency(log, flow, invocation, variables):
+                pass_ = False
+        elif isinstance(invocation, ActionInvocation):
+            if not check_action_consistency(log, flow, invocation, variables):
+                pass_ = False
+        else:
+            assert_never(invocation)
+
+    return pass_
+
+
 def check_loop_consistency(
     log: structlog.stdlib.BoundLogger,
     flow: FlowConfig,
@@ -55,12 +83,19 @@ def check_loop_consistency(
         if dep not in flow:
             log.error("Dependency not found in flow", dependency=dep)
             pass_ = False
+        else:
+            if not check_invocation_consistency(
+                log.bind(dependency_path=dep), flow, flow[dep], variables
+            ):
+                pass_ = False
 
     joint_variables = variables | {loop.for_}
     joint_flow = flow | loop.flow
 
+    # TODO at time of writing all actions in the loop subflow are run;
+    #  after we move from that, this shouldn't check against the whole flow, but only the relevant invocations
     if not check_flow_consistency(
-        log, loop.flow, joint_variables, flow_namespace=joint_flow
+        log, list(loop.flow), joint_variables, flow=joint_flow
     ):
         pass_ = False
 
@@ -83,38 +118,34 @@ def check_action_consistency(
         if dep not in flow:
             log.error("Dependency not found in flow", dependency=dep)
             pass_ = False
+        else:
+            if not check_invocation_consistency(
+                log.bind(dependency_path=dep), flow, flow[dep], variables
+            ):
+                pass_ = False
 
     return pass_
 
 
-def check_flow_consistency(
+def check_invocation_consistency(
     log: structlog.stdlib.BoundLogger,
     flow: FlowConfig,
+    invocation: Executable,
     variables: set[str],
-    flow_namespace: FlowConfig | None = None,
 ):
-    if flow_namespace is None:
-        flow_namespace = flow
-    pass_ = True
-
-    for name, invocation in flow.items():
-        log = log.bind(dependency_path=f"{log._context['dependency_path']}.{name}")
-        if isinstance(invocation, Loop):
-            if not check_loop_consistency(log, flow_namespace, invocation, variables):
-                pass_ = False
-        elif isinstance(invocation, ActionInvocation):
-            if not check_action_consistency(log, flow_namespace, invocation, variables):
-                pass_ = False
-        else:
-            assert_never(invocation)
-
-    return pass_
+    if isinstance(invocation, Loop):
+        return check_loop_consistency(log, flow, invocation, variables)
+    elif isinstance(invocation, ActionInvocation):
+        return check_action_consistency(log, flow, invocation, variables)
+    else:
+        assert_never(invocation)
 
 
 def check_config_consistency(
     log: structlog.stdlib.BoundLogger,
     config: ActionConfig,
     variables: set[str],
+    target_output: ContextVarPath,
 ):
     pass_ = True
 
@@ -123,8 +154,16 @@ def check_config_consistency(
     ):
         pass_ = False
 
-    if not check_flow_consistency(
-        log.bind(dependency_path="flow"), config.flow, variables
+    root_dependency_id = extract_root_var(target_output)
+    if root_dependency_id not in config.flow:
+        log.error("Dependency not found in flow", dependency=root_dependency_id)
+        return False
+
+    if not check_invocation_consistency(
+        log.bind(dependency_path=root_dependency_id),
+        config.flow,
+        config.flow[root_dependency_id],
+        variables,
     ):
         pass_ = False
 

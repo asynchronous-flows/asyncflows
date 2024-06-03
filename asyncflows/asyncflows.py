@@ -108,7 +108,10 @@ class AsyncFlows:
             target_output = self.action_config.default_output
 
         if not check_config_consistency(
-            self.log, self.action_config, set(self.variables)
+            self.log,
+            self.action_config,
+            set(self.variables),
+            target_output,
         ):
             raise ValueError("Flow references unset variables")
 
@@ -137,7 +140,10 @@ class AsyncFlows:
             target_output = self.action_config.default_output
 
         if not check_config_consistency(
-            self.log, self.action_config, set(self.variables)
+            self.log,
+            self.action_config,
+            set(self.variables),
+            target_output,
         ):
             raise ValueError("Flow references unset variables")
 

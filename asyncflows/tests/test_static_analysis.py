@@ -25,4 +25,7 @@ def test_static_analysis(
 ) -> None:
     full_actions_path = os.path.join("asyncflows", "tests", "resources", actions_path)
     config = load_config_file(full_actions_path, config_model=testing_actions_type)
-    assert check_config_consistency(log, config, variables) is expected
+    assert (
+        check_config_consistency(log, config, variables, config.default_output)
+        is expected
+    )
