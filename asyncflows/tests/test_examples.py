@@ -4,6 +4,9 @@ import os
 
 import pytest
 
+from asyncflows.utils.loader_utils import load_config_file
+from asyncflows.utils.static_utils import check_config_consistency
+
 
 @pytest.fixture(scope="function")
 def mock_builtins_input(monkeypatch):
@@ -75,3 +78,32 @@ async def test_run_example(
 
     await example_module.main()
     assert not any(log_line["log_level"] == "error" for log_line in log_history)
+
+
+example_vars = {
+    "application_judgement": {"application", "application_criteria"},
+    "chatbot": {"pdf_filepaths", "message", "conversation_history"},
+    "debono": {"query"},
+    "get_page_title": {"url"},
+    "rag": {"texts", "question"},
+    "sql_rag": {"query"},
+    "text_style_transfer": {"writing_sample", "topic"},
+}
+
+
+@pytest.mark.parametrize(
+    "example_name",
+    get_example_names(),
+)
+async def test_examples_statically(log, example_name):
+    example_stem = f"examples/{example_name}"
+    example_yaml = f"{example_stem}.yaml"
+
+    vars_ = example_vars.get(example_name, set())
+
+    # if example files don't exist
+    if not os.path.exists(example_yaml):
+        raise FileNotFoundError(f"Example not found: {example_name}")
+
+    config = load_config_file(example_yaml)
+    assert check_config_consistency(log, config, vars_)
