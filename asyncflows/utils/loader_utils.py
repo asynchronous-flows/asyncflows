@@ -15,11 +15,14 @@ def load_config_text(config_text: str) -> ActionConfig:
     return config_model.model_validate(yaml.safe_load(config_text))
 
 
-def load_config_file(filename: str) -> ActionConfig:
+def load_config_file(
+    filename: str, config_model: type[ActionConfig] | None = None
+) -> ActionConfig:
     if not os.path.exists(filename):
         raise FileNotFoundError(f"Could not find {filename}")
 
-    config_model = get_config_model()
+    if config_model is None:
+        config_model = get_config_model()
 
     with open(filename, "r") as f:
         return config_model.model_validate(yaml.safe_load(f))

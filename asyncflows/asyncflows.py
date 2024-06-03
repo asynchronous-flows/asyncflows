@@ -10,6 +10,7 @@ from asyncflows.models.config.value_declarations import VarDeclaration
 from asyncflows.repos.blob_repo import InMemoryBlobRepo, BlobRepo
 from asyncflows.repos.cache_repo import ShelveCacheRepo, CacheRepo
 from asyncflows.utils.loader_utils import load_config_file, load_config_text
+from asyncflows.utils.static_utils import check_config_consistency
 
 
 class AsyncFlows:
@@ -106,6 +107,11 @@ class AsyncFlows:
         if target_output is None:
             target_output = self.action_config.default_output
 
+        if not check_config_consistency(
+            self.log, self.action_config, set(self.variables)
+        ):
+            raise ValueError("Flow references unset variables")
+
         declaration = VarDeclaration(
             var=target_output,
         )
@@ -129,6 +135,11 @@ class AsyncFlows:
     async def stream(self, target_output: None | str = None):
         if target_output is None:
             target_output = self.action_config.default_output
+
+        if not check_config_consistency(
+            self.log, self.action_config, set(self.variables)
+        ):
+            raise ValueError("Flow references unset variables")
 
         declaration = VarDeclaration(
             var=target_output,

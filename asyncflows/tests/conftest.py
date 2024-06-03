@@ -259,17 +259,21 @@ def blocking_func():
 
 
 @pytest.fixture(scope="session")
-def testing_actions():
+def testing_actions_type():
     # TODO assert tests not imported before this line
     import asyncflows.tests.resources.actions  # noqa
 
     testing_action_names = list(get_actions_dict().keys())
 
-    TestActionConfig = build_hinted_action_config(
+    return build_hinted_action_config(
         action_names=testing_action_names,
     )
+
+
+@pytest.fixture()
+def testing_actions(testing_actions_type):
     with open("asyncflows/tests/resources/testing_actions.yaml") as f:
-        return TestActionConfig.model_validate(yaml.safe_load(f))
+        return testing_actions_type.model_validate(yaml.safe_load(f))
 
 
 @pytest.fixture
