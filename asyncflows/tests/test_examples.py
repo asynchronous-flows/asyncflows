@@ -44,7 +44,6 @@ def get_example_names():
     return example_names
 
 
-@pytest.mark.slow
 # @pytest.mark.skipif(
 #     "ANTHROPIC_API_KEY" not in os.environ, reason="requires ANTROPIC_API_KEY env var"
 # )
