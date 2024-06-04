@@ -19,10 +19,10 @@ from asyncflows.models.primitives import (
     LambdaString,
     TemplateString,
     ContextVarName,
-    HintType,
+    HintLiteral,
 )
 from asyncflows.utils.config_utils import get_names_from_ast, verify_ast
-from asyncflows.utils.type_utils import get_var_string, get_path_literal
+from asyncflows.utils.type_utils import get_var_string
 
 
 ###
@@ -40,7 +40,7 @@ class Declaration(StrictModel):
         raise NotImplementedError
 
     @classmethod
-    def from_vars(cls, vars_: HintType, strict: bool) -> type[Self]:
+    def from_hint_literal(cls, hint_literal: HintLiteral, strict: bool) -> type[Self]:
         return cls
 
 
@@ -76,14 +76,13 @@ class VarDeclaration(Declaration):
         return await render_var(self.var, context)
 
     @classmethod
-    def from_vars(cls, vars_: HintType, strict: bool) -> type[Self]:
-        var_type = get_path_literal(vars_, strict)
-        varstr = get_var_string(vars_, strict)
+    def from_hint_literal(cls, hint_literal: HintLiteral, strict: bool) -> type[Self]:
+        varstr = get_var_string(hint_literal, strict)
         field_infos = cls.model_fields.copy()
         fields: dict[str, tuple] = {
             var: (info.annotation, info) for var, info in field_infos.items()
         }
-        fields["var"] = (var_type, ...)
+        fields["var"] = (hint_literal, ...)
         return pydantic.create_model(  # type: ignore
             f"{cls.__name__}_{varstr}",
             __base__=cls,
@@ -107,14 +106,13 @@ class LinkDeclaration(Declaration):
         return await render_var(self.link, context)
 
     @classmethod
-    def from_vars(cls, vars_: HintType, strict: bool) -> type[Self]:
-        var_type = get_path_literal(vars_, strict)
-        varstr = get_var_string(vars_, strict)
+    def from_hint_literal(cls, hint_literal: HintLiteral, strict: bool) -> type[Self]:
+        varstr = get_var_string(hint_literal, strict)
         field_infos = cls.model_fields.copy()
         fields: dict[str, tuple] = {
             var: (info.annotation, info) for var, info in field_infos.items()
         }
-        fields["link"] = (var_type, ...)
+        fields["link"] = (hint_literal, ...)
         return pydantic.create_model(  # type: ignore
             f"{cls.__name__}_{varstr}",
             __base__=cls,

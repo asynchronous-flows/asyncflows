@@ -4,7 +4,7 @@ from typing import Any, Literal, Union, Annotated
 import pydantic
 from pydantic import Field
 
-from asyncflows.models.primitives import HintType
+from asyncflows.models.primitives import HintType, HintLiteral
 
 
 def _get_recursive_subfields(
@@ -55,22 +55,23 @@ def get_path_literal(
 
 
 def get_var_string(
-    vars_: HintType | None,
+    hint_literal: HintLiteral | None,
     strict: bool,
 ) -> str:
-    if vars_ is None:
+    if hint_literal is None:
         var_str = ""
     else:
-        var_list = [
-            var
-            if isinstance(var, str)
-            else list(var)[0]
-            if isinstance(var, dict)
-            else str(__name__)
-            for var in vars_
-            if var
-        ]
-        var_str = "_".join(var_list)
+        # hint_literal is a nested annotated literal union, pull out only the strings
+        strings = []
+        frontier = [hint_literal]
+        while frontier:
+            arg = frontier.pop()
+            if isinstance(arg, str):
+                strings.append(arg)
+            elif hasattr(arg, "__args__"):
+                frontier.extend(arg.__args__)  # type: ignore
+
+        var_str = "".join(strings)
     if strict:
         var_str = var_str + "__strict"
     return var_str

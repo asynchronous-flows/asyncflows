@@ -8,7 +8,7 @@ import pydantic
 from pydantic import BaseModel, ConfigDict, Field
 
 from asyncflows.models.config.transform import resolve_transforms_from
-from asyncflows.models.primitives import HintType
+from asyncflows.models.primitives import HintLiteral
 from asyncflows.utils.type_utils import filter_none_from_type
 
 
@@ -23,8 +23,8 @@ def is_subclass_of_basemodel(type_) -> typing.TypeGuard[type[BaseModel]]:
 
 def templatify_model(
     model: type[BaseModel],
-    vars_: HintType | None,
-    links: HintType | None,
+    vars_: HintLiteral | None,
+    links: HintLiteral | None,
     add_union: Optional[type] = None,
     strict: bool = False,
 ) -> dict[str, tuple[type, Any]]:

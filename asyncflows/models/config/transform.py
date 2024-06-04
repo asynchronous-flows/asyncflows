@@ -8,7 +8,7 @@ import structlog
 from pydantic import BaseModel
 from pydantic_core import PydanticUndefined
 
-from asyncflows.models.primitives import HintType
+from asyncflows.models.primitives import HintLiteral
 from asyncflows.utils.type_utils import get_var_string, filter_none_from_type
 
 RealType = TypeVar("RealType")
@@ -38,8 +38,8 @@ class TransformsFrom:  # (Generic[ConfigType]):
     @classmethod
     def _get_config_type(
         cls,
-        vars_: HintType | None,
-        links: HintType | None,
+        vars_: HintLiteral | None,
+        links: HintLiteral | None,
         strict: bool = False,
     ) -> type:  # -> type[ConfigType]:
         raise NotImplementedError
@@ -60,8 +60,8 @@ _transformation_cache = {}
 
 def resolve_transforms_from(
     type_: Any,
-    vars_: HintType | None,
-    links: HintType | None,
+    vars_: HintLiteral | None,
+    links: HintLiteral | None,
     strict: bool = False,
 ) -> Any:  # Union[type[ConfigType], type[ImplementsTransformsInContext]]:
     # to avoid forward references when unnecessary

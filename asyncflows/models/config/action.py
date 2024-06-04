@@ -11,7 +11,7 @@ from asyncflows.models.config.value_declarations import (
     ValueDeclaration,
     LinkDeclaration,
 )
-from asyncflows.models.primitives import HintType
+from asyncflows.models.primitives import HintLiteral
 from asyncflows.models.primitives import ExecutableName
 from asyncflows.utils.config_utils import templatify_model
 
@@ -34,8 +34,8 @@ class ActionInvocation(StrictModel):
 
 
 def build_hinted_value_declaration(
-    vars_: HintType | None = None,
-    links: HintType | None = None,
+    vars_: HintLiteral | None = None,
+    links: HintLiteral | None = None,
     strict: bool = False,
     excluded_declaration_types: None | list[type[ValueDeclaration]] = None,
 ):
@@ -46,14 +46,14 @@ def build_hinted_value_declaration(
 
     if vars_:
         union_elements.append(
-            VarDeclaration.from_vars(vars_, strict),
+            VarDeclaration.from_hint_literal(vars_, strict),
         )
     if not vars_ or not strict and VarDeclaration not in excluded_declaration_types:
         union_elements.append(VarDeclaration)
 
     if links:
         union_elements.append(
-            LinkDeclaration.from_vars(links, strict),
+            LinkDeclaration.from_hint_literal(links, strict),
         )
     if not links or not strict and LinkDeclaration not in excluded_declaration_types:
         union_elements.append(LinkDeclaration)
@@ -71,8 +71,8 @@ def build_hinted_value_declaration(
 
 def build_actions(
     action_names: list[str] | None = None,
-    vars_: HintType | None = None,
-    links: HintType | None = None,
+    vars_: HintLiteral | None = None,
+    links: HintLiteral | None = None,
     strict: bool = False,
 ):
     # Dynamically build action models from currently defined actions

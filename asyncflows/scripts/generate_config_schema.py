@@ -3,21 +3,23 @@ import json
 import os
 import traceback
 
-from pydantic import ValidationError
+from pydantic import ValidationError, TypeAdapter
 
+from asyncflows import BaseModel
 from asyncflows.actions import get_actions_dict
 from asyncflows.models.config.flow import (
     Loop,
     build_hinted_action_config,
 )
 from asyncflows.utils.loader_utils import load_config_file
+from asyncflows.utils.type_utils import get_path_literal
 
 _cache = {}
 
 
 def _build_action_specs(
     config_filename: str,
-):
+) -> list[dict[str, BaseModel]] | None:
     key = config_filename
     if key in _cache:
         return _cache[key]
@@ -46,7 +48,7 @@ def _build_action_specs(
     return action_specs
 
 
-def _build_vars(
+def _build_links(
     config_filename: str,
 ):
     action_specs = _build_action_specs(
@@ -62,21 +64,35 @@ def _build_asyncflows_schema(
     action_names: list[str],
     strict: bool,
     config_filename: str | None = None,
+    link_hint_literal_name: str = "__LinkHintLiteral",
 ):
     if config_filename:
-        links = _build_vars(
+        links = _build_links(
             config_filename=config_filename,
         )
+        link_hint_literal = get_path_literal(links, strict)
     else:
         links = None
+        link_hint_literal = None
 
     HintedActionConfig = build_hinted_action_config(
         action_names=action_names,
-        links=links,
+        links=link_hint_literal,
         vars_=None,
         strict=strict,
     )
     workflow_schema = HintedActionConfig.model_json_schema()
+
+    if link_hint_literal is not None:
+        definitions = workflow_schema["$defs"]
+        if link_hint_literal_name in definitions:
+            raise ValueError(
+                f"Link hint literal name `{link_hint_literal_name}` already exists in definitions"
+            )
+        definitions[link_hint_literal_name] = TypeAdapter(
+            link_hint_literal
+        ).json_schema()
+
     return workflow_schema
 
 

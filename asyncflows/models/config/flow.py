@@ -14,7 +14,7 @@ from asyncflows.models.primitives import (
     ContextVarName,
     ContextVarPath,
     ExecutableId,
-    HintType,
+    HintLiteral,
 )
 from asyncflows.models.config.action import build_hinted_value_declaration
 from asyncflows.models.config.value_declarations import (
@@ -80,8 +80,8 @@ FlowConfig = dict[ExecutableId, Executable]
 
 def build_hinted_action_config(
     action_names: list[str] | None = None,
-    vars_: HintType | None = None,
-    links: HintType | None = None,
+    vars_: HintLiteral | None = None,
+    links: HintLiteral | None = None,
     strict: bool = False,
 ):
     HintedValueDeclaration = build_hinted_value_declaration(

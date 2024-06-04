@@ -32,3 +32,4 @@ TemplateString = str
 
 
 HintType = Sequence[str | BaseModel | dict]
+HintLiteral = type[str]

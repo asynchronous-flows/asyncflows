@@ -19,7 +19,7 @@ from asyncflows.models.config.value_declarations import (
     LinkDeclaration,
     # ConstDeclaration,
 )
-from asyncflows.models.primitives import TemplateString, HintType
+from asyncflows.models.primitives import TemplateString, HintLiteral
 
 
 class QuoteStyle(enum.Enum):
@@ -71,22 +71,22 @@ class ContextElement(PromptElementBase, TransformsFrom):
     @classmethod
     def _get_config_type(
         cls,
-        vars_: HintType | None,
-        links: HintType | None,
+        vars_: HintLiteral | None,
+        links: HintLiteral | None,
         strict: bool = False,
     ) -> type["PromptContextInConfig"]:
         union_elements = []
 
         if vars_:
             union_elements.append(
-                PromptContextInConfigVar.from_vars(vars_, strict),
+                PromptContextInConfigVar.from_hint_literal(vars_, strict),
             )
         if not vars_ or not strict:
             union_elements.append(PromptContextInConfigVar)
 
         if links:
             union_elements.append(
-                PromptContextInConfigLink.from_vars(links, strict),
+                PromptContextInConfigLink.from_hint_literal(links, strict),
             )
         if not links or not strict:
             union_elements.append(PromptContextInConfigLink)
