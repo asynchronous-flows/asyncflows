@@ -273,11 +273,7 @@ class Prompt(StreamingAction[Inputs, Outputs]):
             or "http://localhost:11434"
         )
 
-        api_url = os.path.join(
-            api_base,
-            "api",
-            "chat",
-        )
+        api_url = f"{api_base}/api/chat"
 
         model_name = model_config.model.removeprefix("ollama/")
 
