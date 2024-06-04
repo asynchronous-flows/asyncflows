@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "asyncflows"
-version = "0.1.6"
-description = ""
+version = "0.1.7"
+description = "Config-Driven Asynchronous AI Pipelines"
 authors = ["Rafael Irgolic <hello@irgolic.com>"]
 readme = "README.md"
 license = "BSL-1.1"
