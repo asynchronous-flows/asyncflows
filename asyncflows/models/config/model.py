@@ -1,6 +1,6 @@
 from typing import Optional, Literal, Annotated
 
-from typing_extensions import Doc
+from pydantic import Field
 
 from asyncflows.models.config.common import StrictModel
 
@@ -18,8 +18,8 @@ ModelType = (
             "ollama/mixtral:8x7b",
             "ollama/mixtral:8x22b",
         ],
-        Doc(
-            "Run inference on [Ollama](https://ollama.com/); defaults `api_base` to `localhost:11434`"
+        Field(
+            description="Run inference on [Ollama](https://ollama.com/); defaults `api_base` to `localhost:11434`"
         ),
     ]
     |
@@ -34,14 +34,16 @@ ModelType = (
             "gpt-3.5-turbo-1106",
             "gpt-3.5-turbo",
         ],
-        Doc("OpenAI model; requires `OPENAI_API_KEY` environment variable"),
+        Field(
+            description="OpenAI model; requires `OPENAI_API_KEY` environment variable"
+        ),
     ]
     |
     # google models
     Annotated[
         Literal["gemini-pro",],
-        Doc(
-            "Google model; requires `GCP_CREDENTIALS_64` environment variable (base64-encoded GCP credentials JSON)"
+        Field(
+            description="Google model; requires `GCP_CREDENTIALS_64` environment variable (base64-encoded GCP credentials JSON)"
         ),
     ]
     |
@@ -52,7 +54,9 @@ ModelType = (
             "claude-3-opus-20240229",
             "claude-3-sonnet-20240229",
         ],
-        Doc("Anthropic model; requires `ANTHROPIC_API_KEY` environment variable"),
+        Field(
+            description="Anthropic model; requires `ANTHROPIC_API_KEY` environment variable"
+        ),
     ]
     | str
 )
