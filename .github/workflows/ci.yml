@@ -15,7 +15,7 @@ jobs:
   generate_schema_without_optional_deps:
     strategy:
       matrix:
-        python-version: [ 3.11 ]
+        python-version: [ '3.10', '3.11' ]
         poetry-version: [ 1.7.1 ]
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +38,7 @@ jobs:
   pytest:
     strategy:
       matrix:
-        python-version: [ 3.11 ]
+        python-version: [ '3.10', '3.11' ]
         poetry-version: [ 1.7.1 ]
     runs-on: ubuntu-latest
     services:
@@ -80,7 +80,7 @@ jobs:
   pyright:
     strategy:
       matrix:
-        python-version: [ 3.11 ]
+        python-version: [ '3.10', '3.11' ]
         pyright-version: [ 1.1.343 ]
     runs-on: ubuntu-latest
     steps:
