@@ -7,7 +7,7 @@ readme = "README.md"
 license = "BSL-1.1"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.13"
+python = ">=3.10,<3.12"
 pydantic = "^2.4.2"
 tenacity = "^8.2.3"
 pyyaml = "^6.0.1"
