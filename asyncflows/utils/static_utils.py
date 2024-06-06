@@ -1,4 +1,4 @@
-from typing import Any, assert_never
+from typing_extensions import Any, assert_never
 
 import structlog
 
