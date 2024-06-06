@@ -1268,7 +1268,7 @@ ollama serve
 3. Pull the `ollama/llama3` model (or the model you plan to use):
 
 ```bash
-ollama pull ollama/llama3
+ollama pull llama3
 ```
 
 That's it! You're ready to run the examples.
