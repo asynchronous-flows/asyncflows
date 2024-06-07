@@ -79,22 +79,22 @@ class ContextElement(PromptElementBase, TransformsFrom):
 
         if vars_:
             union_elements.append(
-                PromptContextInConfigVar.from_hint_literal(vars_, strict),
+                ContextVar.from_hint_literal(vars_, strict),
             )
         if not vars_ or not strict:
-            union_elements.append(PromptContextInConfigVar)
+            union_elements.append(ContextVar)
 
         if links:
             union_elements.append(
-                PromptContextInConfigLink.from_hint_literal(links, strict),
+                ContextLink.from_hint_literal(links, strict),
             )
         if not links or not strict:
-            union_elements.append(PromptContextInConfigLink)
+            union_elements.append(ContextLink)
 
         other_elements = [
             element
             for element in typing.get_args(PromptContextInConfig)
-            if element not in (PromptContextInConfigVar, PromptContextInConfigLink)
+            if element not in (ContextVar, ContextLink)
         ]
         union_elements.extend(other_elements)
 
@@ -173,25 +173,25 @@ class PromptContextInConfigBase(Declaration, TransformsInto[ContextElement]):
         )
 
 
-class PromptContextInConfigVar(PromptContextInConfigBase, VarDeclaration):
+class ContextVar(PromptContextInConfigBase, VarDeclaration):
     """
     A variable declaration for prompt context in config.
     """
 
 
-class PromptContextInConfigLink(PromptContextInConfigBase, LinkDeclaration):
+class ContextLink(PromptContextInConfigBase, LinkDeclaration):
     """
     An input declaration for prompt context in config.
     """
 
 
-class PromptContextInConfigTemplate(PromptContextInConfigBase, TextDeclaration):
+class ContextTemplate(PromptContextInConfigBase, TextDeclaration):
     """
     A template string for prompt context in config.
     """
 
 
-class PromptContextInConfigLambda(PromptContextInConfigBase, LambdaDeclaration):
+class ContextLambda(PromptContextInConfigBase, LambdaDeclaration):
     """
     A lambda declaration for prompt context in config.
     """
@@ -204,9 +204,9 @@ class PromptContextInConfigLambda(PromptContextInConfigBase, LambdaDeclaration):
 
 
 PromptContextInConfig = Union[
-    PromptContextInConfigVar,
-    PromptContextInConfigTemplate,
-    PromptContextInConfigLink,
-    PromptContextInConfigLambda,
+    ContextVar,
+    ContextTemplate,
+    ContextLink,
+    ContextLambda,
     # PromptContextInConfigConst,
 ]
