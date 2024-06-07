@@ -17,7 +17,7 @@ from asyncflows.utils.type_utils import get_path_literal
 _cache = {}
 
 
-def _build_action_specs(
+def _build_output_specs(
     config_filename: str,
 ) -> list[dict[str, BaseModel]] | None:
     key = config_filename
@@ -31,27 +31,27 @@ def _build_action_specs(
         traceback.print_exc()
         return None
 
-    action_specs = []
+    output_specs = []
     actions = get_actions_dict()
     for action_id, action_invocation in action_config.flow.items():
         if isinstance(action_invocation, Loop):
             # TODO build for-loop specs
             continue
         action_name = action_invocation.action
-        action_specs.append(
+        output_specs.append(
             {
                 action_id: actions[action_name]._get_outputs_type(),
             }
         )
 
-    _cache[key] = action_specs
-    return action_specs
+    _cache[key] = output_specs
+    return output_specs
 
 
 def _build_links(
     config_filename: str,
 ):
-    action_specs = _build_action_specs(
+    action_specs = _build_output_specs(
         config_filename=config_filename,
     )
     if action_specs is None:
@@ -72,7 +72,6 @@ def _build_asyncflows_schema(
         )
         link_hint_literal = get_path_literal(links, strict)
     else:
-        links = None
         link_hint_literal = None
 
     HintedActionConfig = build_hinted_action_config(
