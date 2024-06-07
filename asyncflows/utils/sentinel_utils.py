@@ -1,3 +1,4 @@
+import inspect
 from typing import Any, TypeGuard
 
 
@@ -6,7 +7,7 @@ class Sentinel:
 
 
 def is_sentinel(value: Any) -> TypeGuard[type[Sentinel]]:
-    return isinstance(value, type) and issubclass(value, Sentinel)
+    return inspect.isclass(value) and issubclass(value, Sentinel)
 
 
 def is_set_of_tuples(value: Any) -> TypeGuard[set[tuple]]:

@@ -1,4 +1,5 @@
 # Transforming between config and action variables
+import inspect
 import types
 import typing
 from typing import TypeVar, Generic, Any, Union
@@ -78,7 +79,7 @@ def resolve_transforms_from(
         and not hasattr(type_, "__origin__")
         and type_.__module__ != "builtins"
     ):
-        if isinstance(type_, type) and issubclass(type_, BaseModel):
+        if inspect.isclass(type_) and issubclass(type_, BaseModel):
             name = f"{type_.__name__}_{var_string}"
             module = __name__
         else:
@@ -122,7 +123,7 @@ def resolve_transforms_from(
         _transformation_cache[cache_key] = type_
         return type_
 
-    if not isinstance(type_, types.GenericAlias) and issubclass(type_, BaseModel):
+    if inspect.isclass(type_) and issubclass(type_, BaseModel):
         fields = {}
         for field_name, field_ in type_.model_fields.items():
             # Annotate optional fields with a default of None
@@ -144,7 +145,7 @@ def resolve_transforms_from(
             **fields,
         )  # pyright: ignore[reportGeneralTypeIssues]
         type_.model_rebuild()
-    if issubclass(type_, TransformsFrom):
+    if inspect.isclass(type_) and issubclass(type_, TransformsFrom):
         type_ = type_._get_config_type(
             vars_=vars_,
             links=links,

@@ -1,5 +1,6 @@
 import ast
 import builtins
+import inspect
 import types
 import typing
 from typing import Optional, Any, Union
@@ -10,15 +11,6 @@ from pydantic import BaseModel, ConfigDict, Field
 from asyncflows.models.config.transform import resolve_transforms_from
 from asyncflows.models.primitives import HintLiteral
 from asyncflows.utils.type_utils import filter_none_from_type
-
-
-def is_subclass_of_basemodel(type_) -> typing.TypeGuard[type[BaseModel]]:
-    # 3.11 doesn't need this special case,
-    # but in 3.10 `issubclass(type_, BaseModel)` throws on GenericAlias-likes
-    origin_type = typing.get_origin(type_)
-    if origin_type is not None:
-        type_ = origin_type
-    return isinstance(type_, type) and issubclass(type_, BaseModel)
 
 
 def templatify_model(
@@ -46,7 +38,7 @@ def templatify_model(
                 is_none_union = True
 
         # templatify subfields
-        if is_subclass_of_basemodel(type_):
+        if inspect.isclass(type_) and issubclass(type_, pydantic.BaseModel):
             subfields = templatify_model(
                 type_,
                 vars_=vars_,
@@ -88,11 +80,7 @@ def templatify_model(
         if add_union is not None:
             # check that union does not collide with existing type
             collides = False
-            if (
-                isinstance(type_, type)
-                and typing.get_origin(type_) is None
-                and issubclass(type_, pydantic.BaseModel)
-            ):
+            if inspect.isclass(type_) and issubclass(type_, pydantic.BaseModel):
                 for field_name in type_.model_fields:
                     if any(
                         field_name in m.__fields__ for m in typing.get_args(add_union)

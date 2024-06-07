@@ -1,3 +1,4 @@
+import inspect
 import typing
 from typing import Any, Literal, Union, Annotated
 
@@ -15,7 +16,7 @@ def _get_recursive_subfields(
         for name, field in obj.items():
             # out.append(name)
             out.extend(_get_recursive_subfields(field, prefix=f"{name}."))
-    elif isinstance(obj, type) and issubclass(obj, pydantic.BaseModel):
+    elif inspect.isclass(obj) and issubclass(obj, pydantic.BaseModel):
         for name, field in obj.model_fields.items():
             field_annotation = Field(...)
             if field.description:
