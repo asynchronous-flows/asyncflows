@@ -133,9 +133,10 @@ def resolve_transforms_from(
             else:
                 default = ...
             field_type = field_.annotation
-            field_type = resolve_transforms_from(field_type, vars_, links, strict)
-            fields[field_name] = (field_type, default)
+            new_field_type = resolve_transforms_from(field_type, vars_, links, strict)
+            fields[field_name] = (typing.Annotated[new_field_type, field_], default)
         # TODO does this break anything? the module namespacing miiiight be a problem
+        # TODO instead of repackaging every pydantic model, only do it if there's a nested TransformsFrom subclass
         type_ = pydantic.create_model(
             name or type_.__name__,
             __base__=type_,
