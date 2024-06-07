@@ -117,11 +117,11 @@ class Outputs(BaseModel):
 
 
 class Prompt(StreamingAction[Inputs, Outputs]):
-    """
-    Prompt to generate a string.
-    """
-
     name = "prompt"
+
+    description = """
+    Prompt the LLM with a message and receive a response.
+    """
 
     def build_messages(
         self,
