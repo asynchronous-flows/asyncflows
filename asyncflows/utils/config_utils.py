@@ -226,6 +226,8 @@ _allowed_ast_types = (
     ast.Eq,
     ast.NotEq,
     ast.Call,
+    ast.JoinedStr,
+    ast.FormattedValue,
 )
 
 
