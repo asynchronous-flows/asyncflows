@@ -47,14 +47,14 @@ class Declaration(StrictModel):
 class TextDeclaration(Declaration):
     text: TemplateString = Field(
         description="""
-A template declaration is a jinja2 template, rendered within the context of the flow and any provided variables.
+A text declaration is a jinja2 template, rendered within the context of the flow and any provided variables.
 If you reference an action's output, it will ensure that action runs before this one.
 
 For more information, see the Jinja2 documentation: https://jinja.palletsprojects.com/en/3.0.x/templates/.
 """,
         json_schema_extra={
             "markdownDescription": """
-A template declaration is a jinja2 template, rendered within the context of the flow and any provided variables.  
+A text declaration is a jinja2 template, rendered within the context of the flow and any provided variables.  
 If you reference an action's output, it will ensure that action runs before this one.
 
 Reference variables or action outputs like: 
