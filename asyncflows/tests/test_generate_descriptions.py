@@ -5,6 +5,14 @@ from asyncflows import Field
 from asyncflows.actions.utils.prompt_context import ContextElement
 from asyncflows.models.config.action import build_field_description
 from asyncflows.models.config.model import ModelConfig
+import enum
+
+
+# string enum
+class Color(str, enum.Enum):
+    RED = "red"
+    GREEN = "green"
+    BLUE = "blue"
 
 
 @pytest.mark.parametrize(
@@ -23,6 +31,12 @@ from asyncflows.models.config.model import ModelConfig
             FieldInfo.from_annotation(list[str]),
             False,
             "list_of_data: list[str]",
+        ),
+        (
+            "string_enum",
+            FieldInfo.from_annotation(Color),
+            False,
+            "string_enum: 'red' | 'green' | 'blue'",
         ),
         (
             "list_of_models",
