@@ -941,7 +941,7 @@ Provide two text files in the application_information folder, the application.tx
 The output of the flow will be a detailed scoring and a set of suggestions on how to improve. 
 
 <div align="center">
-<img width="955" alt="application judgement" src="https://github.com/asynchronous-flows/asyncflows-internal/assets/24586651/6a39d417-80b6-4cde-99c4-2ac26edfa4d3">
+<img width="955" alt="application judgement" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/cd8d1f05-db00-4c85-88d2-3b925b738d5b">
 </div>
 
 <details>
