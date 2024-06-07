@@ -45,11 +45,44 @@ class Declaration(StrictModel):
 
 
 class TextDeclaration(Declaration):
-    """
-    A template declaration is a string that can be rendered within a context.
-    """
+    text: TemplateString = Field(
+        description="""
+A template declaration is a jinja2 template, rendered within the context of the flow and any provided variables.
+If you reference an action's output, it will ensure that action runs before this one.
 
-    text: TemplateString
+For more information, see the Jinja2 documentation: https://jinja.palletsprojects.com/en/3.0.x/templates/.
+""",
+        json_schema_extra={
+            "markdownDescription": """
+A template declaration is a jinja2 template, rendered within the context of the flow and any provided variables.  
+If you reference an action's output, it will ensure that action runs before this one.
+
+Reference variables or action outputs like: 
+
+> ```yaml
+> text: |
+> ```
+> ```jinja
+>   Hi {{ name }}, the output of action_id is {{ action_id.output_name }}
+> ```
+
+It also supports advanced features such as loops and conditionals:
+
+> ```yaml
+> text: |
+> ```
+> ```jinja
+>   {% for item in items -%}
+>     {% if item.name != 'foo' -%}
+>     {{ item.name }}: {{ item.value }}
+>     {% endif %}
+>   {% endfor %}
+> ```
+
+For more information, see the [Jinja2 documentation](https://jinja.palletsprojects.com/en/3.0.x/templates/).
+"""
+        },
+    )
 
     def get_dependencies(self) -> set[ContextVarName]:
         return extract_vars_from_template(self.text)
@@ -62,11 +95,9 @@ class TextDeclaration(Declaration):
 
 
 class VarDeclaration(Declaration):
-    """
-    A variable declaration is a string that references a variable (or path to nested variable) in the context.
-    """
-
-    var: ContextVarPath
+    var: ContextVarPath = Field(
+        description="A variable declaration references a variable (or path to nested variable) in the context."
+    )
 
     def get_dependencies(self) -> set[ContextVarName]:
         id_ = extract_root_var(self.var)
@@ -92,11 +123,9 @@ class VarDeclaration(Declaration):
 
 
 class LinkDeclaration(Declaration):
-    """
-    An link declaration is a string that references another action's output
-    """
-
-    link: ContextVarPath
+    link: ContextVarPath = Field(
+        description="A link declaration references another action's output, and ensures that action runs before this one."
+    )
 
     def get_dependencies(self) -> set[ContextVarName]:
         id_ = extract_root_var(self.link)
@@ -122,11 +151,9 @@ class LinkDeclaration(Declaration):
 
 
 class EnvDeclaration(Declaration):
-    """
-    An env declaration is a string that references an environment variable.
-    """
-
-    env: str
+    env: str = Field(
+        description="An environment declaration references the name of an environment variable that is loaded during runtime."
+    )
 
     def get_dependencies(self) -> set[ContextVarName]:
         return set()
@@ -148,11 +175,37 @@ class EnvDeclaration(Declaration):
 
 
 class LambdaDeclaration(Declaration):
-    """
-    A lambda declaration is a python expression that can be evaluated within a context.
-    """
+    lambda_: LambdaString = Field(
+        alias="lambda",
+        description="""
+A lambda declaration is a python expression evaluated within the context of the flow and any provided variables.
+If you reference an action's output, it will ensure that action runs before this one.
+""",
+        json_schema_extra={
+            "markdownDescription": """
+A lambda declaration is a python expression evaluated within the context of the flow and any provided variables.  
+If you reference an action's output, it will ensure that action runs before this one.
 
-    lambda_: LambdaString = Field(alias="lambda")
+Reference variables or action outputs like:
+
+> ```yaml
+> lambda: |
+> ```
+> ```python
+>   "My name is " + name + ". The output of action_id is " + action_id.output_name
+> ```
+
+You can also use list comprehension and conditionals:
+
+> ```yaml
+> lambda: |
+> ```
+> ```python
+>   [item for item in items if item.name != 'foo']
+> ```
+""",
+        },
+    )
 
     def get_dependencies(self) -> set[ContextVarName]:
         parsed_code = ast.parse(self.lambda_, mode="eval")

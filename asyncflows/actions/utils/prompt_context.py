@@ -6,6 +6,7 @@ from typing_extensions import assert_never
 import structlog.stdlib
 from pydantic import ConfigDict
 
+from asyncflows import Field
 from asyncflows.models.config.common import StrictModel
 from asyncflows.models.config.transform import (
     TransformsInto,
@@ -160,7 +161,33 @@ class PromptContextInConfigBase(Declaration, TransformsInto[ContextElement]):
     A base class for prompt context in config.
     """
 
-    heading: TemplateString
+    heading: TemplateString = Field(
+        description="The heading for the context element.",
+        json_schema_extra={
+            "markdownDescription": """
+The heading for the context element.
+
+If `quote_style` is set to `backticks`, the heading will be wrapped in backticks, according to the following jinja template:    
+
+> ~~~jinja
+> {{ heading }}
+> ```
+> {{ value }}
+> ```
+> ~~~
+
+
+If `quote_style` is set to `xml`, the heading will be wrapped in XML tags, according to the following jinja template:
+
+> ```jinja
+> <{{ heading }}>
+> {{ value }}
+> </{{ heading }}>
+> ```
+
+""",
+        },
+    )
 
     async def transform_from_config(
         self, log: structlog.stdlib.BoundLogger, context: dict[str, Any]
