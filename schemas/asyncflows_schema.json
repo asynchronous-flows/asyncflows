@@ -35,10 +35,14 @@
           "type": "boolean"
         },
         "lambda": {
+          "description": "\nA lambda declaration is a python expression evaluated within the context of the flow and any provided variables.\nIf you reference an action's output, it will ensure that action runs before this one.\n",
+          "markdownDescription": "\nA lambda declaration is a python expression evaluated within the context of the flow and any provided variables.  \nIf you reference an action's output, it will ensure that action runs before this one.\n\nReference variables or action outputs like:\n\n> ```yaml\n> lambda : |\n> ```\n> ```python\n>   \"My name is \" + name + \". The output of action_id is \" + action_id.output_name\n> ```\n\nYou can also use list comprehension and conditionals:\n\n> ```yaml\n> lambda : |\n> ```\n> ```python\n>   [item for item in items if item.name != 'foo']\n> ```\n",
           "title": "Lambda",
           "type": "string"
         },
         "heading": {
+          "description": "The heading for the context element.",
+          "markdownDescription": "\nThe heading for the context element.\n\nIf `quote_style` is set to `backticks`, the heading will be wrapped in backticks, according to the following jinja template:    \n\n> ~~~jinja\n> {{ heading }}\n> ```\n> {{ value }}\n> ```\n> ~~~\n\n\nIf `quote_style` is set to `xml`, the heading will be wrapped in XML tags, according to the following jinja template:\n\n> ```jinja\n> <{{ heading }}>\n> {{ value }}\n> </{{ heading }}>\n> ```\n\n",
           "title": "Heading",
           "type": "string"
         }
@@ -60,10 +64,13 @@
           "type": "boolean"
         },
         "link": {
+          "description": "A link declaration references another action's output, and ensures that action runs before this one.",
           "title": "Link",
           "type": "string"
         },
         "heading": {
+          "description": "The heading for the context element.",
+          "markdownDescription": "\nThe heading for the context element.\n\nIf `quote_style` is set to `backticks`, the heading will be wrapped in backticks, according to the following jinja template:    \n\n> ~~~jinja\n> {{ heading }}\n> ```\n> {{ value }}\n> ```\n> ~~~\n\n\nIf `quote_style` is set to `xml`, the heading will be wrapped in XML tags, according to the following jinja template:\n\n> ```jinja\n> <{{ heading }}>\n> {{ value }}\n> </{{ heading }}>\n> ```\n\n",
           "title": "Heading",
           "type": "string"
         }
@@ -85,10 +92,14 @@
           "type": "boolean"
         },
         "text": {
+          "description": "\nA template declaration is a jinja2 template, rendered within the context of the flow and any provided variables.\nIf you reference an action's output, it will ensure that action runs before this one.\n\nFor more information, see the Jinja2 documentation: https://jinja.palletsprojects.com/en/3.0.x/templates/.\n",
+          "markdownDescription": "\nA template declaration is a jinja2 template, rendered within the context of the flow and any provided variables.  \nIf you reference an action's output, it will ensure that action runs before this one.\n\nReference variables or action outputs like: \n\n> ```yaml\n> text : |\n> ```\n> ```jinja\n>   Hi {{ name }}, the output of action_id is {{ action_id.output_name }}\n> ```\n\nIt also supports advanced features such as loops and conditionals:\n\n> ```yaml\n> text : |\n> ```\n> ```jinja\n>   {% for item in items -%}\n>     {% if item.name != 'foo' -%}\n>     {{ item.name }}: {{ item.value }}\n>     {% endif %}\n>   {% endfor %}\n> ```\n\nFor more information, see the [Jinja2 documentation](https://jinja.palletsprojects.com/en/3.0.x/templates/).\n",
           "title": "Text",
           "type": "string"
         },
         "heading": {
+          "description": "The heading for the context element.",
+          "markdownDescription": "\nThe heading for the context element.\n\nIf `quote_style` is set to `backticks`, the heading will be wrapped in backticks, according to the following jinja template:    \n\n> ~~~jinja\n> {{ heading }}\n> ```\n> {{ value }}\n> ```\n> ~~~\n\n\nIf `quote_style` is set to `xml`, the heading will be wrapped in XML tags, according to the following jinja template:\n\n> ```jinja\n> <{{ heading }}>\n> {{ value }}\n> </{{ heading }}>\n> ```\n\n",
           "title": "Heading",
           "type": "string"
         }
@@ -110,10 +121,13 @@
           "type": "boolean"
         },
         "var": {
+          "description": "A variable declaration references a variable (or path to nested variable) in the context.",
           "title": "Var",
           "type": "string"
         },
         "heading": {
+          "description": "The heading for the context element.",
+          "markdownDescription": "\nThe heading for the context element.\n\nIf `quote_style` is set to `backticks`, the heading will be wrapped in backticks, according to the following jinja template:    \n\n> ~~~jinja\n> {{ heading }}\n> ```\n> {{ value }}\n> ```\n> ~~~\n\n\nIf `quote_style` is set to `xml`, the heading will be wrapped in XML tags, according to the following jinja template:\n\n> ```jinja\n> <{{ heading }}>\n> {{ value }}\n> </{{ heading }}>\n> ```\n\n",
           "title": "Heading",
           "type": "string"
         }
@@ -127,7 +141,6 @@
     },
     "EnvDeclaration": {
       "additionalProperties": false,
-      "description": "An env declaration is a string that references an environment variable.",
       "properties": {
         "stream": {
           "default": false,
@@ -135,6 +148,7 @@
           "type": "boolean"
         },
         "env": {
+          "description": "An environment declaration references the name of an environment variable that is loaded during runtime.",
           "title": "Env",
           "type": "string"
         }
@@ -250,7 +264,6 @@
     },
     "LambdaDeclaration": {
       "additionalProperties": false,
-      "description": "A lambda declaration is a python expression that can be evaluated within a context.",
       "properties": {
         "stream": {
           "default": false,
@@ -258,6 +271,8 @@
           "type": "boolean"
         },
         "lambda": {
+          "description": "\nA lambda declaration is a python expression evaluated within the context of the flow and any provided variables.\nIf you reference an action's output, it will ensure that action runs before this one.\n",
+          "markdownDescription": "\nA lambda declaration is a python expression evaluated within the context of the flow and any provided variables.  \nIf you reference an action's output, it will ensure that action runs before this one.\n\nReference variables or action outputs like:\n\n> ```yaml\n> lambda : |\n> ```\n> ```python\n>   \"My name is \" + name + \". The output of action_id is \" + action_id.output_name\n> ```\n\nYou can also use list comprehension and conditionals:\n\n> ```yaml\n> lambda : |\n> ```\n> ```python\n>   [item for item in items if item.name != 'foo']\n> ```\n",
           "title": "Lambda",
           "type": "string"
         }
@@ -270,7 +285,6 @@
     },
     "LinkDeclaration": {
       "additionalProperties": false,
-      "description": "An link declaration is a string that references another action's output",
       "properties": {
         "stream": {
           "default": false,
@@ -278,6 +292,7 @@
           "type": "boolean"
         },
         "link": {
+          "description": "A link declaration references another action's output, and ensures that action runs before this one.",
           "title": "Link",
           "type": "string"
         }
@@ -871,7 +886,6 @@
     },
     "TextDeclaration": {
       "additionalProperties": false,
-      "description": "A template declaration is a string that can be rendered within a context.",
       "properties": {
         "stream": {
           "default": false,
@@ -879,6 +893,8 @@
           "type": "boolean"
         },
         "text": {
+          "description": "\nA template declaration is a jinja2 template, rendered within the context of the flow and any provided variables.\nIf you reference an action's output, it will ensure that action runs before this one.\n\nFor more information, see the Jinja2 documentation: https://jinja.palletsprojects.com/en/3.0.x/templates/.\n",
+          "markdownDescription": "\nA template declaration is a jinja2 template, rendered within the context of the flow and any provided variables.  \nIf you reference an action's output, it will ensure that action runs before this one.\n\nReference variables or action outputs like: \n\n> ```yaml\n> text : |\n> ```\n> ```jinja\n>   Hi {{ name }}, the output of action_id is {{ action_id.output_name }}\n> ```\n\nIt also supports advanced features such as loops and conditionals:\n\n> ```yaml\n> text : |\n> ```\n> ```jinja\n>   {% for item in items -%}\n>     {% if item.name != 'foo' -%}\n>     {{ item.name }}: {{ item.value }}\n>     {% endif %}\n>   {% endfor %}\n> ```\n\nFor more information, see the [Jinja2 documentation](https://jinja.palletsprojects.com/en/3.0.x/templates/).\n",
           "title": "Text",
           "type": "string"
         }
@@ -922,7 +938,6 @@
     },
     "VarDeclaration": {
       "additionalProperties": false,
-      "description": "A variable declaration is a string that references a variable (or path to nested variable) in the context.",
       "properties": {
         "stream": {
           "default": false,
@@ -930,6 +945,7 @@
           "type": "boolean"
         },
         "var": {
+          "description": "A variable declaration references a variable (or path to nested variable) in the context.",
           "title": "Var",
           "type": "string"
         }
@@ -1644,16 +1660,16 @@
     },
     "promptActionInvocation": {
       "additionalProperties": false,
-      "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\nOUTPUTS\n- result: str  \n  Response given by the LLM",
-      "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L38) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L48) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L176) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L182) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L188) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L194)]\n\n**Outputs**\n- result: str  \n  Response given by the LLM\n\n---",
+      "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]  \n  \nThe prompt to send to the LLM, defined as a list of elements that get stringified and concatenated.\n\n\n\n\nOUTPUTS\n- result: str  \n  Response given by the LLM",
+      "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L203) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L209) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L215) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L221)]  \n  \nThe prompt to send to the LLM, defined as a list of elements that get stringified and concatenated.\n\n\n\n\n**Outputs**\n- result: str  \n  Response given by the LLM\n\n---",
       "properties": {
         "action": {
           "const": "prompt",
-          "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\nOUTPUTS\n- result: str  \n  Response given by the LLM",
+          "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]  \n  \nThe prompt to send to the LLM, defined as a list of elements that get stringified and concatenated.\n\n\n\n\nOUTPUTS\n- result: str  \n  Response given by the LLM",
           "enum": [
             "prompt"
           ],
-          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L38) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L48) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L176) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L182) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L188) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L194)]\n\n**Outputs**\n- result: str  \n  Response given by the LLM\n\n---",
+          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L203) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L209) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L215) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L221)]  \n  \nThe prompt to send to the LLM, defined as a list of elements that get stringified and concatenated.\n\n\n\n\n**Outputs**\n- result: str  \n  Response given by the LLM\n\n---",
           "title": "Prompt Action",
           "type": "string"
         },
