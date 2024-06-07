@@ -1,11 +1,17 @@
+import inspect
+import os
+import types
 import typing
+from enum import Enum
 from typing import Union, Literal
 
 import pydantic
 from pydantic import ConfigDict, Field
+from pydantic.fields import FieldInfo
 
-from asyncflows.actions import get_actions_dict
+from asyncflows.actions import get_actions_dict, InternalActionBase
 from asyncflows.models.config.common import StrictModel
+from asyncflows.models.config.transform import TransformsFrom
 from asyncflows.models.config.value_declarations import (
     VarDeclaration,
     ValueDeclaration,
@@ -69,6 +75,139 @@ def build_hinted_value_declaration(
     return Union[tuple(union_elements)]  # type: ignore
 
 
+def build_type_qualified_name(type_: type, *, markdown: bool) -> str:
+    if type_ is type(None):
+        return "None"
+
+    # convert unions to a string
+    origin = typing.get_origin(type_)
+    if origin is not None:
+        if origin in [Union, types.UnionType]:
+            args = typing.get_args(type_)
+            return " | ".join(
+                build_type_qualified_name(arg, markdown=markdown) for arg in args
+            )
+
+        # convert literal to a string
+        if origin is Literal:
+            args = typing.get_args(type_)
+            return " | ".join(repr(arg) for arg in args)
+
+        # handle other origins
+        origin_qual_name = build_type_qualified_name(origin, markdown=markdown)
+        args_qual_names = " | ".join(
+            build_type_qualified_name(arg, markdown=markdown)
+            for arg in typing.get_args(type_)
+        )
+        return f"{origin_qual_name}[{args_qual_names}]"
+
+    if not isinstance(type_, type):
+        raise ValueError(f"Invalid type: {type_}")
+
+    if issubclass(type_, TransformsFrom):
+        return build_type_qualified_name(
+            type_._get_config_type(None, None), markdown=markdown
+        )
+
+    # convert string enums to a string
+    if issubclass(type_, Enum):
+        return " | ".join(repr(member.value) for member in type_)
+
+    # pass through names of simple and well-known types
+    if type_.__module__ in ["builtins", "typing"]:
+        return type_.__qualname__
+
+    # add markdown link to custom types
+    if not markdown:
+        return type_.__qualname__
+
+    # Building the link to the source code file
+    try:
+        # Get the file and line number where the type is defined
+        source_file = inspect.getfile(type_)
+        source_line = inspect.getsourcelines(type_)[1]
+
+        # Construct the file URL
+        source_path = os.path.abspath(source_file)
+        file_url = f"file://{source_path}#L{source_line}"
+        return f"[{type_.__qualname__}]({file_url})"
+    except Exception:
+        # Fallback to just the type name if we can't get the source file
+        return type_.__qualname__
+
+
+def remove_optional(type_: type | None) -> tuple[type, bool]:
+    if type_ is None:
+        return typing.Any, True
+    if typing.get_origin(type_) in [Union, types.UnionType]:
+        args = typing.get_args(type_)
+        if type(None) in args:
+            return args[0], True
+    return type_, False
+
+
+def build_field_description(
+    field_name: str, field_info: FieldInfo, *, markdown: bool
+) -> str:
+    type_, is_optional = remove_optional(field_info.annotation)
+    qualified_name = build_type_qualified_name(type_, markdown=markdown)
+
+    field_desc = f"{field_name}: {qualified_name}"
+    if is_optional:
+        field_desc += " (optional)"
+
+    if field_info.description:
+        field_desc += f"  \n  {field_info.description}"
+
+    return field_desc
+
+
+def build_action_description(
+    action: type[InternalActionBase], *, markdown: bool
+) -> None | str:
+    description_items = []
+
+    # grab the main description
+    if action.description:
+        description_items.append(inspect.cleandoc(action.description))
+
+    # add inputs description
+    inputs_description_items = []
+    inputs = action._get_inputs_type()
+    if not isinstance(None, inputs):
+        for field_name, field_info in inputs.model_fields.items():
+            inputs_description_items.append(
+                f"- {build_field_description(field_name, field_info, markdown=markdown)}"
+            )
+    if inputs_description_items:
+        if markdown:
+            title = "**Inputs**"
+        else:
+            title = "INPUTS"
+        description_items.append(f"{title}\n" + "\n".join(inputs_description_items))
+
+    # add outputs description
+    outputs_description_items = []
+    outputs = action._get_outputs_type()
+    if not isinstance(None, outputs):
+        for field_name, field_info in outputs.model_fields.items():
+            outputs_description_items.append(
+                f"- {build_field_description(field_name, field_info, markdown=markdown)}"
+            )
+    if outputs_description_items:
+        if markdown:
+            title = "**Outputs**"
+        else:
+            title = "OUTPUTS"
+        description_items.append(f"{title}\n" + "\n".join(outputs_description_items))
+
+    if not description_items:
+        return None
+    if markdown:
+        description_items.append("---")
+    return "\n\n".join(description_items)
+
+
 def build_actions(
     action_names: list[str] | None = None,
     vars_: HintLiteral | None = None,
@@ -87,9 +226,31 @@ def build_actions(
     action_models = []
     for action_name in action_names:
         action = actions_dict[action_name]
+
+        if action.readable_name:
+            title = action.readable_name
+        else:
+            title = f"{action.name.replace('_', ' ').title()} Action"
+        description = build_action_description(action, markdown=False)
+        markdown_description = build_action_description(action, markdown=True)
+
+        # build action literal
+        action_literal = Literal[action.name]  # type: ignore
+        if description is not None:
+            action_literal = typing.Annotated[
+                action_literal,
+                Field(
+                    title=title,
+                    description=description,
+                    json_schema_extra={
+                        "markdownDescription": markdown_description,
+                    },
+                ),
+            ]
+
         # build base model field
         fields = {
-            "action": (Literal[action.name], ...),  # type: ignore
+            "action": (action_literal, ...),
             "cache_key": (None | str | HintedValueDeclaration, None),
         }
 
@@ -109,7 +270,12 @@ def build_actions(
             action.name + "ActionInvocation",
             __base__=ActionInvocation,
             __module__=__name__,
+            __doc__=description,
             model_config=ConfigDict(
+                title=title,
+                json_schema_extra={
+                    "markdownDescription": markdown_description,
+                },
                 arbitrary_types_allowed=True,
                 extra="forbid",
             ),
