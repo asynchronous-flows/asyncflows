@@ -47,7 +47,10 @@ class RoleElement(PromptElementBase):
 
 
 class TextElement(PromptElementBase):
-    text: str
+    # copy the documentation from TextDeclaration.text
+    # can't inherit TextDeclaration or the object will turn into a string by action_service
+    # TODO explore compositional methods for this instead of inheritance?
+    text: TemplateString = TextDeclaration.model_fields["text"]  # type: ignore
     role: Literal["user", "system", "assistant"] | None = None
 
     def as_string(
