@@ -140,6 +140,202 @@
       "title": "Blob_ActionFieldTemplate",
       "type": "object"
     },
+    "ContextLambda": {
+      "additionalProperties": false,
+      "description": "A lambda declaration for prompt context in config.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "lambda": {
+          "title": "Lambda",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lambda",
+        "heading"
+      ],
+      "title": "ContextLambda",
+      "type": "object"
+    },
+    "ContextLambda_": {
+      "additionalProperties": false,
+      "properties": {
+        "stream": {
+          "default": null,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "lambda_": {
+          "title": "Lambda ",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lambda_",
+        "heading"
+      ],
+      "title": "ContextLambda_",
+      "type": "object"
+    },
+    "ContextLink": {
+      "additionalProperties": false,
+      "description": "An input declaration for prompt context in config.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "link": {
+          "title": "Link",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link",
+        "heading"
+      ],
+      "title": "ContextLink",
+      "type": "object"
+    },
+    "ContextLink_": {
+      "additionalProperties": false,
+      "properties": {
+        "stream": {
+          "default": null,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "link": {
+          "title": "Link",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link",
+        "heading"
+      ],
+      "title": "ContextLink_",
+      "type": "object"
+    },
+    "ContextTemplate": {
+      "additionalProperties": false,
+      "description": "A template string for prompt context in config.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "heading"
+      ],
+      "title": "ContextTemplate",
+      "type": "object"
+    },
+    "ContextTemplate_": {
+      "additionalProperties": false,
+      "properties": {
+        "stream": {
+          "default": null,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "heading"
+      ],
+      "title": "ContextTemplate_",
+      "type": "object"
+    },
+    "ContextVar": {
+      "additionalProperties": false,
+      "description": "A variable declaration for prompt context in config.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "var": {
+          "title": "Var",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "var",
+        "heading"
+      ],
+      "title": "ContextVar",
+      "type": "object"
+    },
+    "ContextVar_": {
+      "additionalProperties": false,
+      "properties": {
+        "stream": {
+          "default": null,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "var": {
+          "title": "Var",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "var",
+        "heading"
+      ],
+      "title": "ContextVar_",
+      "type": "object"
+    },
     "EnvDeclaration": {
       "additionalProperties": false,
       "description": "An env declaration is a string that references an environment variable.",
@@ -618,16 +814,16 @@
                     "$ref": "#/$defs/TextElement__"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigVar_"
+                    "$ref": "#/$defs/ContextVar_"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigLink_"
+                    "$ref": "#/$defs/ContextLink_"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigTemplate_"
+                    "$ref": "#/$defs/ContextTemplate_"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigLambda_"
+                    "$ref": "#/$defs/ContextLambda_"
                   }
                 ]
               },
@@ -953,202 +1149,6 @@
       "title": "OptionalModelConfigActionFieldTemplate",
       "type": "object"
     },
-    "PromptContextInConfigLambda": {
-      "additionalProperties": false,
-      "description": "A lambda declaration for prompt context in config.",
-      "properties": {
-        "stream": {
-          "default": false,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "lambda": {
-          "title": "Lambda",
-          "type": "string"
-        },
-        "heading": {
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "lambda",
-        "heading"
-      ],
-      "title": "PromptContextInConfigLambda",
-      "type": "object"
-    },
-    "PromptContextInConfigLambda_": {
-      "additionalProperties": false,
-      "properties": {
-        "stream": {
-          "default": null,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "lambda_": {
-          "title": "Lambda ",
-          "type": "string"
-        },
-        "heading": {
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "lambda_",
-        "heading"
-      ],
-      "title": "PromptContextInConfigLambda_",
-      "type": "object"
-    },
-    "PromptContextInConfigLink": {
-      "additionalProperties": false,
-      "description": "An input declaration for prompt context in config.",
-      "properties": {
-        "stream": {
-          "default": false,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "link": {
-          "title": "Link",
-          "type": "string"
-        },
-        "heading": {
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "link",
-        "heading"
-      ],
-      "title": "PromptContextInConfigLink",
-      "type": "object"
-    },
-    "PromptContextInConfigLink_": {
-      "additionalProperties": false,
-      "properties": {
-        "stream": {
-          "default": null,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "link": {
-          "title": "Link",
-          "type": "string"
-        },
-        "heading": {
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "link",
-        "heading"
-      ],
-      "title": "PromptContextInConfigLink_",
-      "type": "object"
-    },
-    "PromptContextInConfigTemplate": {
-      "additionalProperties": false,
-      "description": "A template string for prompt context in config.",
-      "properties": {
-        "stream": {
-          "default": false,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "text": {
-          "title": "Text",
-          "type": "string"
-        },
-        "heading": {
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "text",
-        "heading"
-      ],
-      "title": "PromptContextInConfigTemplate",
-      "type": "object"
-    },
-    "PromptContextInConfigTemplate_": {
-      "additionalProperties": false,
-      "properties": {
-        "stream": {
-          "default": null,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "text": {
-          "title": "Text",
-          "type": "string"
-        },
-        "heading": {
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "text",
-        "heading"
-      ],
-      "title": "PromptContextInConfigTemplate_",
-      "type": "object"
-    },
-    "PromptContextInConfigVar": {
-      "additionalProperties": false,
-      "description": "A variable declaration for prompt context in config.",
-      "properties": {
-        "stream": {
-          "default": false,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "var": {
-          "title": "Var",
-          "type": "string"
-        },
-        "heading": {
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "var",
-        "heading"
-      ],
-      "title": "PromptContextInConfigVar",
-      "type": "object"
-    },
-    "PromptContextInConfigVar_": {
-      "additionalProperties": false,
-      "properties": {
-        "stream": {
-          "default": null,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "var": {
-          "title": "Var",
-          "type": "string"
-        },
-        "heading": {
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "var",
-        "heading"
-      ],
-      "title": "PromptContextInConfigVar_",
-      "type": "object"
-    },
     "QuoteStyle": {
       "enum": [
         "backticks",
@@ -1299,13 +1299,17 @@
     },
     "execute_db_statementActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- database_url: str  \n  Database URL (asynchronous)\n- statement: str  \n  SQL statement to execute\n- allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes\n- max_rows: int  \n  Maximum number of rows to return\n\nOUTPUTS\n- text: str  \n  Result of the SQL statement\n- data: list[list[Any]]\n- headers: list[str]",
+      "markdownDescription": "**Inputs**\n- database_url: str  \n  Database URL (asynchronous)\n- statement: str  \n  SQL statement to execute\n- allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes\n- max_rows: int  \n  Maximum number of rows to return\n\n**Outputs**\n- text: str  \n  Result of the SQL statement\n- data: list[list[Any]]\n- headers: list[str]\n\n---",
       "properties": {
         "action": {
           "const": "execute_db_statement",
+          "description": "INPUTS\n- database_url: str  \n  Database URL (asynchronous)\n- statement: str  \n  SQL statement to execute\n- allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes\n- max_rows: int  \n  Maximum number of rows to return\n\nOUTPUTS\n- text: str  \n  Result of the SQL statement\n- data: list[list[Any]]\n- headers: list[str]",
           "enum": [
             "execute_db_statement"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- database_url: str  \n  Database URL (asynchronous)\n- statement: str  \n  SQL statement to execute\n- allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes\n- max_rows: int  \n  Maximum number of rows to return\n\n**Outputs**\n- text: str  \n  Result of the SQL statement\n- data: list[list[Any]]\n- headers: list[str]\n\n---",
+          "title": "Execute Db Statement Action",
           "type": "string"
         },
         "cache_key": {
@@ -1440,18 +1444,22 @@
         "database_url",
         "statement"
       ],
-      "title": "execute_db_statementActionInvocation",
+      "title": "Execute Db Statement Action",
       "type": "object"
     },
     "extract_listActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- text: str\n- valid_values: list[str] (optional)\n- list_format: 'comma' | 'newline' | 'space' | 'bullet points'\n\nOUTPUTS\n- results: list[str]",
+      "markdownDescription": "**Inputs**\n- text: str\n- valid_values: list[str] (optional)\n- list_format: 'comma' | 'newline' | 'space' | 'bullet points'\n\n**Outputs**\n- results: list[str]\n\n---",
       "properties": {
         "action": {
           "const": "extract_list",
+          "description": "INPUTS\n- text: str\n- valid_values: list[str] (optional)\n- list_format: 'comma' | 'newline' | 'space' | 'bullet points'\n\nOUTPUTS\n- results: list[str]",
           "enum": [
             "extract_list"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- text: str\n- valid_values: list[str] (optional)\n- list_format: 'comma' | 'newline' | 'space' | 'bullet points'\n\n**Outputs**\n- results: list[str]\n\n---",
+          "title": "Extract List Action",
           "type": "string"
         },
         "cache_key": {
@@ -1569,18 +1577,22 @@
         "action",
         "text"
       ],
-      "title": "extract_listActionInvocation",
+      "title": "Extract List Action",
       "type": "object"
     },
     "extract_pdf_textActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- file: File | str\n- min_start_chars: int\n\nOUTPUTS\n- title: str (optional)\n- start_of_text: str (optional)\n- full_text: str (optional)\n- pages: list[Page] (optional)",
+      "markdownDescription": "**Inputs**\n- file: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n- min_start_chars: int\n\n**Outputs**\n- title: str (optional)\n- start_of_text: str (optional)\n- full_text: str (optional)\n- pages: list[[Page](file:///Users/rafael/asyncflows/asyncflows/actions/extract_pdf_text.py#L15)] (optional)\n\n---",
       "properties": {
         "action": {
           "const": "extract_pdf_text",
+          "description": "INPUTS\n- file: File | str\n- min_start_chars: int\n\nOUTPUTS\n- title: str (optional)\n- start_of_text: str (optional)\n- full_text: str (optional)\n- pages: list[Page] (optional)",
           "enum": [
             "extract_pdf_text"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- file: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n- min_start_chars: int\n\n**Outputs**\n- title: str (optional)\n- start_of_text: str (optional)\n- full_text: str (optional)\n- pages: list[[Page](file:///Users/rafael/asyncflows/asyncflows/actions/extract_pdf_text.py#L15)] (optional)\n\n---",
+          "title": "Extract Pdf Text Action",
           "type": "string"
         },
         "cache_key": {
@@ -1665,18 +1677,22 @@
         "action",
         "file"
       ],
-      "title": "extract_pdf_textActionInvocation",
+      "title": "Extract Pdf Text Action",
       "type": "object"
     },
     "extract_xml_tagActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- text: str  \n  Text to extract out of <tag>text</tag>\n- tag: str  \n  Tag to extract from\n\nOUTPUTS\n- result: str  \n  Text extracted from the tag",
+      "markdownDescription": "**Inputs**\n- text: str  \n  Text to extract out of <tag>text</tag>\n- tag: str  \n  Tag to extract from\n\n**Outputs**\n- result: str  \n  Text extracted from the tag\n\n---",
       "properties": {
         "action": {
           "const": "extract_xml_tag",
+          "description": "INPUTS\n- text: str  \n  Text to extract out of <tag>text</tag>\n- tag: str  \n  Tag to extract from\n\nOUTPUTS\n- result: str  \n  Text extracted from the tag",
           "enum": [
             "extract_xml_tag"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- text: str  \n  Text to extract out of <tag>text</tag>\n- tag: str  \n  Tag to extract from\n\n**Outputs**\n- result: str  \n  Text extracted from the tag\n\n---",
+          "title": "Extract Xml Tag Action",
           "type": "string"
         },
         "cache_key": {
@@ -1758,18 +1774,22 @@
         "text",
         "tag"
       ],
-      "title": "extract_xml_tagActionInvocation",
+      "title": "Extract Xml Tag Action",
       "type": "object"
     },
     "get_db_schemaActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- database_url: str  \n  Database URL (synchronous)\n\nOUTPUTS\n- schema_text: str  \n  Text describing the database schema in `CREATE TABLE` statements",
+      "markdownDescription": "**Inputs**\n- database_url: str  \n  Database URL (synchronous)\n\n**Outputs**\n- schema_text: str  \n  Text describing the database schema in `CREATE TABLE` statements\n\n---",
       "properties": {
         "action": {
           "const": "get_db_schema",
+          "description": "INPUTS\n- database_url: str  \n  Database URL (synchronous)\n\nOUTPUTS\n- schema_text: str  \n  Text describing the database schema in `CREATE TABLE` statements",
           "enum": [
             "get_db_schema"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- database_url: str  \n  Database URL (synchronous)\n\n**Outputs**\n- schema_text: str  \n  Text describing the database schema in `CREATE TABLE` statements\n\n---",
+          "title": "Get Db Schema Action",
           "type": "string"
         },
         "cache_key": {
@@ -1827,18 +1847,22 @@
         "action",
         "database_url"
       ],
-      "title": "get_db_schemaActionInvocation",
+      "title": "Get Db Schema Action",
       "type": "object"
     },
     "get_urlActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- url: str  \n  URL of the webpage to GET\n\nOUTPUTS\n- result: str  \n  Text content of the webpage",
+      "markdownDescription": "**Inputs**\n- url: str  \n  URL of the webpage to GET\n\n**Outputs**\n- result: str  \n  Text content of the webpage\n\n---",
       "properties": {
         "action": {
           "const": "get_url",
+          "description": "INPUTS\n- url: str  \n  URL of the webpage to GET\n\nOUTPUTS\n- result: str  \n  Text content of the webpage",
           "enum": [
             "get_url"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- url: str  \n  URL of the webpage to GET\n\n**Outputs**\n- result: str  \n  Text content of the webpage\n\n---",
+          "title": "Get Url Action",
           "type": "string"
         },
         "cache_key": {
@@ -1896,18 +1920,22 @@
         "action",
         "url"
       ],
-      "title": "get_urlActionInvocation",
+      "title": "Get Url Action",
       "type": "object"
     },
     "ocrActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- pdf: File | str\n\nOUTPUTS\n- pdf_ocr: str",
+      "markdownDescription": "**Inputs**\n- pdf: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n\n**Outputs**\n- pdf_ocr: str\n\n---",
       "properties": {
         "action": {
           "const": "ocr",
+          "description": "INPUTS\n- pdf: File | str\n\nOUTPUTS\n- pdf_ocr: str",
           "enum": [
             "ocr"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- pdf: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n\n**Outputs**\n- pdf_ocr: str\n\n---",
+          "title": "Ocr Action",
           "type": "string"
         },
         "cache_key": {
@@ -1968,18 +1996,22 @@
         "action",
         "pdf"
       ],
-      "title": "ocrActionInvocation",
+      "title": "Ocr Action",
       "type": "object"
     },
     "promptActionInvocation": {
       "additionalProperties": false,
+      "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\nOUTPUTS\n- result: str  \n  Response given by the LLM",
+      "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L38) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L48) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L176) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L182) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L188) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L194)]\n\n**Outputs**\n- result: str  \n  Response given by the LLM\n\n---",
       "properties": {
         "action": {
           "const": "prompt",
+          "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\nOUTPUTS\n- result: str  \n  Response given by the LLM",
           "enum": [
             "prompt"
           ],
-          "title": "Action",
+          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L38) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L48) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L176) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L182) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L188) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L194)]\n\n**Outputs**\n- result: str  \n  Response given by the LLM\n\n---",
+          "title": "Prompt Action",
           "type": "string"
         },
         "cache_key": {
@@ -2075,16 +2107,16 @@
                     "$ref": "#/$defs/TextElement_"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigVar"
+                    "$ref": "#/$defs/ContextVar"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigLink"
+                    "$ref": "#/$defs/ContextLink"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigTemplate"
+                    "$ref": "#/$defs/ContextTemplate"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigLambda"
+                    "$ref": "#/$defs/ContextLambda"
                   }
                 ]
               },
@@ -2113,18 +2145,22 @@
         "action",
         "prompt"
       ],
-      "title": "promptActionInvocation",
+      "title": "Prompt Action",
       "type": "object"
     },
     "rerankActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\nOUTPUTS\n- result: list[Any]",
+      "markdownDescription": "**Inputs**\n- model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\n**Outputs**\n- result: list[Any]\n\n---",
       "properties": {
         "action": {
           "const": "rerank",
+          "description": "INPUTS\n- model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\nOUTPUTS\n- result: list[Any]",
           "enum": [
             "rerank"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\n**Outputs**\n- result: list[Any]\n\n---",
+          "title": "Rerank Action",
           "type": "string"
         },
         "cache_key": {
@@ -2322,18 +2358,22 @@
         "documents",
         "query"
       ],
-      "title": "rerankActionInvocation",
+      "title": "Rerank Action",
       "type": "object"
     },
     "retrieveActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\nOUTPUTS\n- result: list[Any]",
+      "markdownDescription": "**Inputs**\n- model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\n**Outputs**\n- result: list[Any]\n\n---",
       "properties": {
         "action": {
           "const": "retrieve",
+          "description": "INPUTS\n- model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\nOUTPUTS\n- result: list[Any]",
           "enum": [
             "retrieve"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\n**Outputs**\n- result: list[Any]\n\n---",
+          "title": "Retrieve Action",
           "type": "string"
         },
         "cache_key": {
@@ -2531,18 +2571,22 @@
         "documents",
         "query"
       ],
-      "title": "retrieveActionInvocation",
+      "title": "Retrieve Action",
       "type": "object"
     },
     "scoreActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- mutated_response_output: list\n- expected_output: str\n\nOUTPUTS\n- scores: list",
+      "markdownDescription": "**Inputs**\n- mutated_response_output: list\n- expected_output: str\n\n**Outputs**\n- scores: list\n\n---",
       "properties": {
         "action": {
           "const": "score",
+          "description": "INPUTS\n- mutated_response_output: list\n- expected_output: str\n\nOUTPUTS\n- scores: list",
           "enum": [
             "score"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- mutated_response_output: list\n- expected_output: str\n\n**Outputs**\n- scores: list\n\n---",
+          "title": "Score Action",
           "type": "string"
         },
         "cache_key": {
@@ -2625,18 +2669,22 @@
         "mutated_response_output",
         "expected_output"
       ],
-      "title": "scoreActionInvocation",
+      "title": "Score Action",
       "type": "object"
     },
     "test_addActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
+      "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int\n\n---",
       "properties": {
         "action": {
           "const": "test_add",
+          "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
           "enum": [
             "test_add"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int\n\n---",
+          "title": "Test Add Action",
           "type": "string"
         },
         "cache_key": {
@@ -2718,18 +2766,22 @@
         "a",
         "b"
       ],
-      "title": "test_addActionInvocation",
+      "title": "Test Add Action",
       "type": "object"
     },
     "test_create_blobActionInvocation": {
       "additionalProperties": false,
+      "description": "OUTPUTS\n- blob: Blob",
+      "markdownDescription": "**Outputs**\n- blob: [Blob](file:///Users/rafael/asyncflows/asyncflows/models/blob.py#L9)\n\n---",
       "properties": {
         "action": {
           "const": "test_create_blob",
+          "description": "OUTPUTS\n- blob: Blob",
           "enum": [
             "test_create_blob"
           ],
-          "title": "Action",
+          "markdownDescription": "**Outputs**\n- blob: [Blob](file:///Users/rafael/asyncflows/asyncflows/models/blob.py#L9)\n\n---",
+          "title": "Test Create Blob Action",
           "type": "string"
         },
         "cache_key": {
@@ -2763,18 +2815,22 @@
       "required": [
         "action"
       ],
-      "title": "test_create_blobActionInvocation",
+      "title": "Test Create Blob Action",
       "type": "object"
     },
     "test_double_addActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
+      "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int\n\n---",
       "properties": {
         "action": {
           "const": "test_double_add",
+          "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
           "enum": [
             "test_double_add"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int\n\n---",
+          "title": "Test Double Add Action",
           "type": "string"
         },
         "cache_key": {
@@ -2856,11 +2912,12 @@
         "a",
         "b"
       ],
-      "title": "test_double_addActionInvocation",
+      "title": "Test Double Add Action",
       "type": "object"
     },
     "test_errorActionInvocation": {
       "additionalProperties": false,
+      "markdownDescription": null,
       "properties": {
         "action": {
           "const": "test_error",
@@ -2901,18 +2958,22 @@
       "required": [
         "action"
       ],
-      "title": "test_errorActionInvocation",
+      "title": "Test Error Action",
       "type": "object"
     },
     "test_finishActionInvocation": {
       "additionalProperties": false,
+      "description": "OUTPUTS\n- finish_history: list[bool]",
+      "markdownDescription": "**Outputs**\n- finish_history: list[bool]\n\n---",
       "properties": {
         "action": {
           "const": "test_finish",
+          "description": "OUTPUTS\n- finish_history: list[bool]",
           "enum": [
             "test_finish"
           ],
-          "title": "Action",
+          "markdownDescription": "**Outputs**\n- finish_history: list[bool]\n\n---",
+          "title": "Test Finish Action",
           "type": "string"
         },
         "cache_key": {
@@ -2946,18 +3007,22 @@
       "required": [
         "action"
       ],
-      "title": "test_finishActionInvocation",
+      "title": "Test Finish Action",
       "type": "object"
     },
     "test_get_blobActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- blob: Blob",
+      "markdownDescription": "**Inputs**\n- blob: [Blob](file:///Users/rafael/asyncflows/asyncflows/models/blob.py#L9)\n\n---",
       "properties": {
         "action": {
           "const": "test_get_blob",
+          "description": "INPUTS\n- blob: Blob",
           "enum": [
             "test_get_blob"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- blob: [Blob](file:///Users/rafael/asyncflows/asyncflows/models/blob.py#L9)\n\n---",
+          "title": "Test Get Blob Action",
           "type": "string"
         },
         "cache_key": {
@@ -3015,18 +3080,22 @@
         "action",
         "blob"
       ],
-      "title": "test_get_blobActionInvocation",
+      "title": "Test Get Blob Action",
       "type": "object"
     },
     "test_nested_addActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- nested: AddInputs\n\nOUTPUTS\n- nested: AddOutputs",
+      "markdownDescription": "**Inputs**\n- nested: [AddInputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L22)\n\n**Outputs**\n- nested: [AddOutputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L27)\n\n---",
       "properties": {
         "action": {
           "const": "test_nested_add",
+          "description": "INPUTS\n- nested: AddInputs\n\nOUTPUTS\n- nested: AddOutputs",
           "enum": [
             "test_nested_add"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- nested: [AddInputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L22)\n\n**Outputs**\n- nested: [AddOutputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L27)\n\n---",
+          "title": "Test Nested Add Action",
           "type": "string"
         },
         "cache_key": {
@@ -3084,18 +3153,22 @@
         "action",
         "nested"
       ],
-      "title": "test_nested_addActionInvocation",
+      "title": "Test Nested Add Action",
       "type": "object"
     },
     "test_non_caching_adderActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
+      "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int\n\n---",
       "properties": {
         "action": {
           "const": "test_non_caching_adder",
+          "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
           "enum": [
             "test_non_caching_adder"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int\n\n---",
+          "title": "Test Non Caching Adder Action",
           "type": "string"
         },
         "cache_key": {
@@ -3177,18 +3250,22 @@
         "a",
         "b"
       ],
-      "title": "test_non_caching_adderActionInvocation",
+      "title": "Test Non Caching Adder Action",
       "type": "object"
     },
     "test_optional_nested_addActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- nested: AddInputs (optional)\n\nOUTPUTS\n- nested: AddOutputs (optional)",
+      "markdownDescription": "**Inputs**\n- nested: [AddInputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L22) (optional)\n\n**Outputs**\n- nested: [AddOutputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L27) (optional)\n\n---",
       "properties": {
         "action": {
           "const": "test_optional_nested_add",
+          "description": "INPUTS\n- nested: AddInputs (optional)\n\nOUTPUTS\n- nested: AddOutputs (optional)",
           "enum": [
             "test_optional_nested_add"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- nested: [AddInputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L22) (optional)\n\n**Outputs**\n- nested: [AddOutputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L27) (optional)\n\n---",
+          "title": "Test Optional Nested Add Action",
           "type": "string"
         },
         "cache_key": {
@@ -3249,18 +3326,22 @@
         "action",
         "nested"
       ],
-      "title": "test_optional_nested_addActionInvocation",
+      "title": "Test Optional Nested Add Action",
       "type": "object"
     },
     "test_passing_promptActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\nOUTPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]",
+      "markdownDescription": "**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L38) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L48) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L176) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L182) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L188) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L194)]\n\n**Outputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L38) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L48) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L176) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L182) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L188) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L194)]\n\n---",
       "properties": {
         "action": {
           "const": "test_passing_prompt",
+          "description": "INPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\nOUTPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]",
           "enum": [
             "test_passing_prompt"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L38) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L48) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L176) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L182) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L188) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L194)]\n\n**Outputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L38) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L48) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L176) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L182) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L188) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L194)]\n\n---",
+          "title": "Test Passing Prompt Action",
           "type": "string"
         },
         "cache_key": {
@@ -3356,16 +3437,16 @@
                     "$ref": "#/$defs/TextElement_"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigVar"
+                    "$ref": "#/$defs/ContextVar"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigLink"
+                    "$ref": "#/$defs/ContextLink"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigTemplate"
+                    "$ref": "#/$defs/ContextTemplate"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigLambda"
+                    "$ref": "#/$defs/ContextLambda"
                   }
                 ]
               },
@@ -3394,18 +3475,22 @@
         "action",
         "prompt"
       ],
-      "title": "test_passing_promptActionInvocation",
+      "title": "Test Passing Prompt Action",
       "type": "object"
     },
     "test_range_streamActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- range: int\n\nOUTPUTS\n- value: int",
+      "markdownDescription": "**Inputs**\n- range: int\n\n**Outputs**\n- value: int\n\n---",
       "properties": {
         "action": {
           "const": "test_range_stream",
+          "description": "INPUTS\n- range: int\n\nOUTPUTS\n- value: int",
           "enum": [
             "test_range_stream"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- range: int\n\n**Outputs**\n- value: int\n\n---",
+          "title": "Test Range Stream Action",
           "type": "string"
         },
         "cache_key": {
@@ -3463,18 +3548,22 @@
         "action",
         "range"
       ],
-      "title": "test_range_streamActionInvocation",
+      "title": "Test Range Stream Action",
       "type": "object"
     },
     "test_stringifierActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- value: int\n\nOUTPUTS\n- string: str",
+      "markdownDescription": "**Inputs**\n- value: int\n\n**Outputs**\n- string: str\n\n---",
       "properties": {
         "action": {
           "const": "test_stringifier",
+          "description": "INPUTS\n- value: int\n\nOUTPUTS\n- string: str",
           "enum": [
             "test_stringifier"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- value: int\n\n**Outputs**\n- string: str\n\n---",
+          "title": "Test Stringifier Action",
           "type": "string"
         },
         "cache_key": {
@@ -3532,18 +3621,22 @@
         "action",
         "value"
       ],
-      "title": "test_stringifierActionInvocation",
+      "title": "Test Stringifier Action",
       "type": "object"
     },
     "test_transforming_promptActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- context: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n- nested: NestedPromptContext\n\nOUTPUTS\n- context_value: str\n- nested_context_value: str",
+      "markdownDescription": "**Inputs**\n- context: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L38) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L48) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L176) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L182) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L188) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L194)]\n- nested: [NestedPromptContext](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L144)\n\n**Outputs**\n- context_value: str\n- nested_context_value: str\n\n---",
       "properties": {
         "action": {
           "const": "test_transforming_prompt",
+          "description": "INPUTS\n- context: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n- nested: NestedPromptContext\n\nOUTPUTS\n- context_value: str\n- nested_context_value: str",
           "enum": [
             "test_transforming_prompt"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- context: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L38) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L48) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L176) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L182) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L188) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L194)]\n- nested: [NestedPromptContext](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L144)\n\n**Outputs**\n- context_value: str\n- nested_context_value: str\n\n---",
+          "title": "Test Transforming Prompt Action",
           "type": "string"
         },
         "cache_key": {
@@ -3585,16 +3678,16 @@
                     "$ref": "#/$defs/TextElement_"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigVar"
+                    "$ref": "#/$defs/ContextVar"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigLink"
+                    "$ref": "#/$defs/ContextLink"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigTemplate"
+                    "$ref": "#/$defs/ContextTemplate"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigLambda"
+                    "$ref": "#/$defs/ContextLambda"
                   }
                 ]
               },
@@ -3647,18 +3740,22 @@
         "context",
         "nested"
       ],
-      "title": "test_transforming_promptActionInvocation",
+      "title": "Test Transforming Prompt Action",
       "type": "object"
     },
     "test_waiting_addActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
+      "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int\n\n---",
       "properties": {
         "action": {
           "const": "test_waiting_add",
+          "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
           "enum": [
             "test_waiting_add"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int\n\n---",
+          "title": "Test Waiting Add Action",
           "type": "string"
         },
         "cache_key": {
@@ -3740,7 +3837,7 @@
         "a",
         "b"
       ],
-      "title": "test_waiting_addActionInvocation",
+      "title": "Test Waiting Add Action",
       "type": "object"
     }
   },

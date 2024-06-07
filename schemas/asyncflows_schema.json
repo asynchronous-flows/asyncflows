@@ -25,6 +25,106 @@
       "title": "Blob_",
       "type": "object"
     },
+    "ContextLambda": {
+      "additionalProperties": false,
+      "description": "A lambda declaration for prompt context in config.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "lambda": {
+          "title": "Lambda",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lambda",
+        "heading"
+      ],
+      "title": "ContextLambda",
+      "type": "object"
+    },
+    "ContextLink": {
+      "additionalProperties": false,
+      "description": "An input declaration for prompt context in config.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "link": {
+          "title": "Link",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link",
+        "heading"
+      ],
+      "title": "ContextLink",
+      "type": "object"
+    },
+    "ContextTemplate": {
+      "additionalProperties": false,
+      "description": "A template string for prompt context in config.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "heading"
+      ],
+      "title": "ContextTemplate",
+      "type": "object"
+    },
+    "ContextVar": {
+      "additionalProperties": false,
+      "description": "A variable declaration for prompt context in config.",
+      "properties": {
+        "stream": {
+          "default": false,
+          "title": "Stream",
+          "type": "boolean"
+        },
+        "var": {
+          "title": "Var",
+          "type": "string"
+        },
+        "heading": {
+          "title": "Heading",
+          "type": "string"
+        }
+      },
+      "required": [
+        "var",
+        "heading"
+      ],
+      "title": "ContextVar",
+      "type": "object"
+    },
     "EnvDeclaration": {
       "additionalProperties": false,
       "description": "An env declaration is a string that references an environment variable.",
@@ -742,106 +842,6 @@
       "title": "OptionalModelConfigActionFieldTemplate",
       "type": "object"
     },
-    "PromptContextInConfigLambda": {
-      "additionalProperties": false,
-      "description": "A lambda declaration for prompt context in config.",
-      "properties": {
-        "stream": {
-          "default": false,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "lambda": {
-          "title": "Lambda",
-          "type": "string"
-        },
-        "heading": {
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "lambda",
-        "heading"
-      ],
-      "title": "PromptContextInConfigLambda",
-      "type": "object"
-    },
-    "PromptContextInConfigLink": {
-      "additionalProperties": false,
-      "description": "An input declaration for prompt context in config.",
-      "properties": {
-        "stream": {
-          "default": false,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "link": {
-          "title": "Link",
-          "type": "string"
-        },
-        "heading": {
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "link",
-        "heading"
-      ],
-      "title": "PromptContextInConfigLink",
-      "type": "object"
-    },
-    "PromptContextInConfigTemplate": {
-      "additionalProperties": false,
-      "description": "A template string for prompt context in config.",
-      "properties": {
-        "stream": {
-          "default": false,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "text": {
-          "title": "Text",
-          "type": "string"
-        },
-        "heading": {
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "text",
-        "heading"
-      ],
-      "title": "PromptContextInConfigTemplate",
-      "type": "object"
-    },
-    "PromptContextInConfigVar": {
-      "additionalProperties": false,
-      "description": "A variable declaration for prompt context in config.",
-      "properties": {
-        "stream": {
-          "default": false,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "var": {
-          "title": "Var",
-          "type": "string"
-        },
-        "heading": {
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "var",
-        "heading"
-      ],
-      "title": "PromptContextInConfigVar",
-      "type": "object"
-    },
     "QuoteStyle": {
       "enum": [
         "backticks",
@@ -942,13 +942,17 @@
     },
     "execute_db_statementActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- database_url: str  \n  Database URL (asynchronous)\n- statement: str  \n  SQL statement to execute\n- allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes\n- max_rows: int  \n  Maximum number of rows to return\n\nOUTPUTS\n- text: str  \n  Result of the SQL statement\n- data: list[list[Any]]\n- headers: list[str]",
+      "markdownDescription": "**Inputs**\n- database_url: str  \n  Database URL (asynchronous)\n- statement: str  \n  SQL statement to execute\n- allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes\n- max_rows: int  \n  Maximum number of rows to return\n\n**Outputs**\n- text: str  \n  Result of the SQL statement\n- data: list[list[Any]]\n- headers: list[str]\n\n---",
       "properties": {
         "action": {
           "const": "execute_db_statement",
+          "description": "INPUTS\n- database_url: str  \n  Database URL (asynchronous)\n- statement: str  \n  SQL statement to execute\n- allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes\n- max_rows: int  \n  Maximum number of rows to return\n\nOUTPUTS\n- text: str  \n  Result of the SQL statement\n- data: list[list[Any]]\n- headers: list[str]",
           "enum": [
             "execute_db_statement"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- database_url: str  \n  Database URL (asynchronous)\n- statement: str  \n  SQL statement to execute\n- allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes\n- max_rows: int  \n  Maximum number of rows to return\n\n**Outputs**\n- text: str  \n  Result of the SQL statement\n- data: list[list[Any]]\n- headers: list[str]\n\n---",
+          "title": "Execute Db Statement Action",
           "type": "string"
         },
         "cache_key": {
@@ -1083,18 +1087,22 @@
         "database_url",
         "statement"
       ],
-      "title": "execute_db_statementActionInvocation",
+      "title": "Execute Db Statement Action",
       "type": "object"
     },
     "extract_listActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- text: str\n- valid_values: list[str] (optional)\n- list_format: 'comma' | 'newline' | 'space' | 'bullet points'\n\nOUTPUTS\n- results: list[str]",
+      "markdownDescription": "**Inputs**\n- text: str\n- valid_values: list[str] (optional)\n- list_format: 'comma' | 'newline' | 'space' | 'bullet points'\n\n**Outputs**\n- results: list[str]\n\n---",
       "properties": {
         "action": {
           "const": "extract_list",
+          "description": "INPUTS\n- text: str\n- valid_values: list[str] (optional)\n- list_format: 'comma' | 'newline' | 'space' | 'bullet points'\n\nOUTPUTS\n- results: list[str]",
           "enum": [
             "extract_list"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- text: str\n- valid_values: list[str] (optional)\n- list_format: 'comma' | 'newline' | 'space' | 'bullet points'\n\n**Outputs**\n- results: list[str]\n\n---",
+          "title": "Extract List Action",
           "type": "string"
         },
         "cache_key": {
@@ -1212,18 +1220,22 @@
         "action",
         "text"
       ],
-      "title": "extract_listActionInvocation",
+      "title": "Extract List Action",
       "type": "object"
     },
     "extract_pdf_textActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- file: File | str\n- min_start_chars: int\n\nOUTPUTS\n- title: str (optional)\n- start_of_text: str (optional)\n- full_text: str (optional)\n- pages: list[Page] (optional)",
+      "markdownDescription": "**Inputs**\n- file: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n- min_start_chars: int\n\n**Outputs**\n- title: str (optional)\n- start_of_text: str (optional)\n- full_text: str (optional)\n- pages: list[[Page](file:///Users/rafael/asyncflows/asyncflows/actions/extract_pdf_text.py#L15)] (optional)\n\n---",
       "properties": {
         "action": {
           "const": "extract_pdf_text",
+          "description": "INPUTS\n- file: File | str\n- min_start_chars: int\n\nOUTPUTS\n- title: str (optional)\n- start_of_text: str (optional)\n- full_text: str (optional)\n- pages: list[Page] (optional)",
           "enum": [
             "extract_pdf_text"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- file: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n- min_start_chars: int\n\n**Outputs**\n- title: str (optional)\n- start_of_text: str (optional)\n- full_text: str (optional)\n- pages: list[[Page](file:///Users/rafael/asyncflows/asyncflows/actions/extract_pdf_text.py#L15)] (optional)\n\n---",
+          "title": "Extract Pdf Text Action",
           "type": "string"
         },
         "cache_key": {
@@ -1308,18 +1320,22 @@
         "action",
         "file"
       ],
-      "title": "extract_pdf_textActionInvocation",
+      "title": "Extract Pdf Text Action",
       "type": "object"
     },
     "extract_xml_tagActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- text: str  \n  Text to extract out of <tag>text</tag>\n- tag: str  \n  Tag to extract from\n\nOUTPUTS\n- result: str  \n  Text extracted from the tag",
+      "markdownDescription": "**Inputs**\n- text: str  \n  Text to extract out of <tag>text</tag>\n- tag: str  \n  Tag to extract from\n\n**Outputs**\n- result: str  \n  Text extracted from the tag\n\n---",
       "properties": {
         "action": {
           "const": "extract_xml_tag",
+          "description": "INPUTS\n- text: str  \n  Text to extract out of <tag>text</tag>\n- tag: str  \n  Tag to extract from\n\nOUTPUTS\n- result: str  \n  Text extracted from the tag",
           "enum": [
             "extract_xml_tag"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- text: str  \n  Text to extract out of <tag>text</tag>\n- tag: str  \n  Tag to extract from\n\n**Outputs**\n- result: str  \n  Text extracted from the tag\n\n---",
+          "title": "Extract Xml Tag Action",
           "type": "string"
         },
         "cache_key": {
@@ -1401,18 +1417,22 @@
         "text",
         "tag"
       ],
-      "title": "extract_xml_tagActionInvocation",
+      "title": "Extract Xml Tag Action",
       "type": "object"
     },
     "get_db_schemaActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- database_url: str  \n  Database URL (synchronous)\n\nOUTPUTS\n- schema_text: str  \n  Text describing the database schema in `CREATE TABLE` statements",
+      "markdownDescription": "**Inputs**\n- database_url: str  \n  Database URL (synchronous)\n\n**Outputs**\n- schema_text: str  \n  Text describing the database schema in `CREATE TABLE` statements\n\n---",
       "properties": {
         "action": {
           "const": "get_db_schema",
+          "description": "INPUTS\n- database_url: str  \n  Database URL (synchronous)\n\nOUTPUTS\n- schema_text: str  \n  Text describing the database schema in `CREATE TABLE` statements",
           "enum": [
             "get_db_schema"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- database_url: str  \n  Database URL (synchronous)\n\n**Outputs**\n- schema_text: str  \n  Text describing the database schema in `CREATE TABLE` statements\n\n---",
+          "title": "Get Db Schema Action",
           "type": "string"
         },
         "cache_key": {
@@ -1470,18 +1490,22 @@
         "action",
         "database_url"
       ],
-      "title": "get_db_schemaActionInvocation",
+      "title": "Get Db Schema Action",
       "type": "object"
     },
     "get_urlActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- url: str  \n  URL of the webpage to GET\n\nOUTPUTS\n- result: str  \n  Text content of the webpage",
+      "markdownDescription": "**Inputs**\n- url: str  \n  URL of the webpage to GET\n\n**Outputs**\n- result: str  \n  Text content of the webpage\n\n---",
       "properties": {
         "action": {
           "const": "get_url",
+          "description": "INPUTS\n- url: str  \n  URL of the webpage to GET\n\nOUTPUTS\n- result: str  \n  Text content of the webpage",
           "enum": [
             "get_url"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- url: str  \n  URL of the webpage to GET\n\n**Outputs**\n- result: str  \n  Text content of the webpage\n\n---",
+          "title": "Get Url Action",
           "type": "string"
         },
         "cache_key": {
@@ -1539,18 +1563,22 @@
         "action",
         "url"
       ],
-      "title": "get_urlActionInvocation",
+      "title": "Get Url Action",
       "type": "object"
     },
     "ocrActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- pdf: File | str\n\nOUTPUTS\n- pdf_ocr: str",
+      "markdownDescription": "**Inputs**\n- pdf: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n\n**Outputs**\n- pdf_ocr: str\n\n---",
       "properties": {
         "action": {
           "const": "ocr",
+          "description": "INPUTS\n- pdf: File | str\n\nOUTPUTS\n- pdf_ocr: str",
           "enum": [
             "ocr"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- pdf: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n\n**Outputs**\n- pdf_ocr: str\n\n---",
+          "title": "Ocr Action",
           "type": "string"
         },
         "cache_key": {
@@ -1611,18 +1639,22 @@
         "action",
         "pdf"
       ],
-      "title": "ocrActionInvocation",
+      "title": "Ocr Action",
       "type": "object"
     },
     "promptActionInvocation": {
       "additionalProperties": false,
+      "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\nOUTPUTS\n- result: str  \n  Response given by the LLM",
+      "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L38) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L48) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L176) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L182) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L188) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L194)]\n\n**Outputs**\n- result: str  \n  Response given by the LLM\n\n---",
       "properties": {
         "action": {
           "const": "prompt",
+          "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\nOUTPUTS\n- result: str  \n  Response given by the LLM",
           "enum": [
             "prompt"
           ],
-          "title": "Action",
+          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L38) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L48) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L176) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L182) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L188) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L194)]\n\n**Outputs**\n- result: str  \n  Response given by the LLM\n\n---",
+          "title": "Prompt Action",
           "type": "string"
         },
         "cache_key": {
@@ -1718,16 +1750,16 @@
                     "$ref": "#/$defs/TextElement_"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigVar"
+                    "$ref": "#/$defs/ContextVar"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigLink"
+                    "$ref": "#/$defs/ContextLink"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigTemplate"
+                    "$ref": "#/$defs/ContextTemplate"
                   },
                   {
-                    "$ref": "#/$defs/PromptContextInConfigLambda"
+                    "$ref": "#/$defs/ContextLambda"
                   }
                 ]
               },
@@ -1756,18 +1788,22 @@
         "action",
         "prompt"
       ],
-      "title": "promptActionInvocation",
+      "title": "Prompt Action",
       "type": "object"
     },
     "rerankActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\nOUTPUTS\n- result: list[Any]",
+      "markdownDescription": "**Inputs**\n- model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\n**Outputs**\n- result: list[Any]\n\n---",
       "properties": {
         "action": {
           "const": "rerank",
+          "description": "INPUTS\n- model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\nOUTPUTS\n- result: list[Any]",
           "enum": [
             "rerank"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\n**Outputs**\n- result: list[Any]\n\n---",
+          "title": "Rerank Action",
           "type": "string"
         },
         "cache_key": {
@@ -1965,18 +2001,22 @@
         "documents",
         "query"
       ],
-      "title": "rerankActionInvocation",
+      "title": "Rerank Action",
       "type": "object"
     },
     "retrieveActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\nOUTPUTS\n- result: list[Any]",
+      "markdownDescription": "**Inputs**\n- model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\n**Outputs**\n- result: list[Any]\n\n---",
       "properties": {
         "action": {
           "const": "retrieve",
+          "description": "INPUTS\n- model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\nOUTPUTS\n- result: list[Any]",
           "enum": [
             "retrieve"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\n**Outputs**\n- result: list[Any]\n\n---",
+          "title": "Retrieve Action",
           "type": "string"
         },
         "cache_key": {
@@ -2174,18 +2214,22 @@
         "documents",
         "query"
       ],
-      "title": "retrieveActionInvocation",
+      "title": "Retrieve Action",
       "type": "object"
     },
     "scoreActionInvocation": {
       "additionalProperties": false,
+      "description": "INPUTS\n- mutated_response_output: list\n- expected_output: str\n\nOUTPUTS\n- scores: list",
+      "markdownDescription": "**Inputs**\n- mutated_response_output: list\n- expected_output: str\n\n**Outputs**\n- scores: list\n\n---",
       "properties": {
         "action": {
           "const": "score",
+          "description": "INPUTS\n- mutated_response_output: list\n- expected_output: str\n\nOUTPUTS\n- scores: list",
           "enum": [
             "score"
           ],
-          "title": "Action",
+          "markdownDescription": "**Inputs**\n- mutated_response_output: list\n- expected_output: str\n\n**Outputs**\n- scores: list\n\n---",
+          "title": "Score Action",
           "type": "string"
         },
         "cache_key": {
@@ -2268,7 +2312,7 @@
         "mutated_response_output",
         "expected_output"
       ],
-      "title": "scoreActionInvocation",
+      "title": "Score Action",
       "type": "object"
     }
   },
