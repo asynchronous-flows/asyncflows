@@ -101,16 +101,16 @@ def build_type_qualified_name(type_: type, *, markdown: bool) -> str:
         )
         return f"{origin_qual_name}[{args_qual_names}]"
 
-    if not isinstance(type_, type):
-        raise ValueError(f"Invalid type: {type_}")
+    # if not isinstance(type_, type):
+    #     raise ValueError(f"Invalid type: {type_}")
 
-    if issubclass(type_, TransformsFrom):
+    if isinstance(type_, type) and issubclass(type_, TransformsFrom):
         return build_type_qualified_name(
             type_._get_config_type(None, None), markdown=markdown
         )
 
     # convert string enums to a string
-    if issubclass(type_, Enum):
+    if isinstance(type_, type) and issubclass(type_, Enum):
         return " | ".join(repr(member.value) for member in type_)
 
     # pass through names of simple and well-known types
