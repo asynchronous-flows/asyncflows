@@ -76,16 +76,3 @@ def get_var_string(
     if strict:
         var_str = var_str + "__strict"
     return var_str
-
-
-def filter_none_from_type(
-    type_: type[Any],
-) -> type[Any]:
-    type_args = typing.get_args(type_)
-    if type(None) not in type_args:
-        raise ValueError(f"Type {type_} does not contain None")
-    new_type_args = tuple(arg for arg in type_args if arg is not type(None))
-    if len(type_args) == 1:
-        return type_args[0]
-    else:
-        return Union[new_type_args]  # type: ignore

@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from pydantic_core import PydanticUndefined
 
 from asyncflows.models.primitives import HintLiteral
-from asyncflows.utils.type_utils import get_var_string, filter_none_from_type
+from asyncflows.utils.type_utils import get_var_string
 
 RealType = TypeVar("RealType")
 ConfigType = TypeVar("ConfigType")
@@ -52,28 +52,71 @@ class TransformsFrom:  # (Generic[ConfigType]):
 # here is a function that transforms types, and renamespaces them to this module if they're pydantic models
 # some types have recursive references, so we cache their forward references
 
-# TODO maybe use generics to avoid the need for this?
+# edit: im kind of proud of this function now that it's been refactored a bit
 
-
-_transformation_log = {}
+_forward_ref_cache = {}
 _transformation_cache = {}
 
 
-def resolve_transforms_from(
+def templatify_fields(
+    type_: type[BaseModel],
+    vars_: HintLiteral | None = None,
+    links: HintLiteral | None = None,
+    add_union: type | None = None,
+    strict: bool = False,
+):
+    fields = {}
+    for field_name, field_ in type_.model_fields.items():
+        # Annotate optional fields with a default of None
+        if field_.default is not PydanticUndefined:
+            default = field_.default
+        elif not field_.is_required():
+            default = None
+        else:
+            default = ...
+        field_type = field_.annotation
+
+        # recurse over each field
+        new_field_type = transform_and_templatify_type(
+            field_type, vars_, links, add_union, strict
+        )
+
+        # add a union to the mix
+        if add_union is not None:
+            # raise if `add_union` collides with existing an existing field name
+            # for field_name in type_.model_fields:
+            #     if any(
+            #         field_name in m.model_fields for m in typing.get_args(add_union)
+            #     ):
+            #         raise ValueError(f"{field_name} is a restricted field name.")
+            new_field_type = Union[new_field_type, add_union]
+
+        # keep original FieldInfo
+        annotated_field_type = typing.Annotated[new_field_type, field_]
+
+        fields[field_name] = (annotated_field_type, default)
+
+    return fields
+
+
+def transform_and_templatify_type(
     type_: Any,
-    vars_: HintLiteral | None,
-    links: HintLiteral | None,
+    vars_: HintLiteral | None = None,
+    links: HintLiteral | None = None,
+    add_union: type | None = None,
     strict: bool = False,
 ) -> Any:  # Union[type[ConfigType], type[ImplementsTransformsInContext]]:
-    # to avoid forward references when unnecessary
+    # cache resolved types to avoid forward references when unnecessary
     var_string = get_var_string(vars_, strict)
     cache_key = str((type_, var_string))
     if cache_key in _transformation_cache:
         return _transformation_cache[cache_key]
+    # cache ForwardRefs to avoid infinite recursion
+    if cache_key in _forward_ref_cache:
+        return _forward_ref_cache[cache_key]
 
-    # to avoid infinite recursion
-    if cache_key in _transformation_log:
-        return _transformation_log[cache_key]
+    # determine `name` and `module`,
+    # store ForwardRef if necessary
     if (
         hasattr(type_, "__name__")
         and not hasattr(type_, "__origin__")
@@ -85,7 +128,7 @@ def resolve_transforms_from(
         else:
             name = type_.__name__
             module = type_.__module__
-        _transformation_log[cache_key] = typing.ForwardRef(
+        _forward_ref_cache[cache_key] = typing.ForwardRef(
             arg=name,
             module=module,
         )
@@ -93,58 +136,49 @@ def resolve_transforms_from(
         name = None
         module = None
 
-    # if it's a union with None
-    if (
-        # isinstance(type_, type)
-        typing.get_origin(type_) is Union and type(None) in typing.get_args(type_)
-    ):
+    origin = typing.get_origin(type_)
+    args = typing.get_args(type_)
+    if origin is types.UnionType:
+        origin = Union
+
+    # remove None from union and denote as optional
+    if origin is Union and type(None) in args:
         is_optional = True
-        type_ = filter_none_from_type(type_)
+        args = tuple(arg for arg in args if arg is not type(None))
+        if len(args) == 1:
+            type_ = args[0]
+        else:
+            type_ = Union[args]  # type: ignore
     else:
         is_optional = False
 
-    origin = typing.get_origin(type_)
+    # recurse over type args if it's a type with origin
     if origin is not None:
-        args = typing.get_args(type_)
-        args = tuple(resolve_transforms_from(arg, vars_, links, strict) for arg in args)
-        if origin is types.UnionType:
-            origin = Union
-            # type_ = args[0] | args[1]
-        # else:
+        args = tuple(
+            transform_and_templatify_type(arg, vars_, links, add_union, strict)
+            for arg in args
+        )
         type_ = origin[args]  # type: ignore
-
-    # if isinstance(type_, list):
-    #     type_ = [resolve_transforms_from(v, vars_, strict) for v in type_]
-    # elif isinstance(type_, dict):
-    #     type_ = {k: resolve_transforms_from(v, vars_, strict) for k, v in type_.items()}
-    if not isinstance(type_, type):
-        if is_optional:
-            type_ = Union[type_, None]
-        _transformation_cache[cache_key] = type_
-        return type_
-
-    if inspect.isclass(type_) and issubclass(type_, BaseModel):
-        fields = {}
-        for field_name, field_ in type_.model_fields.items():
-            # Annotate optional fields with a default of None
-            if not field_.is_required():
-                default = None
-            elif field_.default is not PydanticUndefined:
-                default = field_.default
-            else:
-                default = ...
-            field_type = field_.annotation
-            new_field_type = resolve_transforms_from(field_type, vars_, links, strict)
-            fields[field_name] = (typing.Annotated[new_field_type, field_], default)
+    # special case pydantic models
+    elif inspect.isclass(type_) and issubclass(type_, BaseModel):
+        fields = templatify_fields(
+            type_,
+            vars_=vars_,
+            links=links,
+            add_union=add_union,
+            strict=strict,
+        )
+        # repackage the pydantic model
         # TODO does this break anything? the module namespacing miiiight be a problem
-        # TODO instead of repackaging every pydantic model, only do it if there's a nested TransformsFrom subclass
         type_ = pydantic.create_model(
             name or type_.__name__,
             __base__=type_,
             __module__=module or __name__,
             **fields,
-        )  # pyright: ignore[reportGeneralTypeIssues]
+        )
         type_.model_rebuild()
+
+    # resolve TransformsFrom
     if inspect.isclass(type_) and issubclass(type_, TransformsFrom):
         type_ = type_._get_config_type(
             vars_=vars_,

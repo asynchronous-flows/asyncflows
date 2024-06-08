@@ -1,114 +1,5 @@
 import ast
 import builtins
-import inspect
-import types
-import typing
-from typing import Optional, Any, Union
-
-import pydantic
-from pydantic import BaseModel, ConfigDict, Field
-
-from asyncflows.models.config.transform import resolve_transforms_from
-from asyncflows.models.primitives import HintLiteral
-from asyncflows.utils.type_utils import filter_none_from_type
-
-
-def templatify_model(
-    model: type[BaseModel],
-    vars_: HintLiteral | None,
-    links: HintLiteral | None,
-    add_union: Optional[type] = None,
-    strict: bool = False,
-) -> dict[str, tuple[type, Any]]:
-    # Create a new model, put in a field of "field_type" for each input
-    template_fields = {}
-    for name_, field_ in model.model_fields.items():
-        # Get the type of the field, which may be different in context than in the action
-        # TODO i think if you pass SQLModel objects in it breaks on config parse
-        type_ = field_.annotation
-
-        type_ = resolve_transforms_from(type_, vars_, links, strict)
-
-        is_none_union = False
-        if typing.get_origin(type_) in [Union, types.UnionType]:
-            # filter out None from the union
-            args = typing.get_args(type_)
-            if type(None) in args:
-                type_ = filter_none_from_type(type_)
-                is_none_union = True
-
-        # templatify subfields
-        if inspect.isclass(type_) and issubclass(type_, pydantic.BaseModel):
-            subfields = templatify_model(
-                type_,
-                vars_=vars_,
-                links=links,
-                add_union=add_union,
-                strict=strict,
-            )
-            type_ = pydantic.create_model(
-                type_.__name__ + "ActionFieldTemplate",
-                __base__=type_,
-                __module__=__name__,
-                model_config=ConfigDict(
-                    arbitrary_types_allowed=True,
-                ),
-                **subfields,  # pyright: ignore[reportGeneralTypeIssues]
-            )
-
-        if is_none_union:
-            type_ = Union[type_, None]
-
-        # Annotate optional fields with a default of None
-        kwargs = {}
-        if not field_.is_required() or (
-            add_union is not None and isinstance(None, add_union)
-        ):
-            kwargs["default"] = field_.default
-        if field_.alias is not None:
-            kwargs["alias"] = field_.alias
-        # else:
-        #     default = ...
-        if not kwargs:
-            template_field = ...
-        else:
-            template_field = Field(
-                # alias=field_.alias,
-                # default=default,
-                **kwargs
-            )
-        if add_union is not None:
-            # check that union does not collide with existing type
-            collides = False
-            if inspect.isclass(type_) and issubclass(type_, pydantic.BaseModel):
-                for field_name in type_.model_fields:
-                    if any(
-                        field_name in m.__fields__ for m in typing.get_args(add_union)
-                    ):
-                        # raise ValueError(f"{field_name} is a restricted field name.")
-                        collides = True
-            # TODO if it's a template, enforce dict structure on the template
-            if not collides:
-                type_ = Union[type_, add_union]
-        template_fields[name_] = (type_, template_field)
-    # inputs_template = pydantic.create_model(
-    #     action.name + model.__name__ + "ActionFieldTemplate",
-    #     __base__=StrictModel,
-    #     __module__=__name__,
-    #     **template_fields,
-    # )
-    # inputs_template.update_forward_refs()
-    #
-    # # Annotate with a good default for the inputs themselves,
-    # # given if any of the inputs are required
-    # if not all_optional and any(
-    #     f.is_required() for f in model.model_fields.values()
-    # ):
-    #     default = ...
-    # else:
-    #     default = {}
-
-    return template_fields
 
 
 # def construct_optional_config(model: type[BaseModel]) -> type[BaseModel]:
@@ -119,7 +10,7 @@ def templatify_model(
 #         model_config=ConfigDict(
 #             arbitrary_types_allowed=True,
 #         ),
-#         **templatify_model(
+#         **transform_and_templatify(
 #             model,
 #             vars_=None,
 #             add_union=type(None),

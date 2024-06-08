@@ -11,7 +11,10 @@ from pydantic.fields import FieldInfo
 
 from asyncflows.actions import get_actions_dict, InternalActionBase
 from asyncflows.models.config.common import StrictModel
-from asyncflows.models.config.transform import TransformsFrom
+from asyncflows.models.config.transform import (
+    TransformsFrom,
+    templatify_fields,
+)
 from asyncflows.models.config.value_declarations import (
     VarDeclaration,
     ValueDeclaration,
@@ -19,7 +22,6 @@ from asyncflows.models.config.value_declarations import (
 )
 from asyncflows.models.primitives import HintLiteral
 from asyncflows.models.primitives import ExecutableName
-from asyncflows.utils.config_utils import templatify_model
 
 
 # if TYPE_CHECKING:
@@ -44,7 +46,7 @@ def build_hinted_value_declaration(
     links: HintLiteral | None = None,
     strict: bool = False,
     excluded_declaration_types: None | list[type[ValueDeclaration]] = None,
-):
+) -> type[ValueDeclaration]:
     if excluded_declaration_types is None:
         excluded_declaration_types = []
 
@@ -257,11 +259,11 @@ def build_actions(
         # build input fields
         inputs = action._get_inputs_type()
         if not isinstance(None, inputs):
-            fields |= templatify_model(
+            fields |= templatify_fields(
                 inputs,
                 vars_=vars_,
                 links=links,
-                add_union=HintedValueDeclaration,  # type: ignore
+                add_union=HintedValueDeclaration,
                 strict=strict,
             )
 

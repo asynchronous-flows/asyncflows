@@ -25,6 +25,7 @@ def _build_output_specs(
         return _cache[key]
 
     try:
+        # TODO load the file not as a strict model
         action_config = load_config_file(config_filename)
     except ValidationError:
         print("Failed to load action config")

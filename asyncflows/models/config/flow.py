@@ -1,6 +1,5 @@
 from typing import Union
 
-import pydantic
 from pydantic import Field
 
 from asyncflows.models.config.action import (
@@ -9,6 +8,7 @@ from asyncflows.models.config.action import (
 )
 from asyncflows.models.config.common import StrictModel
 from asyncflows.models.config.model import ModelConfig
+from asyncflows.models.config.transform import transform_and_templatify_type
 from asyncflows.models.config.value_declarations import ValueDeclaration
 from asyncflows.models.primitives import (
     ContextVarName,
@@ -21,7 +21,6 @@ from asyncflows.models.config.value_declarations import (
     LinkDeclaration,
     LambdaDeclaration,
 )
-from asyncflows.utils.config_utils import templatify_model
 
 
 class Loop(StrictModel):
@@ -45,22 +44,10 @@ def build_model_config(
         strict=strict, excluded_declaration_types=[LinkDeclaration, LambdaDeclaration]
     )
 
-    fields = templatify_model(
+    return transform_and_templatify_type(
         ModelConfig,
-        vars_=None,
-        links=None,
         add_union=HintedValueDeclaration,  # type: ignore
         strict=strict,
-    )
-
-    return pydantic.create_model(
-        "ModelConfigDeclaration",
-        __base__=ModelConfig,
-        __module__=__name__,
-        # model_config=ConfigDict(
-        #     arbitrary_types_allowed=True,
-        # ),
-        **fields,  # pyright: ignore[reportGeneralTypeIssues]
     )
 
 
