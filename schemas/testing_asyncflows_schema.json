@@ -1,6 +1,6 @@
 {
   "$defs": {
-    "AddInputs_ActionFieldTemplate": {
+    "AddInputs_": {
       "properties": {
         "a": {
           "anyOf": [
@@ -53,35 +53,10 @@
         "a",
         "b"
       ],
-      "title": "AddInputs_ActionFieldTemplate",
+      "title": "AddInputs_",
       "type": "object"
     },
     "Blob_": {
-      "properties": {
-        "id": {
-          "title": "Id",
-          "type": "string"
-        },
-        "file_extension": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "File Extension"
-        }
-      },
-      "required": [
-        "id"
-      ],
-      "title": "Blob_",
-      "type": "object"
-    },
-    "Blob_ActionFieldTemplate": {
       "properties": {
         "id": {
           "anyOf": [
@@ -137,7 +112,7 @@
       "required": [
         "id"
       ],
-      "title": "Blob_ActionFieldTemplate",
+      "title": "Blob_",
       "type": "object"
     },
     "ContextLambda": {
@@ -169,34 +144,6 @@
       "title": "ContextLambda",
       "type": "object"
     },
-    "ContextLambda_": {
-      "additionalProperties": false,
-      "properties": {
-        "stream": {
-          "default": null,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "lambda": {
-          "description": "\nA lambda declaration is a python expression evaluated within the context of the flow and any provided variables.\nIf you reference an action's output, it will ensure that action runs before this one.\n",
-          "markdownDescription": "\nA lambda declaration is a python expression evaluated within the context of the flow and any provided variables.  \nIf you reference an action's output, it will ensure that action runs before this one.\n\nReference variables or action outputs like:\n\n> ```yaml\n> lambda: |\n> ```\n> ```python\n>   \"My name is \" + name + \". The output of action_id is \" + action_id.output_name\n> ```\n\nYou can also use list comprehension and conditionals:\n\n> ```yaml\n> lambda: |\n> ```\n> ```python\n>   [item for item in items if item.name != 'foo']\n> ```\n",
-          "title": "Lambda",
-          "type": "string"
-        },
-        "heading": {
-          "description": "The heading for the context element.",
-          "markdownDescription": "\nThe heading for the context element.\n\nIf `quote_style` is set to `backticks`, the heading will be wrapped in backticks, according to the following jinja template:    \n\n> ~~~jinja\n> {{ heading }}\n> ```\n> {{ value }}\n> ```\n> ~~~\n\n\nIf `quote_style` is set to `xml`, the heading will be wrapped in XML tags, according to the following jinja template:\n\n> ```jinja\n> <{{ heading }}>\n> {{ value }}\n> </{{ heading }}>\n> ```\n\n",
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "lambda",
-        "heading"
-      ],
-      "title": "ContextLambda_",
-      "type": "object"
-    },
     "ContextLink": {
       "additionalProperties": false,
       "description": "An input declaration for prompt context in config.",
@@ -223,33 +170,6 @@
         "heading"
       ],
       "title": "ContextLink",
-      "type": "object"
-    },
-    "ContextLink_": {
-      "additionalProperties": false,
-      "properties": {
-        "stream": {
-          "default": null,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "link": {
-          "description": "A link declaration references another action's output, and ensures that action runs before this one.",
-          "title": "Link",
-          "type": "string"
-        },
-        "heading": {
-          "description": "The heading for the context element.",
-          "markdownDescription": "\nThe heading for the context element.\n\nIf `quote_style` is set to `backticks`, the heading will be wrapped in backticks, according to the following jinja template:    \n\n> ~~~jinja\n> {{ heading }}\n> ```\n> {{ value }}\n> ```\n> ~~~\n\n\nIf `quote_style` is set to `xml`, the heading will be wrapped in XML tags, according to the following jinja template:\n\n> ```jinja\n> <{{ heading }}>\n> {{ value }}\n> </{{ heading }}>\n> ```\n\n",
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "link",
-        "heading"
-      ],
-      "title": "ContextLink_",
       "type": "object"
     },
     "ContextTemplate": {
@@ -281,34 +201,6 @@
       "title": "ContextTemplate",
       "type": "object"
     },
-    "ContextTemplate_": {
-      "additionalProperties": false,
-      "properties": {
-        "stream": {
-          "default": null,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "text": {
-          "description": "\nA text declaration is a jinja2 template, rendered within the context of the flow and any provided variables.\nIf you reference an action's output, it will ensure that action runs before this one.\n\nFor more information, see the Jinja2 documentation: https://jinja.palletsprojects.com/en/3.0.x/templates/.\n",
-          "markdownDescription": "\nA text declaration is a jinja2 template, rendered within the context of the flow and any provided variables.  \nIf you reference an action's output, it will ensure that action runs before this one.\n\nReference variables or action outputs like: \n\n> ```yaml\n> text: |\n> ```\n> ```jinja\n>   Hi {{ name }}, the output of action_id is {{ action_id.output_name }}\n> ```\n\nIt also supports advanced features such as loops and conditionals:\n\n> ```yaml\n> text: |\n> ```\n> ```jinja\n>   {% for item in items -%}\n>     {% if item.name != 'foo' -%}\n>     {{ item.name }}: {{ item.value }}\n>     {% endif %}\n>   {% endfor %}\n> ```\n\nFor more information, see the [Jinja2 documentation](https://jinja.palletsprojects.com/en/3.0.x/templates/).\n",
-          "title": "Text",
-          "type": "string"
-        },
-        "heading": {
-          "description": "The heading for the context element.",
-          "markdownDescription": "\nThe heading for the context element.\n\nIf `quote_style` is set to `backticks`, the heading will be wrapped in backticks, according to the following jinja template:    \n\n> ~~~jinja\n> {{ heading }}\n> ```\n> {{ value }}\n> ```\n> ~~~\n\n\nIf `quote_style` is set to `xml`, the heading will be wrapped in XML tags, according to the following jinja template:\n\n> ```jinja\n> <{{ heading }}>\n> {{ value }}\n> </{{ heading }}>\n> ```\n\n",
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "text",
-        "heading"
-      ],
-      "title": "ContextTemplate_",
-      "type": "object"
-    },
     "ContextVar": {
       "additionalProperties": false,
       "description": "A variable declaration for prompt context in config.",
@@ -337,33 +229,6 @@
       "title": "ContextVar",
       "type": "object"
     },
-    "ContextVar_": {
-      "additionalProperties": false,
-      "properties": {
-        "stream": {
-          "default": null,
-          "title": "Stream",
-          "type": "boolean"
-        },
-        "var": {
-          "description": "A variable declaration references a variable (or path to nested variable) in the context.",
-          "title": "Var",
-          "type": "string"
-        },
-        "heading": {
-          "description": "The heading for the context element.",
-          "markdownDescription": "\nThe heading for the context element.\n\nIf `quote_style` is set to `backticks`, the heading will be wrapped in backticks, according to the following jinja template:    \n\n> ~~~jinja\n> {{ heading }}\n> ```\n> {{ value }}\n> ```\n> ~~~\n\n\nIf `quote_style` is set to `xml`, the heading will be wrapped in XML tags, according to the following jinja template:\n\n> ```jinja\n> <{{ heading }}>\n> {{ value }}\n> </{{ heading }}>\n> ```\n\n",
-          "title": "Heading",
-          "type": "string"
-        }
-      },
-      "required": [
-        "var",
-        "heading"
-      ],
-      "title": "ContextVar_",
-      "type": "object"
-    },
     "EnvDeclaration": {
       "additionalProperties": false,
       "properties": {
@@ -387,19 +252,38 @@
     "File_": {
       "properties": {
         "sources": {
-          "description": "List of blobs or URLs to download the file from",
-          "items": {
-            "anyOf": [
-              {
-                "$ref": "#/$defs/Blob_"
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Blob_"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
               },
-              {
-                "type": "string"
-              }
-            ]
-          },
-          "title": "Sources",
-          "type": "array"
+              "type": "array"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "description": "List of blobs or URLs to download the file from",
+          "title": "Sources"
         }
       },
       "required": [
@@ -571,7 +455,7 @@
       "title": "LinkDeclaration",
       "type": "object"
     },
-    "ModelConfigDeclaration": {
+    "ModelConfig_": {
       "additionalProperties": false,
       "properties": {
         "max_output_tokens": {
@@ -581,9 +465,6 @@
             },
             {
               "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
             },
             {
               "$ref": "#/$defs/TextDeclaration"
@@ -604,9 +485,6 @@
               "$ref": "#/$defs/VarDeclaration"
             },
             {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
               "$ref": "#/$defs/TextDeclaration"
             },
             {
@@ -623,9 +501,6 @@
             },
             {
               "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
             },
             {
               "$ref": "#/$defs/TextDeclaration"
@@ -649,9 +524,6 @@
               "$ref": "#/$defs/VarDeclaration"
             },
             {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
               "$ref": "#/$defs/TextDeclaration"
             },
             {
@@ -673,9 +545,6 @@
               "$ref": "#/$defs/VarDeclaration"
             },
             {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
               "$ref": "#/$defs/TextDeclaration"
             },
             {
@@ -695,9 +564,6 @@
             },
             {
               "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
             },
             {
               "$ref": "#/$defs/TextDeclaration"
@@ -766,9 +632,6 @@
               "$ref": "#/$defs/VarDeclaration"
             },
             {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
               "$ref": "#/$defs/TextDeclaration"
             },
             {
@@ -785,9 +648,6 @@
             },
             {
               "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
             },
             {
               "$ref": "#/$defs/TextDeclaration"
@@ -811,9 +671,6 @@
               "$ref": "#/$defs/VarDeclaration"
             },
             {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
               "$ref": "#/$defs/TextDeclaration"
             },
             {
@@ -827,10 +684,10 @@
           "title": "Auth Token"
         }
       },
-      "title": "ModelConfigDeclaration",
+      "title": "ModelConfig_",
       "type": "object"
     },
-    "NestedPromptContext_ActionFieldTemplate": {
+    "NestedPromptContext_": {
       "properties": {
         "context": {
           "anyOf": [
@@ -838,22 +695,22 @@
               "items": {
                 "anyOf": [
                   {
-                    "$ref": "#/$defs/RoleElement__"
+                    "$ref": "#/$defs/RoleElement_"
                   },
                   {
-                    "$ref": "#/$defs/TextElement__"
+                    "$ref": "#/$defs/TextElement_"
                   },
                   {
-                    "$ref": "#/$defs/ContextVar_"
+                    "$ref": "#/$defs/ContextVar"
                   },
                   {
-                    "$ref": "#/$defs/ContextLink_"
+                    "$ref": "#/$defs/ContextLink"
                   },
                   {
-                    "$ref": "#/$defs/ContextTemplate_"
+                    "$ref": "#/$defs/ContextTemplate"
                   },
                   {
-                    "$ref": "#/$defs/ContextLambda_"
+                    "$ref": "#/$defs/ContextLambda"
                   }
                 ]
               },
@@ -881,10 +738,10 @@
       "required": [
         "context"
       ],
-      "title": "NestedPromptContext_ActionFieldTemplate",
+      "title": "NestedPromptContext_",
       "type": "object"
     },
-    "OptionalModelConfigActionFieldTemplate": {
+    "OptionalModelConfig_": {
       "additionalProperties": false,
       "properties": {
         "max_output_tokens": {
@@ -1176,7 +1033,7 @@
           "title": "Auth Token"
         }
       },
-      "title": "OptionalModelConfigActionFieldTemplate",
+      "title": "OptionalModelConfig_",
       "type": "object"
     },
     "QuoteStyle": {
@@ -1191,38 +1048,38 @@
       "additionalProperties": false,
       "properties": {
         "role": {
-          "enum": [
-            "user",
-            "system",
-            "assistant"
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "system",
+                "assistant"
+              ],
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
           ],
-          "title": "Role",
-          "type": "string"
+          "title": "Role"
         }
       },
       "required": [
         "role"
       ],
       "title": "RoleElement_",
-      "type": "object"
-    },
-    "RoleElement__": {
-      "additionalProperties": false,
-      "properties": {
-        "role": {
-          "enum": [
-            "user",
-            "system",
-            "assistant"
-          ],
-          "title": "Role",
-          "type": "string"
-        }
-      },
-      "required": [
-        "role"
-      ],
-      "title": "RoleElement__",
       "type": "object"
     },
     "TextDeclaration": {
@@ -1250,10 +1107,29 @@
       "additionalProperties": false,
       "properties": {
         "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
           "description": "\nA text declaration is a jinja2 template, rendered within the context of the flow and any provided variables.\nIf you reference an action's output, it will ensure that action runs before this one.\n\nFor more information, see the Jinja2 documentation: https://jinja.palletsprojects.com/en/3.0.x/templates/.\n",
           "markdownDescription": "\nA text declaration is a jinja2 template, rendered within the context of the flow and any provided variables.  \nIf you reference an action's output, it will ensure that action runs before this one.\n\nReference variables or action outputs like: \n\n> ```yaml\n> text: |\n> ```\n> ```jinja\n>   Hi {{ name }}, the output of action_id is {{ action_id.output_name }}\n> ```\n\nIt also supports advanced features such as loops and conditionals:\n\n> ```yaml\n> text: |\n> ```\n> ```jinja\n>   {% for item in items -%}\n>     {% if item.name != 'foo' -%}\n>     {{ item.name }}: {{ item.value }}\n>     {% endif %}\n>   {% endfor %}\n> ```\n\nFor more information, see the [Jinja2 documentation](https://jinja.palletsprojects.com/en/3.0.x/templates/).\n",
-          "title": "Text",
-          "type": "string"
+          "title": "Text"
         },
         "role": {
           "anyOf": [
@@ -1264,6 +1140,21 @@
                 "assistant"
               ],
               "type": "string"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
             },
             {
               "type": "null"
@@ -1277,39 +1168,6 @@
         "text"
       ],
       "title": "TextElement_",
-      "type": "object"
-    },
-    "TextElement__": {
-      "additionalProperties": false,
-      "properties": {
-        "text": {
-          "description": "\nA text declaration is a jinja2 template, rendered within the context of the flow and any provided variables.\nIf you reference an action's output, it will ensure that action runs before this one.\n\nFor more information, see the Jinja2 documentation: https://jinja.palletsprojects.com/en/3.0.x/templates/.\n",
-          "markdownDescription": "\nA text declaration is a jinja2 template, rendered within the context of the flow and any provided variables.  \nIf you reference an action's output, it will ensure that action runs before this one.\n\nReference variables or action outputs like: \n\n> ```yaml\n> text: |\n> ```\n> ```jinja\n>   Hi {{ name }}, the output of action_id is {{ action_id.output_name }}\n> ```\n\nIt also supports advanced features such as loops and conditionals:\n\n> ```yaml\n> text: |\n> ```\n> ```jinja\n>   {% for item in items -%}\n>     {% if item.name != 'foo' -%}\n>     {{ item.name }}: {{ item.value }}\n>     {% endif %}\n>   {% endfor %}\n> ```\n\nFor more information, see the [Jinja2 documentation](https://jinja.palletsprojects.com/en/3.0.x/templates/).\n",
-          "title": "Text",
-          "type": "string"
-        },
-        "role": {
-          "anyOf": [
-            {
-              "enum": [
-                "user",
-                "system",
-                "assistant"
-              ],
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Role"
-        }
-      },
-      "required": [
-        "text"
-      ],
-      "title": "TextElement__",
       "type": "object"
     },
     "VarDeclaration": {
@@ -1395,6 +1253,7 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
+          "description": "Database URL (asynchronous)",
           "title": "Database Url"
         },
         "statement": {
@@ -1418,6 +1277,7 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
+          "description": "SQL statement to execute",
           "title": "Statement"
         },
         "allowed_statement_prefixes": {
@@ -1447,6 +1307,7 @@
           "default": [
             "SELECT"
           ],
+          "description": "List of allowed statement prefixes",
           "title": "Allowed Statement Prefixes"
         },
         "max_rows": {
@@ -1471,6 +1332,7 @@
             }
           ],
           "default": 5,
+          "description": "Maximum number of rows to return",
           "title": "Max Rows"
         }
       },
@@ -1778,6 +1640,7 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
+          "description": "Text to extract out of <tag>text</tag>",
           "title": "Text"
         },
         "tag": {
@@ -1801,6 +1664,7 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
+          "description": "Tag to extract from",
           "title": "Tag"
         }
       },
@@ -1875,6 +1739,7 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
+          "description": "Database URL (synchronous)",
           "title": "Database Url"
         }
       },
@@ -1948,6 +1813,7 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
+          "description": "URL of the webpage to GET",
           "title": "Url"
         }
       },
@@ -2079,7 +1945,7 @@
         "model": {
           "anyOf": [
             {
-              "$ref": "#/$defs/OptionalModelConfigActionFieldTemplate"
+              "$ref": "#/$defs/OptionalModelConfig_"
             },
             {
               "$ref": "#/$defs/VarDeclaration"
@@ -2128,6 +1994,7 @@
             }
           ],
           "default": null,
+          "description": "The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.",
           "title": "Quote Style"
         },
         "prompt": {
@@ -3090,7 +2957,7 @@
         "blob": {
           "anyOf": [
             {
-              "$ref": "#/$defs/Blob_ActionFieldTemplate"
+              "$ref": "#/$defs/Blob_"
             },
             {
               "$ref": "#/$defs/VarDeclaration"
@@ -3163,7 +3030,7 @@
         "nested": {
           "anyOf": [
             {
-              "$ref": "#/$defs/AddInputs_ActionFieldTemplate"
+              "$ref": "#/$defs/AddInputs_"
             },
             {
               "$ref": "#/$defs/VarDeclaration"
@@ -3333,7 +3200,7 @@
         "nested": {
           "anyOf": [
             {
-              "$ref": "#/$defs/AddInputs_ActionFieldTemplate"
+              "$ref": "#/$defs/AddInputs_"
             },
             {
               "$ref": "#/$defs/VarDeclaration"
@@ -3409,7 +3276,7 @@
         "model": {
           "anyOf": [
             {
-              "$ref": "#/$defs/OptionalModelConfigActionFieldTemplate"
+              "$ref": "#/$defs/OptionalModelConfig_"
             },
             {
               "$ref": "#/$defs/VarDeclaration"
@@ -3458,6 +3325,7 @@
             }
           ],
           "default": null,
+          "description": "The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.",
           "title": "Quote Style"
         },
         "prompt": {
@@ -3749,7 +3617,7 @@
         "nested": {
           "anyOf": [
             {
-              "$ref": "#/$defs/NestedPromptContext_ActionFieldTemplate"
+              "$ref": "#/$defs/NestedPromptContext_"
             },
             {
               "$ref": "#/$defs/VarDeclaration"
@@ -3879,7 +3747,7 @@
   "additionalProperties": false,
   "properties": {
     "default_model": {
-      "$ref": "#/$defs/ModelConfigDeclaration"
+      "$ref": "#/$defs/ModelConfig_"
     },
     "action_timeout": {
       "default": 360,

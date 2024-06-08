@@ -3,13 +3,47 @@
     "Blob_": {
       "properties": {
         "id": {
-          "title": "Id",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "title": "Id"
         },
         "file_extension": {
           "anyOf": [
             {
               "type": "string"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
             },
             {
               "type": "null"
@@ -162,19 +196,38 @@
     "File_": {
       "properties": {
         "sources": {
-          "description": "List of blobs or URLs to download the file from",
-          "items": {
-            "anyOf": [
-              {
-                "$ref": "#/$defs/Blob_"
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Blob_"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
               },
-              {
-                "type": "string"
-              }
-            ]
-          },
-          "title": "Sources",
-          "type": "array"
+              "type": "array"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
+          "description": "List of blobs or URLs to download the file from",
+          "title": "Sources"
         }
       },
       "required": [
@@ -304,7 +357,7 @@
       "title": "LinkDeclaration",
       "type": "object"
     },
-    "ModelConfigDeclaration": {
+    "ModelConfig_": {
       "additionalProperties": false,
       "properties": {
         "max_output_tokens": {
@@ -314,9 +367,6 @@
             },
             {
               "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
             },
             {
               "$ref": "#/$defs/TextDeclaration"
@@ -337,9 +387,6 @@
               "$ref": "#/$defs/VarDeclaration"
             },
             {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
               "$ref": "#/$defs/TextDeclaration"
             },
             {
@@ -356,9 +403,6 @@
             },
             {
               "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
             },
             {
               "$ref": "#/$defs/TextDeclaration"
@@ -382,9 +426,6 @@
               "$ref": "#/$defs/VarDeclaration"
             },
             {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
               "$ref": "#/$defs/TextDeclaration"
             },
             {
@@ -406,9 +447,6 @@
               "$ref": "#/$defs/VarDeclaration"
             },
             {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
               "$ref": "#/$defs/TextDeclaration"
             },
             {
@@ -428,9 +466,6 @@
             },
             {
               "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
             },
             {
               "$ref": "#/$defs/TextDeclaration"
@@ -499,9 +534,6 @@
               "$ref": "#/$defs/VarDeclaration"
             },
             {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
               "$ref": "#/$defs/TextDeclaration"
             },
             {
@@ -518,9 +550,6 @@
             },
             {
               "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
             },
             {
               "$ref": "#/$defs/TextDeclaration"
@@ -544,9 +573,6 @@
               "$ref": "#/$defs/VarDeclaration"
             },
             {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
               "$ref": "#/$defs/TextDeclaration"
             },
             {
@@ -560,10 +586,10 @@
           "title": "Auth Token"
         }
       },
-      "title": "ModelConfigDeclaration",
+      "title": "ModelConfig_",
       "type": "object"
     },
-    "OptionalModelConfigActionFieldTemplate": {
+    "OptionalModelConfig_": {
       "additionalProperties": false,
       "properties": {
         "max_output_tokens": {
@@ -855,7 +881,7 @@
           "title": "Auth Token"
         }
       },
-      "title": "OptionalModelConfigActionFieldTemplate",
+      "title": "OptionalModelConfig_",
       "type": "object"
     },
     "QuoteStyle": {
@@ -870,13 +896,32 @@
       "additionalProperties": false,
       "properties": {
         "role": {
-          "enum": [
-            "user",
-            "system",
-            "assistant"
+          "anyOf": [
+            {
+              "enum": [
+                "user",
+                "system",
+                "assistant"
+              ],
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
           ],
-          "title": "Role",
-          "type": "string"
+          "title": "Role"
         }
       },
       "required": [
@@ -910,10 +955,29 @@
       "additionalProperties": false,
       "properties": {
         "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
+            }
+          ],
           "description": "\nA text declaration is a jinja2 template, rendered within the context of the flow and any provided variables.\nIf you reference an action's output, it will ensure that action runs before this one.\n\nFor more information, see the Jinja2 documentation: https://jinja.palletsprojects.com/en/3.0.x/templates/.\n",
           "markdownDescription": "\nA text declaration is a jinja2 template, rendered within the context of the flow and any provided variables.  \nIf you reference an action's output, it will ensure that action runs before this one.\n\nReference variables or action outputs like: \n\n> ```yaml\n> text: |\n> ```\n> ```jinja\n>   Hi {{ name }}, the output of action_id is {{ action_id.output_name }}\n> ```\n\nIt also supports advanced features such as loops and conditionals:\n\n> ```yaml\n> text: |\n> ```\n> ```jinja\n>   {% for item in items -%}\n>     {% if item.name != 'foo' -%}\n>     {{ item.name }}: {{ item.value }}\n>     {% endif %}\n>   {% endfor %}\n> ```\n\nFor more information, see the [Jinja2 documentation](https://jinja.palletsprojects.com/en/3.0.x/templates/).\n",
-          "title": "Text",
-          "type": "string"
+          "title": "Text"
         },
         "role": {
           "anyOf": [
@@ -924,6 +988,21 @@
                 "assistant"
               ],
               "type": "string"
+            },
+            {
+              "$ref": "#/$defs/VarDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LinkDeclaration"
+            },
+            {
+              "$ref": "#/$defs/TextDeclaration"
+            },
+            {
+              "$ref": "#/$defs/EnvDeclaration"
+            },
+            {
+              "$ref": "#/$defs/LambdaDeclaration"
             },
             {
               "type": "null"
@@ -1022,6 +1101,7 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
+          "description": "Database URL (asynchronous)",
           "title": "Database Url"
         },
         "statement": {
@@ -1045,6 +1125,7 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
+          "description": "SQL statement to execute",
           "title": "Statement"
         },
         "allowed_statement_prefixes": {
@@ -1074,6 +1155,7 @@
           "default": [
             "SELECT"
           ],
+          "description": "List of allowed statement prefixes",
           "title": "Allowed Statement Prefixes"
         },
         "max_rows": {
@@ -1098,6 +1180,7 @@
             }
           ],
           "default": 5,
+          "description": "Maximum number of rows to return",
           "title": "Max Rows"
         }
       },
@@ -1405,6 +1488,7 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
+          "description": "Text to extract out of <tag>text</tag>",
           "title": "Text"
         },
         "tag": {
@@ -1428,6 +1512,7 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
+          "description": "Tag to extract from",
           "title": "Tag"
         }
       },
@@ -1502,6 +1587,7 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
+          "description": "Database URL (synchronous)",
           "title": "Database Url"
         }
       },
@@ -1575,6 +1661,7 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
+          "description": "URL of the webpage to GET",
           "title": "Url"
         }
       },
@@ -1706,7 +1793,7 @@
         "model": {
           "anyOf": [
             {
-              "$ref": "#/$defs/OptionalModelConfigActionFieldTemplate"
+              "$ref": "#/$defs/OptionalModelConfig_"
             },
             {
               "$ref": "#/$defs/VarDeclaration"
@@ -1755,6 +1842,7 @@
             }
           ],
           "default": null,
+          "description": "The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.",
           "title": "Quote Style"
         },
         "prompt": {
@@ -2338,7 +2426,7 @@
   "additionalProperties": false,
   "properties": {
     "default_model": {
-      "$ref": "#/$defs/ModelConfigDeclaration"
+      "$ref": "#/$defs/ModelConfig_"
     },
     "action_timeout": {
       "default": 360,
