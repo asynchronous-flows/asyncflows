@@ -1,10 +1,13 @@
 import ast
 import os
-from typing import Any, Union
+import types
+import typing
+from typing import Any, Union, Annotated
 
 import pydantic
 import simpleeval
 from pydantic import Field
+from pydantic.fields import FieldInfo
 from typing_extensions import Self
 
 from asyncflows.models.config.common import (
@@ -139,8 +142,64 @@ class LinkDeclaration(Declaration):
         varstr = get_var_string(hint_literal, strict)
         field_infos = cls.model_fields.copy()
         fields: dict[str, tuple] = {
-            var: (info.annotation, info) for var, info in field_infos.items()
+            name: (info.annotation, info) for name, info in field_infos.items()
         }
+
+        base_description = field_infos["link"].description
+
+        # prepend the LinkDeclaration's description to the link literal's output description
+        if typing.get_origin(hint_literal) in [Union, types.UnionType]:
+            args = typing.get_args(hint_literal)
+        else:
+            args = [hint_literal]
+        new_args = []
+        for arg in args:
+            # get the FieldInfo from the Annotated type
+            if typing.get_origin(arg) is not Annotated:
+                continue
+
+            description_elements = []
+            if base_description is not None:
+                description_elements.append(base_description)
+            markdown_description_elements = []
+
+            # will not change markdown description if field description is not set
+            for metadata in arg.__metadata__[::-1]:  # type: ignore
+                if not isinstance(metadata, FieldInfo):
+                    continue
+                if metadata.description:
+                    description_elements.append(metadata.description)
+                    # only parses json_schema_extra if it's a dictionary
+                    if (
+                        metadata.json_schema_extra
+                        and isinstance(metadata.json_schema_extra, dict)
+                        and "markdownDescription" in metadata.json_schema_extra
+                    ):
+                        # append base first
+                        markdown_description_elements.append(base_description)
+                        # then append the field's markdown description
+                        markdown_description_elements.append(
+                            metadata.json_schema_extra["markdownDescription"]
+                        )
+                    break
+
+            field_kwargs = {}
+            if description_elements:
+                field_kwargs["description"] = "\n---\n".join(description_elements)
+            if markdown_description_elements:
+                field_kwargs["json_schema_extra"] = {
+                    "markdownDescription": "\n\n---\n\n".join(
+                        markdown_description_elements
+                    )
+                }
+            if field_kwargs:
+                # annotated FieldInfos merge left (the last one overrides)
+                new_args.append(Annotated[arg, Field(**field_kwargs)])  # type: ignore
+        if len(new_args) == 1:
+            hint_literal = new_args[0]
+        else:
+            hint_literal = Union[tuple(new_args)]  # type: ignore
+
         fields["link"] = (hint_literal, ...)
         return pydantic.create_model(  # type: ignore
             f"{cls.__name__}_{varstr}",
