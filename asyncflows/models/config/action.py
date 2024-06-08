@@ -94,7 +94,9 @@ def build_actions(
         if action.readable_name:
             title = action.readable_name
         else:
-            title = f"{action.name.replace('_', ' ').title()} Action"
+            title = action.name.replace('_', ' ').title()
+        title += " Action"
+
         description = build_action_description(action, markdown=False)
         markdown_description = build_action_description(action, markdown=True)
 
@@ -116,8 +118,8 @@ def build_actions(
                 Field(
                     description=description,
                     json_schema_extra={
-                        "markdownDescription": markdown_description,
-                    },
+                        "markdownDescription": markdown_description + "\n\n---",
+                    } if markdown_description is not None else None,
                 ),
             ]
 

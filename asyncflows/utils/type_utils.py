@@ -264,7 +264,7 @@ def _get_recursive_subfields(
             if base_description:
                 description = base_description + "\n\n" + description
             markdown_description = (
-                build_field_description(name, field, markdown=True) + "\n\n---"
+                "- " + build_field_description(name, field, markdown=True) + "\n\n---"
             )
             if base_markdown_description:
                 markdown_description = (
@@ -296,8 +296,8 @@ def build_action_description(
     action: type[InternalActionBase],
     *,
     markdown: bool,
-    include_title=False,
-    include_io=False,
+    include_title: bool = False,
+    include_io: bool = True,
 ) -> None | str:
     description_items = []
 
@@ -305,9 +305,16 @@ def build_action_description(
         if action.readable_name:
             title = action.readable_name
         else:
-            title = f"{action.name.replace('_', ' ').title()} Action"
+            title = action.name.replace('_', ' ').title()
+        title += " Action"
+
+        # FIXME this is a hacky convenience
+        if not include_io:
+            title += " Output"
+
         if markdown:
-            title = f"*{title}*"
+            title = f"**{title}**"
+
         description_items.append(title)
 
     # grab the main description
@@ -349,8 +356,6 @@ def build_action_description(
 
     if not description_items:
         return None
-    if markdown:
-        description_items.append("---")
     return "\n\n".join(description_items)
 
 
@@ -384,13 +389,13 @@ def build_link_literal(
     unique_action_names = set(action.name for action in action_invocations.values())
     action_descriptions = {
         name: build_action_description(
-            actions_dict[name], markdown=False, include_title=True
+            actions_dict[name], markdown=False, include_title=True, include_io=False,
         )
         for name in unique_action_names
     }
     markdown_action_descriptions = {
         name: build_action_description(
-            actions_dict[name], markdown=True, include_title=True
+            actions_dict[name], markdown=True, include_title=True, include_io=False,
         )
         for name in unique_action_names
     }
