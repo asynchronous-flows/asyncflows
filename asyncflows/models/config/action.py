@@ -1,18 +1,13 @@
 import inspect
-import os
-import types
 import typing
-from enum import Enum
 from typing import Union, Literal
 
 import pydantic
 from pydantic import ConfigDict, Field
-from pydantic.fields import FieldInfo
 
 from asyncflows.actions import get_actions_dict, InternalActionBase
 from asyncflows.models.config.common import StrictModel
-from asyncflows.models.config.transform import (
-    TransformsFrom,
+from asyncflows.utils.type_utils import (
     templatify_fields,
 )
 from asyncflows.models.config.value_declarations import (
@@ -22,6 +17,7 @@ from asyncflows.models.config.value_declarations import (
 )
 from asyncflows.models.primitives import HintLiteral
 from asyncflows.models.primitives import ExecutableName
+from asyncflows.utils.type_utils import build_field_description
 
 
 # if TYPE_CHECKING:
@@ -75,93 +71,6 @@ def build_hinted_value_declaration(
     union_elements.extend(other_elements)
 
     return Union[tuple(union_elements)]  # type: ignore
-
-
-def build_type_qualified_name(type_: type, *, markdown: bool) -> str:
-    if type_ is type(None):
-        return "None"
-
-    # convert unions to a string
-    origin = typing.get_origin(type_)
-    if origin is not None:
-        if origin in [Union, types.UnionType]:
-            args = typing.get_args(type_)
-            return " | ".join(
-                build_type_qualified_name(arg, markdown=markdown) for arg in args
-            )
-
-        # convert literal to a string
-        if origin is Literal:
-            args = typing.get_args(type_)
-            return " | ".join(repr(arg) for arg in args)
-
-        # handle other origins
-        origin_qual_name = build_type_qualified_name(origin, markdown=markdown)
-        args_qual_names = " | ".join(
-            build_type_qualified_name(arg, markdown=markdown)
-            for arg in typing.get_args(type_)
-        )
-        return f"{origin_qual_name}[{args_qual_names}]"
-
-    # if not isinstance(type_, type):
-    #     raise ValueError(f"Invalid type: {type_}")
-
-    if inspect.isclass(type_) and issubclass(type_, TransformsFrom):
-        return build_type_qualified_name(
-            type_._get_config_type(None, None), markdown=markdown
-        )
-
-    # convert string enums to a string
-    if inspect.isclass(type_) and issubclass(type_, Enum):
-        return " | ".join(repr(member.value) for member in type_)
-
-    # pass through names of simple and well-known types
-    if type_.__module__ in ["builtins", "typing"]:
-        return type_.__qualname__
-
-    # add markdown link to custom types
-    if not markdown:
-        return type_.__qualname__
-
-    # Building the link to the source code file
-    try:
-        # Get the file and line number where the type is defined
-        source_file = inspect.getfile(type_)
-        source_line = inspect.getsourcelines(type_)[1]
-
-        # Construct the file URL
-        source_path = os.path.abspath(source_file)
-        file_url = f"file://{source_path}#L{source_line}"
-        return f"[{type_.__qualname__}]({file_url})"
-    except Exception:
-        # Fallback to just the type name if we can't get the source file
-        return type_.__qualname__
-
-
-def remove_optional(type_: type | None) -> tuple[type, bool]:
-    if type_ is None:
-        return typing.Any, True
-    if typing.get_origin(type_) in [Union, types.UnionType]:
-        args = typing.get_args(type_)
-        if type(None) in args:
-            return args[0], True
-    return type_, False
-
-
-def build_field_description(
-    field_name: str, field_info: FieldInfo, *, markdown: bool
-) -> str:
-    type_, is_optional = remove_optional(field_info.annotation)
-    qualified_name = build_type_qualified_name(type_, markdown=markdown)
-
-    field_desc = f"{field_name}: {qualified_name}"
-    if is_optional:
-        field_desc += " (optional)"
-
-    if field_info.description:
-        field_desc += f"  \n  {field_info.description}"
-
-    return field_desc
 
 
 def build_action_description(

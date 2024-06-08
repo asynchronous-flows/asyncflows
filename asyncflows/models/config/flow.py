@@ -8,7 +8,7 @@ from asyncflows.models.config.action import (
 )
 from asyncflows.models.config.common import StrictModel
 from asyncflows.models.config.model import ModelConfig
-from asyncflows.models.config.transform import transform_and_templatify_type
+from asyncflows.utils.type_utils import transform_and_templatify_type
 from asyncflows.models.config.value_declarations import ValueDeclaration
 from asyncflows.models.primitives import (
     ContextVarName,
