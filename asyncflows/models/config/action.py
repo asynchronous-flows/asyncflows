@@ -56,14 +56,14 @@ def build_hinted_value_declaration(
         union_elements.append(
             VarDeclaration.from_hint_literal(vars_, strict),
         )
-    if not vars_ or not strict and VarDeclaration not in excluded_declaration_types:
+    if (not vars_ or not strict) and VarDeclaration not in excluded_declaration_types:
         union_elements.append(VarDeclaration)
 
     if links:
         union_elements.append(
             LinkDeclaration.from_hint_literal(links, strict),
         )
-    if not links or not strict and LinkDeclaration not in excluded_declaration_types:
+    if (not links or not strict) and LinkDeclaration not in excluded_declaration_types:
         union_elements.append(LinkDeclaration)
 
     other_elements = [
