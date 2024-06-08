@@ -1,5 +1,4 @@
 import inspect
-import typing
 from typing import Any, Literal, Union, Annotated
 
 import pydantic
@@ -52,7 +51,10 @@ def get_path_literal(
         if subfields:
             union_elements.extend(subfields)
 
-    return Union[tuple(union_elements)]  # type: ignore
+    if union_elements:
+        return Union[tuple(union_elements)]  # type: ignore
+    else:
+        return str
 
 
 def get_var_string(
