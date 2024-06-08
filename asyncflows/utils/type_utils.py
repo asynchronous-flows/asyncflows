@@ -11,9 +11,9 @@ from pydantic import Field, BaseModel
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 
+from asyncflows.actions import InternalActionBase, get_actions_dict
 from asyncflows.models.config.transform import TransformsFrom
-from asyncflows.models.primitives import HintType, HintLiteral
-
+from asyncflows.models.primitives import HintLiteral, ExecutableId
 
 # forgive me father for I have sinned
 # "I have used a global variable", says copilot
@@ -62,7 +62,7 @@ def templatify_fields(
             new_field_type = Union[new_field_type, add_union]
 
         # keep original FieldInfo
-        annotated_field_type = typing.Annotated[new_field_type, field_]
+        annotated_field_type = Annotated[new_field_type, field_]
 
         fields[field_name] = (annotated_field_type, default)
 
@@ -248,30 +248,131 @@ def build_field_description(
 
 
 def _get_recursive_subfields(
-    obj: dict | pydantic.BaseModel | Any, prefix: str = ""
+    obj: dict | pydantic.BaseModel | Any,
+    base_description: str | None,
+    base_markdown_description: str | None,
+    name_prefix: str = "",
 ) -> list[type[str]]:
     out = []
-    if isinstance(obj, dict):
-        for name, field in obj.items():
-            # out.append(name)
-            out.extend(_get_recursive_subfields(field, prefix=f"{name}."))
-    elif inspect.isclass(obj) and issubclass(obj, pydantic.BaseModel):
+    # if isinstance(obj, dict):
+    #     for name, field in obj.items():
+    #         # out.append(name)
+    #         out.extend(_get_recursive_subfields(field, base_description, base_markdown_description, f"{name}."))
+    if inspect.isclass(obj) and issubclass(obj, pydantic.BaseModel):
         for name, field in obj.model_fields.items():
-            field_annotation = Field(...)
-            if field.description:
-                field_annotation.description = field.description
+            description = build_field_description(name, field, markdown=False)
+            if base_description:
+                description = base_description + "\n\n" + description
+            markdown_description = (
+                build_field_description(name, field, markdown=True) + "\n\n---"
+            )
+            if base_markdown_description:
+                markdown_description = (
+                    base_markdown_description + "\n\n" + markdown_description
+                )
             out.append(
                 Annotated[
-                    Literal[f"{prefix}{name}"],  # type: ignore
-                    field_annotation,
+                    Literal[f"{name_prefix}{name}"],
+                    Field(
+                        description=description,
+                        json_schema_extra={
+                            "markdownDescription": markdown_description,
+                        },
+                    ),
                 ]
             )
-            out.extend(_get_recursive_subfields(field.annotation, prefix=f"{name}."))
+            out.extend(
+                _get_recursive_subfields(
+                    field.annotation,
+                    base_description,
+                    base_markdown_description,
+                    name_prefix=f"{name_prefix}{name}.",
+                )
+            )
     return out
 
 
-def get_path_literal(
-    vars_: HintType,
+def build_action_description(
+    action: type[InternalActionBase],
+    *,
+    markdown: bool,
+    include_title=False,
+    include_io=False,
+) -> None | str:
+    description_items = []
+
+    if include_title:
+        if action.readable_name:
+            title = action.readable_name
+        else:
+            title = f"{action.name.replace('_', ' ').title()} Action"
+        if markdown:
+            title = f"*{title}*"
+        description_items.append(title)
+
+    # grab the main description
+    if action.description:
+        description_items.append(inspect.cleandoc(action.description))
+
+    if include_io:
+        # add inputs description
+        inputs_description_items = []
+        inputs = action._get_inputs_type()
+        if not isinstance(None, inputs):
+            for field_name, field_info in inputs.model_fields.items():
+                inputs_description_items.append(
+                    f"- {build_field_description(field_name, field_info, markdown=markdown)}"
+                )
+        if inputs_description_items:
+            if markdown:
+                title = "**Inputs**"
+            else:
+                title = "INPUTS"
+            description_items.append(f"{title}\n" + "\n".join(inputs_description_items))
+
+        # add outputs description
+        outputs_description_items = []
+        outputs = action._get_outputs_type()
+        if not isinstance(None, outputs):
+            for field_name, field_info in outputs.model_fields.items():
+                outputs_description_items.append(
+                    f"- {build_field_description(field_name, field_info, markdown=markdown)}"
+                )
+        if outputs_description_items:
+            if markdown:
+                title = "**Outputs**"
+            else:
+                title = "OUTPUTS"
+            description_items.append(
+                f"{title}\n" + "\n".join(outputs_description_items)
+            )
+
+    if not description_items:
+        return None
+    if markdown:
+        description_items.append("---")
+    return "\n\n".join(description_items)
+
+
+def build_var_literal(
+    vars_: list[str],
+    strict: bool,
+):
+    union_elements = []
+
+    if not strict:
+        union_elements.append(str)
+
+    if vars_:
+        union_elements.append(Literal[tuple(vars_)])  # type: ignore
+
+    if union_elements:
+        return Union[tuple(union_elements)]  # type: ignore
+    return str
+
+
+def build_link_literal(
+    action_invocations: dict[ExecutableId, type[InternalActionBase]],
     strict: bool,
 ) -> type[str]:
     union_elements = []
@@ -279,22 +380,38 @@ def get_path_literal(
     if not strict:
         union_elements.append(str)
 
-    # if there are any strings, then that's the name of the var
-    string_vars = [var for var in vars_ if isinstance(var, str)]
-    if string_vars:
-        union_elements.append(Literal[tuple(string_vars)])  # type: ignore
+    actions_dict = get_actions_dict()
+    unique_action_names = set(action.name for action in action_invocations.values())
+    action_descriptions = {
+        name: build_action_description(
+            actions_dict[name], markdown=False, include_title=True
+        )
+        for name in unique_action_names
+    }
+    markdown_action_descriptions = {
+        name: build_action_description(
+            actions_dict[name], markdown=True, include_title=True
+        )
+        for name in unique_action_names
+    }
 
     # if there are any models, then each recursive subfield is a var, like jsonpath
-    model_vars = [var for var in vars_ if isinstance(var, (pydantic.BaseModel, dict))]
-    for model_var in model_vars:
-        subfields = _get_recursive_subfields(model_var)
-        if subfields:
-            union_elements.extend(subfields)
+    for action_id, action in action_invocations.items():
+        outputs = action._get_outputs_type()
+        base_description = action_descriptions[action.name]
+        base_markdown_description = markdown_action_descriptions[action.name]
+        possible_links = _get_recursive_subfields(
+            outputs,
+            base_description,
+            base_markdown_description,
+            name_prefix=f"{action_id}.",
+        )
+        if possible_links:
+            union_elements.extend(possible_links)
 
     if union_elements:
         return Union[tuple(union_elements)]  # type: ignore
-    else:
-        return str
+    return str
 
 
 def get_var_string(

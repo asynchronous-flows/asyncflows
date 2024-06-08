@@ -156,6 +156,7 @@ class LinkDeclaration(Declaration):
         for arg in args:
             # get the FieldInfo from the Annotated type
             if typing.get_origin(arg) is not Annotated:
+                new_args.append(arg)
                 continue
 
             description_elements = []

@@ -3,7 +3,7 @@ from pydantic.fields import FieldInfo
 
 from asyncflows import Field
 from asyncflows.actions.utils.prompt_context import ContextElement
-from asyncflows.models.config.action import build_field_description
+from asyncflows.utils.type_utils import build_field_description
 from asyncflows.models.config.model import ModelConfig
 import enum
 

@@ -1,7 +1,3 @@
-from typing import Sequence
-
-from pydantic import BaseModel
-
 ExecutableId = str
 ExecutableName = str
 
@@ -31,5 +27,4 @@ ContextVarPath = str
 TemplateString = str
 
 
-HintType = Sequence[str | BaseModel | dict]
 HintLiteral = type[str]

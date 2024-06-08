@@ -1,14 +1,14 @@
-import inspect
 import typing
-from typing import Union, Literal
+from typing import Union, Literal, Annotated
 
 import pydantic
 from pydantic import ConfigDict, Field
 
-from asyncflows.actions import get_actions_dict, InternalActionBase
+from asyncflows.actions import get_actions_dict
 from asyncflows.models.config.common import ExtraModel
 from asyncflows.utils.type_utils import (
     templatify_fields,
+    build_action_description,
 )
 from asyncflows.models.config.value_declarations import (
     VarDeclaration,
@@ -17,7 +17,6 @@ from asyncflows.models.config.value_declarations import (
 )
 from asyncflows.models.primitives import HintLiteral
 from asyncflows.models.primitives import ExecutableName
-from asyncflows.utils.type_utils import build_field_description
 
 
 # if TYPE_CHECKING:
@@ -73,52 +72,6 @@ def build_hinted_value_declaration(
     return Union[tuple(union_elements)]  # type: ignore
 
 
-def build_action_description(
-    action: type[InternalActionBase], *, markdown: bool
-) -> None | str:
-    description_items = []
-
-    # grab the main description
-    if action.description:
-        description_items.append(inspect.cleandoc(action.description))
-
-    # add inputs description
-    inputs_description_items = []
-    inputs = action._get_inputs_type()
-    if not isinstance(None, inputs):
-        for field_name, field_info in inputs.model_fields.items():
-            inputs_description_items.append(
-                f"- {build_field_description(field_name, field_info, markdown=markdown)}"
-            )
-    if inputs_description_items:
-        if markdown:
-            title = "**Inputs**"
-        else:
-            title = "INPUTS"
-        description_items.append(f"{title}\n" + "\n".join(inputs_description_items))
-
-    # add outputs description
-    outputs_description_items = []
-    outputs = action._get_outputs_type()
-    if not isinstance(None, outputs):
-        for field_name, field_info in outputs.model_fields.items():
-            outputs_description_items.append(
-                f"- {build_field_description(field_name, field_info, markdown=markdown)}"
-            )
-    if outputs_description_items:
-        if markdown:
-            title = "**Outputs**"
-        else:
-            title = "OUTPUTS"
-        description_items.append(f"{title}\n" + "\n".join(outputs_description_items))
-
-    if not description_items:
-        return None
-    if markdown:
-        description_items.append("---")
-    return "\n\n".join(description_items)
-
-
 def build_actions(
     action_names: list[str] | None = None,
     vars_: HintLiteral | None = None,
@@ -147,11 +100,20 @@ def build_actions(
 
         # build action literal
         action_literal = Literal[action.name]  # type: ignore
+
+        # add title
+        action_literal = Annotated[
+            action_literal,
+            Field(
+                title=title,
+            ),
+        ]
+
+        # add description
         if description is not None:
-            action_literal = typing.Annotated[
+            action_literal = Annotated[
                 action_literal,
                 Field(
-                    title=title,
                     description=description,
                     json_schema_extra={
                         "markdownDescription": markdown_description,

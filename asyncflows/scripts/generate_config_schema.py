@@ -3,63 +3,40 @@ import json
 import os
 import traceback
 
-from pydantic import ValidationError, TypeAdapter
+import pydantic
+from pydantic import TypeAdapter
 
-from asyncflows import BaseModel
-from asyncflows.actions import get_actions_dict
+from asyncflows.actions import get_actions_dict, InternalActionBase
 from asyncflows.models.config.flow import (
     Loop,
     build_hinted_action_config,
     ActionConfig,
 )
 from asyncflows.utils.loader_utils import load_config_file
-from asyncflows.utils.type_utils import get_path_literal
-
-_cache = {}
+from asyncflows.utils.type_utils import build_link_literal
 
 
-def _build_output_specs(
+def _get_action_invocations(
     config_filename: str,
-) -> list[dict[str, BaseModel]] | None:
-    key = config_filename
-    if key in _cache:
-        return _cache[key]
-
+) -> dict[str, type[InternalActionBase]]:
     try:
-        # load the file not as a strict model
+        # load the file not as a non-strict model
         action_config = load_config_file(config_filename, config_model=ActionConfig)
-    except ValidationError:
-        print("Failed to load action config")
+    except pydantic.ValidationError:
         traceback.print_exc()
-        return None
+        print("Failed to load action config")
+        return {}
 
-    output_specs = []
+    action_invocations = {}
     actions = get_actions_dict()
     for action_id, action_invocation in action_config.flow.items():
         if isinstance(action_invocation, Loop):
-            # TODO build for-loop specs
+            # TODO support for loops in link fields
             continue
         action_name = action_invocation.action
-        output_specs.append(
-            {
-                action_id: actions[action_name]._get_outputs_type(),
-            }
-        )
+        action_invocations[action_id] = actions[action_name]
 
-    _cache[key] = output_specs
-    return output_specs
-
-
-def _build_links(
-    config_filename: str,
-):
-    action_specs = _build_output_specs(
-        config_filename=config_filename,
-    )
-    if action_specs is None:
-        action_specs = []
-
-    return action_specs
+    return action_invocations
 
 
 def _build_asyncflows_schema(
@@ -69,10 +46,13 @@ def _build_asyncflows_schema(
     link_hint_literal_name: str = "__LinkHintLiteral",
 ):
     if config_filename:
-        links = _build_links(
+        action_invocations = _get_action_invocations(
             config_filename=config_filename,
         )
-        link_hint_literal = get_path_literal(links, strict)
+        link_hint_literal = build_link_literal(
+            action_invocations=action_invocations,
+            strict=strict,
+        )
     else:
         link_hint_literal = None
 
