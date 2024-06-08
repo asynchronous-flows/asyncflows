@@ -10,6 +10,7 @@ from asyncflows.actions import get_actions_dict
 from asyncflows.models.config.flow import (
     Loop,
     build_hinted_action_config,
+    ActionConfig,
 )
 from asyncflows.utils.loader_utils import load_config_file
 from asyncflows.utils.type_utils import get_path_literal
@@ -25,8 +26,8 @@ def _build_output_specs(
         return _cache[key]
 
     try:
-        # TODO load the file not as a strict model
-        action_config = load_config_file(config_filename)
+        # load the file not as a strict model
+        action_config = load_config_file(config_filename, config_model=ActionConfig)
     except ValidationError:
         print("Failed to load action config")
         traceback.print_exc()

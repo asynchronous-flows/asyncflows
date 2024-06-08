@@ -6,7 +6,7 @@ import pydantic
 from pydantic import ConfigDict, Field
 
 from asyncflows.actions import get_actions_dict, InternalActionBase
-from asyncflows.models.config.common import StrictModel
+from asyncflows.models.config.common import ExtraModel
 from asyncflows.utils.type_utils import (
     templatify_fields,
 )
@@ -29,7 +29,7 @@ from asyncflows.utils.type_utils import build_field_description
 #     Action = Union[tuple(actions.values())]
 
 
-class ActionInvocation(StrictModel):
+class ActionInvocation(ExtraModel):
     action: ExecutableName
     cache_key: None | str | ValueDeclaration = Field(
         None,
