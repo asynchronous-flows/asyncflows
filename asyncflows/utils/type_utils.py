@@ -28,14 +28,14 @@ _transformation_cache = {}  # TODO this could be a WeakValueDictionary too, but 
 
 
 def templatify_fields(
-    type_: type[BaseModel],
+    fields: dict[str, FieldInfo],
     vars_: HintLiteral | None = None,
     links: HintLiteral | None = None,
     add_union: type | None = None,
     strict: bool = False,
 ):
-    fields = {}
-    for field_name, field_ in type_.model_fields.items():
+    new_fields = {}
+    for field_name, field_ in fields.items():
         # Annotate optional fields with a default of None
         if field_.default is not PydanticUndefined:
             default = field_.default
@@ -64,9 +64,25 @@ def templatify_fields(
         # keep original FieldInfo
         annotated_field_type = Annotated[new_field_type, field_]
 
-        fields[field_name] = (annotated_field_type, default)
+        new_fields[field_name] = (annotated_field_type, default)
 
-    return fields
+    return new_fields
+
+
+def templatify_model(
+    type_: type[BaseModel],
+    vars_: HintLiteral | None = None,
+    links: HintLiteral | None = None,
+    add_union: type | None = None,
+    strict: bool = False,
+):
+    return templatify_fields(
+        type_.model_fields,
+        vars_,
+        links,
+        add_union,
+        strict,
+    )
 
 
 def transform_and_templatify_type(
@@ -131,7 +147,7 @@ def transform_and_templatify_type(
         type_ = origin[args]  # type: ignore
     # special case pydantic models
     elif inspect.isclass(type_) and issubclass(type_, BaseModel):
-        fields = templatify_fields(
+        fields = templatify_model(
             type_,
             vars_=vars_,
             links=links,
@@ -198,13 +214,18 @@ def build_type_qualified_name(type_: type, *, markdown: bool) -> str:
     if inspect.isclass(type_) and issubclass(type_, Enum):
         return " | ".join(repr(member.value) for member in type_)
 
+    # if hasattr(type_, "title") and isinstance(type_.title, str):
+    #     name = type_.title
+    # else:
+    name = type_.__qualname__
+
     # pass through names of simple and well-known types
     if type_.__module__ in ["builtins", "typing"]:
-        return type_.__qualname__
+        return name
 
     # add markdown link to custom types
     if not markdown:
-        return type_.__qualname__
+        return name
 
     # Building the link to the source code file
     try:
@@ -215,10 +236,10 @@ def build_type_qualified_name(type_: type, *, markdown: bool) -> str:
         # Construct the file URL
         source_path = os.path.abspath(source_file)
         file_url = f"file://{source_path}#L{source_line}"
-        return f"[{type_.__qualname__}]({file_url})"
+        return f"[{name}]({file_url})"
     except Exception:
         # Fallback to just the type name if we can't get the source file
-        return type_.__qualname__
+        return name
 
 
 def remove_optional(type_: type | None) -> tuple[type, bool]:
@@ -245,6 +266,70 @@ def build_field_description(
         field_desc += f"  \n  {field_info.description}"
 
     return field_desc
+
+
+def build_input_fields(
+    action: type[InternalActionBase],
+    vars_: HintLiteral | None = None,
+    links: HintLiteral | None = None,
+    add_union: type | None = None,
+    strict: bool = False,
+) -> dict[str, tuple[type, Any]]:
+    inputs = action._get_inputs_type()
+    if isinstance(None, inputs):
+        return {}
+
+    # generate action description
+    action_title = build_action_title(action, markdown=False, title_suffix=" Input")
+    action_description = build_action_description(
+        action,
+        markdown=False,
+        include_title=False,
+        include_io=False,
+    )
+    markdown_action_description = build_action_description(
+        action,
+        markdown=True,
+        include_title=False,
+        include_io=False,
+    )
+
+    new_field_infos = {}
+
+    # add input description
+    for field_name, field_info in inputs.model_fields.items():
+        # field_title = field_name.replace("_", " ").title()
+        # title = f"{field_title}: {action_title}"
+        title = action_title
+
+        field_description = build_field_description(
+            field_name, field_info, markdown=False
+        )
+        markdown_field_description = (
+            f"- {build_field_description(field_name, field_info, markdown=True)}"
+        )
+
+        description = field_description
+        if action_description:
+            description = action_description + "\n\n" + description
+        markdown_description = markdown_field_description + "\n\n---"
+        if markdown_action_description:
+            markdown_description = (
+                markdown_action_description + "\n\n" + markdown_description
+            )
+
+        new_field_info = FieldInfo.merge_field_infos(
+            field_info,
+            title=title,
+            description=description,
+            json_schema_extra={
+                "markdownDescription": markdown_description,
+            },
+        )
+        new_field_infos[field_name] = new_field_info
+
+    # templatify the input fields
+    return templatify_fields(new_field_infos, vars_, links, add_union, strict)
 
 
 def _get_recursive_subfields(
@@ -292,29 +377,37 @@ def _get_recursive_subfields(
     return out
 
 
+def build_action_title(
+    action: type[InternalActionBase],
+    *,
+    markdown: bool,
+    title_suffix: str = "",
+) -> str:
+    if action.readable_name:
+        title = action.readable_name
+    else:
+        title = action.name.replace("_", " ").title()
+    title += " Action"
+
+    title = f"{title}{title_suffix}"
+
+    if markdown:
+        title = f"**{title}**"
+    return title
+
+
 def build_action_description(
     action: type[InternalActionBase],
     *,
     markdown: bool,
     include_title: bool = False,
+    title_suffix: str = "",
     include_io: bool = True,
 ) -> None | str:
     description_items = []
 
     if include_title:
-        if action.readable_name:
-            title = action.readable_name
-        else:
-            title = action.name.replace('_', ' ').title()
-        title += " Action"
-
-        # FIXME this is a hacky convenience
-        if not include_io:
-            title += " Output"
-
-        if markdown:
-            title = f"**{title}**"
-
+        title = build_action_title(action, markdown=markdown, title_suffix=title_suffix)
         description_items.append(title)
 
     # grab the main description
@@ -389,13 +482,21 @@ def build_link_literal(
     unique_action_names = set(action.name for action in action_invocations.values())
     action_descriptions = {
         name: build_action_description(
-            actions_dict[name], markdown=False, include_title=True, include_io=False,
+            actions_dict[name],
+            markdown=False,
+            include_title=True,
+            include_io=False,
+            title_suffix=" Output",
         )
         for name in unique_action_names
     }
     markdown_action_descriptions = {
         name: build_action_description(
-            actions_dict[name], markdown=True, include_title=True, include_io=False,
+            actions_dict[name],
+            markdown=True,
+            include_title=True,
+            include_io=False,
+            title_suffix=" Output",
         )
         for name in unique_action_names
     }

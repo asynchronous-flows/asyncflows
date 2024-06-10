@@ -1192,13 +1192,16 @@
     },
     "execute_db_statementActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- database_url: str  \n  Database URL (asynchronous)\n- statement: str  \n  SQL statement to execute\n- allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes\n- max_rows: int  \n  Maximum number of rows to return\n\nOUTPUTS\n- text: str  \n  Result of the SQL statement\n- data: list[list[Any]]\n- headers: list[str]",
+      "markdownDescription": "**Inputs**\n- database_url: str  \n  Database URL (asynchronous)\n- statement: str  \n  SQL statement to execute\n- allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes\n- max_rows: int  \n  Maximum number of rows to return\n\n**Outputs**\n- text: str  \n  Result of the SQL statement\n- data: list[list[Any]]\n- headers: list[str]",
       "properties": {
         "action": {
           "const": "execute_db_statement",
+          "description": "INPUTS\n- database_url: str  \n  Database URL (asynchronous)\n- statement: str  \n  SQL statement to execute\n- allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes\n- max_rows: int  \n  Maximum number of rows to return\n\nOUTPUTS\n- text: str  \n  Result of the SQL statement\n- data: list[list[Any]]\n- headers: list[str]",
           "enum": [
             "execute_db_statement"
           ],
+          "markdownDescription": "**Inputs**\n- database_url: str  \n  Database URL (asynchronous)\n- statement: str  \n  SQL statement to execute\n- allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes\n- max_rows: int  \n  Maximum number of rows to return\n\n**Outputs**\n- text: str  \n  Result of the SQL statement\n- data: list[list[Any]]\n- headers: list[str]\n\n---",
           "title": "Execute Db Statement Action",
           "type": "string"
         },
@@ -1250,8 +1253,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "description": "Database URL (asynchronous)",
-          "title": "Database Url"
+          "description": "database_url: str  \n  Database URL (asynchronous)",
+          "markdownDescription": "- database_url: str  \n  Database URL (asynchronous)\n\n---",
+          "title": "Execute Db Statement Action Input"
         },
         "statement": {
           "anyOf": [
@@ -1274,8 +1278,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "description": "SQL statement to execute",
-          "title": "Statement"
+          "description": "statement: str  \n  SQL statement to execute",
+          "markdownDescription": "- statement: str  \n  SQL statement to execute\n\n---",
+          "title": "Execute Db Statement Action Input"
         },
         "allowed_statement_prefixes": {
           "anyOf": [
@@ -1304,8 +1309,9 @@
           "default": [
             "SELECT"
           ],
-          "description": "List of allowed statement prefixes",
-          "title": "Allowed Statement Prefixes"
+          "description": "allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes",
+          "markdownDescription": "- allowed_statement_prefixes: list[str]  \n  List of allowed statement prefixes\n\n---",
+          "title": "Execute Db Statement Action Input"
         },
         "max_rows": {
           "anyOf": [
@@ -1329,8 +1335,9 @@
             }
           ],
           "default": 5,
-          "description": "Maximum number of rows to return",
-          "title": "Max Rows"
+          "description": "max_rows: int  \n  Maximum number of rows to return",
+          "markdownDescription": "- max_rows: int  \n  Maximum number of rows to return\n\n---",
+          "title": "Execute Db Statement Action Input"
         }
       },
       "required": [
@@ -1343,13 +1350,16 @@
     },
     "extract_listActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- text: str\n- valid_values: list[str] (optional)\n- list_format: 'comma' | 'newline' | 'space' | 'bullet points'\n\nOUTPUTS\n- results: list[str]",
+      "markdownDescription": "**Inputs**\n- text: str\n- valid_values: list[str] (optional)\n- list_format: 'comma' | 'newline' | 'space' | 'bullet points'\n\n**Outputs**\n- results: list[str]",
       "properties": {
         "action": {
           "const": "extract_list",
+          "description": "INPUTS\n- text: str\n- valid_values: list[str] (optional)\n- list_format: 'comma' | 'newline' | 'space' | 'bullet points'\n\nOUTPUTS\n- results: list[str]",
           "enum": [
             "extract_list"
           ],
+          "markdownDescription": "**Inputs**\n- text: str\n- valid_values: list[str] (optional)\n- list_format: 'comma' | 'newline' | 'space' | 'bullet points'\n\n**Outputs**\n- results: list[str]\n\n---",
           "title": "Extract List Action",
           "type": "string"
         },
@@ -1401,7 +1411,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Text"
+          "description": "text: str",
+          "markdownDescription": "- text: str\n\n---",
+          "title": "Extract List Action Input"
         },
         "valid_values": {
           "anyOf": [
@@ -1431,7 +1443,9 @@
             }
           ],
           "default": null,
-          "title": "Valid Values"
+          "description": "valid_values: list[str] (optional)",
+          "markdownDescription": "- valid_values: list[str] (optional)\n\n---",
+          "title": "Extract List Action Input"
         },
         "list_format": {
           "anyOf": [
@@ -1461,7 +1475,9 @@
             }
           ],
           "default": "bullet points",
-          "title": "List Format"
+          "description": "list_format: 'comma' | 'newline' | 'space' | 'bullet points'",
+          "markdownDescription": "- list_format: 'comma' | 'newline' | 'space' | 'bullet points'\n\n---",
+          "title": "Extract List Action Input"
         }
       },
       "required": [
@@ -1473,13 +1489,16 @@
     },
     "extract_pdf_textActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- file: File | str\n- min_start_chars: int\n\nOUTPUTS\n- title: str (optional)\n- start_of_text: str (optional)\n- full_text: str (optional)\n- pages: list[Page] (optional)",
+      "markdownDescription": "**Inputs**\n- file: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n- min_start_chars: int\n\n**Outputs**\n- title: str (optional)\n- start_of_text: str (optional)\n- full_text: str (optional)\n- pages: list[[Page](file:///Users/rafael/asyncflows/asyncflows/actions/extract_pdf_text.py#L15)] (optional)",
       "properties": {
         "action": {
           "const": "extract_pdf_text",
+          "description": "INPUTS\n- file: File | str\n- min_start_chars: int\n\nOUTPUTS\n- title: str (optional)\n- start_of_text: str (optional)\n- full_text: str (optional)\n- pages: list[Page] (optional)",
           "enum": [
             "extract_pdf_text"
           ],
+          "markdownDescription": "**Inputs**\n- file: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n- min_start_chars: int\n\n**Outputs**\n- title: str (optional)\n- start_of_text: str (optional)\n- full_text: str (optional)\n- pages: list[[Page](file:///Users/rafael/asyncflows/asyncflows/actions/extract_pdf_text.py#L15)] (optional)\n\n---",
           "title": "Extract Pdf Text Action",
           "type": "string"
         },
@@ -1534,7 +1553,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "File"
+          "description": "file: File | str",
+          "markdownDescription": "- file: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n\n---",
+          "title": "Extract Pdf Text Action Input"
         },
         "min_start_chars": {
           "anyOf": [
@@ -1558,7 +1579,9 @@
             }
           ],
           "default": 1000,
-          "title": "Min Start Chars"
+          "description": "min_start_chars: int",
+          "markdownDescription": "- min_start_chars: int\n\n---",
+          "title": "Extract Pdf Text Action Input"
         }
       },
       "required": [
@@ -1570,13 +1593,16 @@
     },
     "extract_xml_tagActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- text: str  \n  Text to extract out of <tag>text</tag>\n- tag: str  \n  Tag to extract from\n\nOUTPUTS\n- result: str  \n  Text extracted from the tag",
+      "markdownDescription": "**Inputs**\n- text: str  \n  Text to extract out of <tag>text</tag>\n- tag: str  \n  Tag to extract from\n\n**Outputs**\n- result: str  \n  Text extracted from the tag",
       "properties": {
         "action": {
           "const": "extract_xml_tag",
+          "description": "INPUTS\n- text: str  \n  Text to extract out of <tag>text</tag>\n- tag: str  \n  Tag to extract from\n\nOUTPUTS\n- result: str  \n  Text extracted from the tag",
           "enum": [
             "extract_xml_tag"
           ],
+          "markdownDescription": "**Inputs**\n- text: str  \n  Text to extract out of <tag>text</tag>\n- tag: str  \n  Tag to extract from\n\n**Outputs**\n- result: str  \n  Text extracted from the tag\n\n---",
           "title": "Extract Xml Tag Action",
           "type": "string"
         },
@@ -1628,8 +1654,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "description": "Text to extract out of <tag>text</tag>",
-          "title": "Text"
+          "description": "text: str  \n  Text to extract out of <tag>text</tag>",
+          "markdownDescription": "- text: str  \n  Text to extract out of <tag>text</tag>\n\n---",
+          "title": "Extract Xml Tag Action Input"
         },
         "tag": {
           "anyOf": [
@@ -1652,8 +1679,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "description": "Tag to extract from",
-          "title": "Tag"
+          "description": "tag: str  \n  Tag to extract from",
+          "markdownDescription": "- tag: str  \n  Tag to extract from\n\n---",
+          "title": "Extract Xml Tag Action Input"
         }
       },
       "required": [
@@ -1666,13 +1694,16 @@
     },
     "get_db_schemaActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- database_url: str  \n  Database URL (synchronous)\n\nOUTPUTS\n- schema_text: str  \n  Text describing the database schema in `CREATE TABLE` statements",
+      "markdownDescription": "**Inputs**\n- database_url: str  \n  Database URL (synchronous)\n\n**Outputs**\n- schema_text: str  \n  Text describing the database schema in `CREATE TABLE` statements",
       "properties": {
         "action": {
           "const": "get_db_schema",
+          "description": "INPUTS\n- database_url: str  \n  Database URL (synchronous)\n\nOUTPUTS\n- schema_text: str  \n  Text describing the database schema in `CREATE TABLE` statements",
           "enum": [
             "get_db_schema"
           ],
+          "markdownDescription": "**Inputs**\n- database_url: str  \n  Database URL (synchronous)\n\n**Outputs**\n- schema_text: str  \n  Text describing the database schema in `CREATE TABLE` statements\n\n---",
           "title": "Get Db Schema Action",
           "type": "string"
         },
@@ -1724,8 +1755,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "description": "Database URL (synchronous)",
-          "title": "Database Url"
+          "description": "database_url: str  \n  Database URL (synchronous)",
+          "markdownDescription": "- database_url: str  \n  Database URL (synchronous)\n\n---",
+          "title": "Get Db Schema Action Input"
         }
       },
       "required": [
@@ -1737,13 +1769,16 @@
     },
     "get_urlActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- url: str  \n  URL of the webpage to GET\n\nOUTPUTS\n- result: str  \n  Text content of the webpage",
+      "markdownDescription": "**Inputs**\n- url: str  \n  URL of the webpage to GET\n\n**Outputs**\n- result: str  \n  Text content of the webpage",
       "properties": {
         "action": {
           "const": "get_url",
+          "description": "INPUTS\n- url: str  \n  URL of the webpage to GET\n\nOUTPUTS\n- result: str  \n  Text content of the webpage",
           "enum": [
             "get_url"
           ],
+          "markdownDescription": "**Inputs**\n- url: str  \n  URL of the webpage to GET\n\n**Outputs**\n- result: str  \n  Text content of the webpage\n\n---",
           "title": "Get Url Action",
           "type": "string"
         },
@@ -1795,8 +1830,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "description": "URL of the webpage to GET",
-          "title": "Url"
+          "description": "url: str  \n  URL of the webpage to GET",
+          "markdownDescription": "- url: str  \n  URL of the webpage to GET\n\n---",
+          "title": "Get Url Action Input"
         }
       },
       "required": [
@@ -1808,13 +1844,16 @@
     },
     "ocrActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- pdf: File | str\n\nOUTPUTS\n- pdf_ocr: str",
+      "markdownDescription": "**Inputs**\n- pdf: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n\n**Outputs**\n- pdf_ocr: str",
       "properties": {
         "action": {
           "const": "ocr",
+          "description": "INPUTS\n- pdf: File | str\n\nOUTPUTS\n- pdf_ocr: str",
           "enum": [
             "ocr"
           ],
+          "markdownDescription": "**Inputs**\n- pdf: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n\n**Outputs**\n- pdf_ocr: str\n\n---",
           "title": "Ocr Action",
           "type": "string"
         },
@@ -1869,7 +1908,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Pdf"
+          "description": "pdf: File | str",
+          "markdownDescription": "- pdf: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n\n---",
+          "title": "Ocr Action Input"
         }
       },
       "required": [
@@ -1881,16 +1922,16 @@
     },
     "promptActionInvocation": {
       "additionalProperties": false,
-      "description": "Prompt the LLM with a message and receive a response.",
-      "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n---",
+      "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\nOUTPUTS\n- result: str  \n  Response given by the LLM",
+      "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]\n\n**Outputs**\n- result: str  \n  Response given by the LLM",
       "properties": {
         "action": {
           "const": "prompt",
-          "description": "Prompt the LLM with a message and receive a response.",
+          "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\nOUTPUTS\n- result: str  \n  Response given by the LLM",
           "enum": [
             "prompt"
           ],
-          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n---",
+          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]\n\n**Outputs**\n- result: str  \n  Response given by the LLM\n\n---",
           "title": "Prompt Action",
           "type": "string"
         },
@@ -1946,7 +1987,9 @@
             }
           ],
           "default": null,
-          "title": "Model"
+          "description": "Prompt the LLM with a message and receive a response.\n\nmodel: OptionalModelConfig (optional)",
+          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n\n---",
+          "title": "Prompt Action Input"
         },
         "quote_style": {
           "anyOf": [
@@ -1973,8 +2016,9 @@
             }
           ],
           "default": null,
-          "description": "The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.",
-          "title": "Quote Style"
+          "description": "Prompt the LLM with a message and receive a response.\n\nquote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.",
+          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n\n---",
+          "title": "Prompt Action Input"
         },
         "prompt": {
           "anyOf": [
@@ -2019,7 +2063,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Prompt"
+          "description": "Prompt the LLM with a message and receive a response.\n\nprompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]",
+          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]\n\n---",
+          "title": "Prompt Action Input"
         }
       },
       "required": [
@@ -2031,13 +2077,16 @@
     },
     "rerankActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\nOUTPUTS\n- result: list[Any]",
+      "markdownDescription": "**Inputs**\n- model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\n**Outputs**\n- result: list[Any]",
       "properties": {
         "action": {
           "const": "rerank",
+          "description": "INPUTS\n- model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\nOUTPUTS\n- result: list[Any]",
           "enum": [
             "rerank"
           ],
+          "markdownDescription": "**Inputs**\n- model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\n**Outputs**\n- result: list[Any]\n\n---",
           "title": "Rerank Action",
           "type": "string"
         },
@@ -2094,7 +2143,9 @@
             }
           ],
           "default": "cross-encoder/ms-marco-TinyBERT-L-2-v2",
-          "title": "Model"
+          "description": "model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'",
+          "markdownDescription": "- model: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n\n---",
+          "title": "Rerank Action Input"
         },
         "device": {
           "anyOf": [
@@ -2127,7 +2178,9 @@
             }
           ],
           "default": null,
-          "title": "Device"
+          "description": "device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)",
+          "markdownDescription": "- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n\n---",
+          "title": "Rerank Action Input"
         },
         "documents": {
           "anyOf": [
@@ -2151,7 +2204,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Documents"
+          "description": "documents: list[Any]",
+          "markdownDescription": "- documents: list[Any]\n\n---",
+          "title": "Rerank Action Input"
         },
         "texts": {
           "anyOf": [
@@ -2181,7 +2236,9 @@
             }
           ],
           "default": null,
-          "title": "Texts"
+          "description": "texts: None (optional)",
+          "markdownDescription": "- texts: None (optional)\n\n---",
+          "title": "Rerank Action Input"
         },
         "query": {
           "anyOf": [
@@ -2204,7 +2261,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Query"
+          "description": "query: str",
+          "markdownDescription": "- query: str\n\n---",
+          "title": "Rerank Action Input"
         },
         "k": {
           "anyOf": [
@@ -2228,7 +2287,9 @@
             }
           ],
           "default": 10,
-          "title": "K"
+          "description": "k: int",
+          "markdownDescription": "- k: int\n\n---",
+          "title": "Rerank Action Input"
         }
       },
       "required": [
@@ -2241,13 +2302,16 @@
     },
     "retrieveActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\nOUTPUTS\n- result: list[Any]",
+      "markdownDescription": "**Inputs**\n- model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\n**Outputs**\n- result: list[Any]",
       "properties": {
         "action": {
           "const": "retrieve",
+          "description": "INPUTS\n- model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\nOUTPUTS\n- result: list[Any]",
           "enum": [
             "retrieve"
           ],
+          "markdownDescription": "**Inputs**\n- model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- documents: list[Any]\n- texts: None (optional)\n- query: str\n- k: int\n\n**Outputs**\n- result: list[Any]\n\n---",
           "title": "Retrieve Action",
           "type": "string"
         },
@@ -2304,7 +2368,9 @@
             }
           ],
           "default": "sentence-transformers/all-mpnet-base-v2",
-          "title": "Model"
+          "description": "model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'",
+          "markdownDescription": "- model: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n\n---",
+          "title": "Retrieve Action Input"
         },
         "device": {
           "anyOf": [
@@ -2337,7 +2403,9 @@
             }
           ],
           "default": null,
-          "title": "Device"
+          "description": "device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)",
+          "markdownDescription": "- device: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n\n---",
+          "title": "Retrieve Action Input"
         },
         "documents": {
           "anyOf": [
@@ -2361,7 +2429,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Documents"
+          "description": "documents: list[Any]",
+          "markdownDescription": "- documents: list[Any]\n\n---",
+          "title": "Retrieve Action Input"
         },
         "texts": {
           "anyOf": [
@@ -2391,7 +2461,9 @@
             }
           ],
           "default": null,
-          "title": "Texts"
+          "description": "texts: None (optional)",
+          "markdownDescription": "- texts: None (optional)\n\n---",
+          "title": "Retrieve Action Input"
         },
         "query": {
           "anyOf": [
@@ -2414,7 +2486,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Query"
+          "description": "query: str",
+          "markdownDescription": "- query: str\n\n---",
+          "title": "Retrieve Action Input"
         },
         "k": {
           "anyOf": [
@@ -2438,7 +2512,9 @@
             }
           ],
           "default": 10,
-          "title": "K"
+          "description": "k: int",
+          "markdownDescription": "- k: int\n\n---",
+          "title": "Retrieve Action Input"
         }
       },
       "required": [
@@ -2451,13 +2527,16 @@
     },
     "scoreActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- mutated_response_output: list\n- expected_output: str\n\nOUTPUTS\n- scores: list",
+      "markdownDescription": "**Inputs**\n- mutated_response_output: list\n- expected_output: str\n\n**Outputs**\n- scores: list",
       "properties": {
         "action": {
           "const": "score",
+          "description": "INPUTS\n- mutated_response_output: list\n- expected_output: str\n\nOUTPUTS\n- scores: list",
           "enum": [
             "score"
           ],
+          "markdownDescription": "**Inputs**\n- mutated_response_output: list\n- expected_output: str\n\n**Outputs**\n- scores: list\n\n---",
           "title": "Score Action",
           "type": "string"
         },
@@ -2510,7 +2589,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Mutated Response Output"
+          "description": "mutated_response_output: list",
+          "markdownDescription": "- mutated_response_output: list\n\n---",
+          "title": "Score Action Input"
         },
         "expected_output": {
           "anyOf": [
@@ -2533,7 +2614,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Expected Output"
+          "description": "expected_output: str",
+          "markdownDescription": "- expected_output: str\n\n---",
+          "title": "Score Action Input"
         }
       },
       "required": [
@@ -2546,13 +2629,16 @@
     },
     "test_addActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
+      "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int",
       "properties": {
         "action": {
           "const": "test_add",
+          "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
           "enum": [
             "test_add"
           ],
+          "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int\n\n---",
           "title": "Test Add Action",
           "type": "string"
         },
@@ -2604,7 +2690,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "A"
+          "description": "a: int",
+          "markdownDescription": "- a: int\n\n---",
+          "title": "Test Add Action Input"
         },
         "b": {
           "anyOf": [
@@ -2627,7 +2715,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "B"
+          "description": "b: int",
+          "markdownDescription": "- b: int\n\n---",
+          "title": "Test Add Action Input"
         }
       },
       "required": [
@@ -2640,13 +2730,16 @@
     },
     "test_create_blobActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "OUTPUTS\n- blob: Blob",
+      "markdownDescription": "**Outputs**\n- blob: [Blob](file:///Users/rafael/asyncflows/asyncflows/models/blob.py#L9)",
       "properties": {
         "action": {
           "const": "test_create_blob",
+          "description": "OUTPUTS\n- blob: Blob",
           "enum": [
             "test_create_blob"
           ],
+          "markdownDescription": "**Outputs**\n- blob: [Blob](file:///Users/rafael/asyncflows/asyncflows/models/blob.py#L9)\n\n---",
           "title": "Test Create Blob Action",
           "type": "string"
         },
@@ -2686,13 +2779,16 @@
     },
     "test_double_addActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
+      "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int",
       "properties": {
         "action": {
           "const": "test_double_add",
+          "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
           "enum": [
             "test_double_add"
           ],
+          "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int\n\n---",
           "title": "Test Double Add Action",
           "type": "string"
         },
@@ -2744,7 +2840,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "A"
+          "description": "a: int",
+          "markdownDescription": "- a: int\n\n---",
+          "title": "Test Double Add Action Input"
         },
         "b": {
           "anyOf": [
@@ -2767,7 +2865,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "B"
+          "description": "b: int",
+          "markdownDescription": "- b: int\n\n---",
+          "title": "Test Double Add Action Input"
         }
       },
       "required": [
@@ -2826,13 +2926,16 @@
     },
     "test_finishActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "OUTPUTS\n- finish_history: list[bool]",
+      "markdownDescription": "**Outputs**\n- finish_history: list[bool]",
       "properties": {
         "action": {
           "const": "test_finish",
+          "description": "OUTPUTS\n- finish_history: list[bool]",
           "enum": [
             "test_finish"
           ],
+          "markdownDescription": "**Outputs**\n- finish_history: list[bool]\n\n---",
           "title": "Test Finish Action",
           "type": "string"
         },
@@ -2872,13 +2975,16 @@
     },
     "test_get_blobActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- blob: Blob",
+      "markdownDescription": "**Inputs**\n- blob: [Blob](file:///Users/rafael/asyncflows/asyncflows/models/blob.py#L9)",
       "properties": {
         "action": {
           "const": "test_get_blob",
+          "description": "INPUTS\n- blob: Blob",
           "enum": [
             "test_get_blob"
           ],
+          "markdownDescription": "**Inputs**\n- blob: [Blob](file:///Users/rafael/asyncflows/asyncflows/models/blob.py#L9)\n\n---",
           "title": "Test Get Blob Action",
           "type": "string"
         },
@@ -2930,7 +3036,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Blob"
+          "description": "blob: Blob",
+          "markdownDescription": "- blob: [Blob](file:///Users/rafael/asyncflows/asyncflows/models/blob.py#L9)\n\n---",
+          "title": "Test Get Blob Action Input"
         }
       },
       "required": [
@@ -2942,13 +3050,16 @@
     },
     "test_nested_addActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- nested: AddInputs\n\nOUTPUTS\n- nested: AddOutputs",
+      "markdownDescription": "**Inputs**\n- nested: [AddInputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L22)\n\n**Outputs**\n- nested: [AddOutputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L27)",
       "properties": {
         "action": {
           "const": "test_nested_add",
+          "description": "INPUTS\n- nested: AddInputs\n\nOUTPUTS\n- nested: AddOutputs",
           "enum": [
             "test_nested_add"
           ],
+          "markdownDescription": "**Inputs**\n- nested: [AddInputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L22)\n\n**Outputs**\n- nested: [AddOutputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L27)\n\n---",
           "title": "Test Nested Add Action",
           "type": "string"
         },
@@ -3000,7 +3111,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Nested"
+          "description": "nested: AddInputs",
+          "markdownDescription": "- nested: [AddInputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L22)\n\n---",
+          "title": "Test Nested Add Action Input"
         }
       },
       "required": [
@@ -3012,13 +3125,16 @@
     },
     "test_non_caching_adderActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
+      "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int",
       "properties": {
         "action": {
           "const": "test_non_caching_adder",
+          "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
           "enum": [
             "test_non_caching_adder"
           ],
+          "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int\n\n---",
           "title": "Test Non Caching Adder Action",
           "type": "string"
         },
@@ -3070,7 +3186,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "A"
+          "description": "a: int",
+          "markdownDescription": "- a: int\n\n---",
+          "title": "Test Non Caching Adder Action Input"
         },
         "b": {
           "anyOf": [
@@ -3093,7 +3211,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "B"
+          "description": "b: int",
+          "markdownDescription": "- b: int\n\n---",
+          "title": "Test Non Caching Adder Action Input"
         }
       },
       "required": [
@@ -3106,13 +3226,16 @@
     },
     "test_optional_nested_addActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- nested: AddInputs (optional)\n\nOUTPUTS\n- nested: AddOutputs (optional)",
+      "markdownDescription": "**Inputs**\n- nested: [AddInputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L22) (optional)\n\n**Outputs**\n- nested: [AddOutputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L27) (optional)",
       "properties": {
         "action": {
           "const": "test_optional_nested_add",
+          "description": "INPUTS\n- nested: AddInputs (optional)\n\nOUTPUTS\n- nested: AddOutputs (optional)",
           "enum": [
             "test_optional_nested_add"
           ],
+          "markdownDescription": "**Inputs**\n- nested: [AddInputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L22) (optional)\n\n**Outputs**\n- nested: [AddOutputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L27) (optional)\n\n---",
           "title": "Test Optional Nested Add Action",
           "type": "string"
         },
@@ -3167,7 +3290,9 @@
               "type": "null"
             }
           ],
-          "title": "Nested"
+          "description": "nested: AddInputs (optional)",
+          "markdownDescription": "- nested: [AddInputs](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L22) (optional)\n\n---",
+          "title": "Test Optional Nested Add Action Input"
         }
       },
       "required": [
@@ -3179,13 +3304,16 @@
     },
     "test_passing_promptActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\nOUTPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]",
+      "markdownDescription": "**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]\n\n**Outputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]",
       "properties": {
         "action": {
           "const": "test_passing_prompt",
+          "description": "INPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\nOUTPUTS\n- model: OptionalModelConfig (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]",
           "enum": [
             "test_passing_prompt"
           ],
+          "markdownDescription": "**Inputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]\n\n**Outputs**\n- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]\n\n---",
           "title": "Test Passing Prompt Action",
           "type": "string"
         },
@@ -3241,7 +3369,9 @@
             }
           ],
           "default": null,
-          "title": "Model"
+          "description": "model: OptionalModelConfig (optional)",
+          "markdownDescription": "- model: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n\n---",
+          "title": "Test Passing Prompt Action Input"
         },
         "quote_style": {
           "anyOf": [
@@ -3268,8 +3398,9 @@
             }
           ],
           "default": null,
-          "description": "The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.",
-          "title": "Quote Style"
+          "description": "quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.",
+          "markdownDescription": "- quote_style: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n\n---",
+          "title": "Test Passing Prompt Action Input"
         },
         "prompt": {
           "anyOf": [
@@ -3314,7 +3445,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Prompt"
+          "description": "prompt: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]",
+          "markdownDescription": "- prompt: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]\n\n---",
+          "title": "Test Passing Prompt Action Input"
         }
       },
       "required": [
@@ -3326,13 +3459,16 @@
     },
     "test_range_streamActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- range: int\n\nOUTPUTS\n- value: int",
+      "markdownDescription": "**Inputs**\n- range: int\n\n**Outputs**\n- value: int",
       "properties": {
         "action": {
           "const": "test_range_stream",
+          "description": "INPUTS\n- range: int\n\nOUTPUTS\n- value: int",
           "enum": [
             "test_range_stream"
           ],
+          "markdownDescription": "**Inputs**\n- range: int\n\n**Outputs**\n- value: int\n\n---",
           "title": "Test Range Stream Action",
           "type": "string"
         },
@@ -3384,7 +3520,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Range"
+          "description": "range: int",
+          "markdownDescription": "- range: int\n\n---",
+          "title": "Test Range Stream Action Input"
         }
       },
       "required": [
@@ -3396,13 +3534,16 @@
     },
     "test_stringifierActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- value: int\n\nOUTPUTS\n- string: str",
+      "markdownDescription": "**Inputs**\n- value: int\n\n**Outputs**\n- string: str",
       "properties": {
         "action": {
           "const": "test_stringifier",
+          "description": "INPUTS\n- value: int\n\nOUTPUTS\n- string: str",
           "enum": [
             "test_stringifier"
           ],
+          "markdownDescription": "**Inputs**\n- value: int\n\n**Outputs**\n- string: str\n\n---",
           "title": "Test Stringifier Action",
           "type": "string"
         },
@@ -3454,7 +3595,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Value"
+          "description": "value: int",
+          "markdownDescription": "- value: int\n\n---",
+          "title": "Test Stringifier Action Input"
         }
       },
       "required": [
@@ -3466,13 +3609,16 @@
     },
     "test_transforming_promptActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- context: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n- nested: NestedPromptContext\n\nOUTPUTS\n- context_value: str\n- nested_context_value: str",
+      "markdownDescription": "**Inputs**\n- context: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]\n- nested: [NestedPromptContext](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L144)\n\n**Outputs**\n- context_value: str\n- nested_context_value: str",
       "properties": {
         "action": {
           "const": "test_transforming_prompt",
+          "description": "INPUTS\n- context: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n- nested: NestedPromptContext\n\nOUTPUTS\n- context_value: str\n- nested_context_value: str",
           "enum": [
             "test_transforming_prompt"
           ],
+          "markdownDescription": "**Inputs**\n- context: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]\n- nested: [NestedPromptContext](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L144)\n\n**Outputs**\n- context_value: str\n- nested_context_value: str\n\n---",
           "title": "Test Transforming Prompt Action",
           "type": "string"
         },
@@ -3546,7 +3692,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Context"
+          "description": "context: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]",
+          "markdownDescription": "- context: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]\n\n---",
+          "title": "Test Transforming Prompt Action Input"
         },
         "nested": {
           "anyOf": [
@@ -3569,7 +3717,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "Nested"
+          "description": "nested: NestedPromptContext",
+          "markdownDescription": "- nested: [NestedPromptContext](file:///Users/rafael/asyncflows/asyncflows/tests/resources/actions.py#L144)\n\n---",
+          "title": "Test Transforming Prompt Action Input"
         }
       },
       "required": [
@@ -3582,13 +3732,16 @@
     },
     "test_waiting_addActionInvocation": {
       "additionalProperties": false,
-      "markdownDescription": null,
+      "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
+      "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int",
       "properties": {
         "action": {
           "const": "test_waiting_add",
+          "description": "INPUTS\n- a: int\n- b: int\n\nOUTPUTS\n- result: int",
           "enum": [
             "test_waiting_add"
           ],
+          "markdownDescription": "**Inputs**\n- a: int\n- b: int\n\n**Outputs**\n- result: int\n\n---",
           "title": "Test Waiting Add Action",
           "type": "string"
         },
@@ -3640,7 +3793,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "A"
+          "description": "a: int",
+          "markdownDescription": "- a: int\n\n---",
+          "title": "Test Waiting Add Action Input"
         },
         "b": {
           "anyOf": [
@@ -3663,7 +3818,9 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "title": "B"
+          "description": "b: int",
+          "markdownDescription": "- b: int\n\n---",
+          "title": "Test Waiting Add Action Input"
         }
       },
       "required": [

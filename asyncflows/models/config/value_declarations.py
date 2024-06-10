@@ -6,7 +6,7 @@ from typing import Any, Union, Annotated
 
 import pydantic
 import simpleeval
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from pydantic.fields import FieldInfo
 from typing_extensions import Self
 
@@ -206,6 +206,9 @@ class LinkDeclaration(Declaration):
             f"{cls.__name__}_{varstr}",
             __base__=cls,
             __module__=__name__,
+            model_config=ConfigDict(
+                title="LinkDeclaration",
+            ),
             **fields,  # type: ignore
         )
 

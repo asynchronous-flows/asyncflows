@@ -7,8 +7,9 @@ from pydantic import ConfigDict, Field
 from asyncflows.actions import get_actions_dict
 from asyncflows.models.config.common import ExtraModel
 from asyncflows.utils.type_utils import (
-    templatify_fields,
     build_action_description,
+    build_input_fields,
+    build_action_title,
 )
 from asyncflows.models.config.value_declarations import (
     VarDeclaration,
@@ -91,11 +92,7 @@ def build_actions(
     for action_name in action_names:
         action = actions_dict[action_name]
 
-        if action.readable_name:
-            title = action.readable_name
-        else:
-            title = action.name.replace('_', ' ').title()
-        title += " Action"
+        title = build_action_title(action, markdown=False)
 
         description = build_action_description(action, markdown=False)
         markdown_description = build_action_description(action, markdown=True)
@@ -119,7 +116,9 @@ def build_actions(
                     description=description,
                     json_schema_extra={
                         "markdownDescription": markdown_description + "\n\n---",
-                    } if markdown_description is not None else None,
+                    }
+                    if markdown_description is not None
+                    else None,
                 ),
             ]
 
@@ -130,15 +129,13 @@ def build_actions(
         }
 
         # build input fields
-        inputs = action._get_inputs_type()
-        if not isinstance(None, inputs):
-            fields |= templatify_fields(
-                inputs,
-                vars_=vars_,
-                links=links,
-                add_union=HintedValueDeclaration,
-                strict=strict,
-            )
+        fields |= build_input_fields(
+            action,
+            vars_=vars_,
+            links=links,
+            add_union=HintedValueDeclaration,
+            strict=strict,
+        )
 
         # build action invocation model
         action_basemodel = pydantic.create_model(
