@@ -7,6 +7,7 @@ import pydantic
 from pydantic import TypeAdapter
 
 from asyncflows.actions import get_actions_dict, InternalActionBase
+from asyncflows.log_config import get_logger
 from asyncflows.models.config.flow import (
     Loop,
     build_hinted_action_config,
@@ -23,8 +24,11 @@ def _get_action_invocations(
         # load the file not as a non-strict model
         action_config = load_config_file(config_filename, config_model=ActionConfig)
     except pydantic.ValidationError:
-        traceback.print_exc()
-        print("Failed to load action config")
+        log = get_logger()
+        log.debug(
+            "Failed to load action config",
+            exc_info=traceback.format_exc(),
+        )
         return {}
 
     action_invocations = {}
