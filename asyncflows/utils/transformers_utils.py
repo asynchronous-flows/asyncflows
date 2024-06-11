@@ -1,12 +1,14 @@
 import asyncio
 import contextlib
 from collections import defaultdict
-from typing import AsyncIterator, Any, Literal
+from typing import AsyncIterator, Any, Literal, TYPE_CHECKING
 
 import numpy as np
-# from infinity_emb import AsyncEmbeddingEngine, EngineArgs
 
-AsyncEmbeddingEngine = Any
+if TYPE_CHECKING:
+    from infinity_emb import AsyncEmbeddingEngine
+else:
+    AsyncEmbeddingEngine = Any
 
 
 DEFAULT_KEEP_ENGINE_ALIVE_DELAY = 2
