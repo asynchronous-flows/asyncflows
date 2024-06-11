@@ -114,8 +114,18 @@ if __name__ == "__main__":
             config_filename=args.flow,
             strict=True,
         )
-        # straight to stdout we go
-        print(json.dumps(schema, indent=2))
+        # print to stdout for backwards compat
+        json_schema_dump = json.dumps(schema, indent=2)
+        print(json_schema_dump)
+        # print to fd `3` for functionality even if errors are thrown
+        try:
+            buffer_size = 512
+            with os.fdopen(3, "w") as fd:
+                # chunk it
+                for i in range(0, len(json_schema_dump), buffer_size):
+                    fd.write(json_schema_dump[i : i + buffer_size])
+        except Exception:
+            pass
     else:
         # TODO assert tests not imported before this line
         import asyncflows.tests.resources.actions  # noqa
