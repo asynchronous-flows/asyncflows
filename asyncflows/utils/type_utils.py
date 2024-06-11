@@ -258,7 +258,7 @@ def build_field_description(
     type_, is_optional = remove_optional(field_info.annotation)
     qualified_name = build_type_qualified_name(type_, markdown=markdown)
 
-    field_desc = f"{field_name}: {qualified_name}"
+    field_desc = f"`{field_name}`: {qualified_name}"
     if is_optional:
         field_desc += " (optional)"
 
