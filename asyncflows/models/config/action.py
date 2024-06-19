@@ -77,6 +77,7 @@ def build_actions(
     action_names: list[str] | None = None,
     vars_: HintLiteral | None = None,
     links: HintLiteral | None = None,
+    include_paths: bool = False,
     strict: bool = False,
 ):
     # Dynamically build action models from currently defined actions
@@ -94,8 +95,12 @@ def build_actions(
 
         title = build_action_title(action, markdown=False)
 
-        description = build_action_description(action, markdown=False)
-        markdown_description = build_action_description(action, markdown=True)
+        description = build_action_description(
+            action, markdown=False, include_paths=include_paths
+        )
+        markdown_description = build_action_description(
+            action, markdown=True, include_paths=include_paths
+        )
 
         # build action literal
         action_literal = Literal[action.name]  # type: ignore
@@ -135,6 +140,7 @@ def build_actions(
             links=links,
             add_union=HintedValueDeclaration,
             strict=strict,
+            include_paths=include_paths,
         )
 
         # build action invocation model

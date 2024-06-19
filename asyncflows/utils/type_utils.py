@@ -178,7 +178,9 @@ def transform_and_templatify_type(
     return type_
 
 
-def build_type_qualified_name(type_: type, *, markdown: bool) -> str:
+def build_type_qualified_name(
+    type_: type, *, markdown: bool, include_paths: bool
+) -> str:
     if type_ is type(None):
         return "None"
 
@@ -188,7 +190,10 @@ def build_type_qualified_name(type_: type, *, markdown: bool) -> str:
         if origin in [Union, types.UnionType]:
             args = typing.get_args(type_)
             return " | ".join(
-                build_type_qualified_name(arg, markdown=markdown) for arg in args
+                build_type_qualified_name(
+                    arg, markdown=markdown, include_paths=include_paths
+                )
+                for arg in args
             )
 
         # convert literal to a string
@@ -197,9 +202,13 @@ def build_type_qualified_name(type_: type, *, markdown: bool) -> str:
             return " | ".join(repr(arg) for arg in args)
 
         # handle other origins
-        origin_qual_name = build_type_qualified_name(origin, markdown=markdown)
+        origin_qual_name = build_type_qualified_name(
+            origin, markdown=markdown, include_paths=include_paths
+        )
         args_qual_names = " | ".join(
-            build_type_qualified_name(arg, markdown=markdown)
+            build_type_qualified_name(
+                arg, markdown=markdown, include_paths=include_paths
+            )
             for arg in typing.get_args(type_)
         )
         return f"{origin_qual_name}[{args_qual_names}]"
@@ -207,7 +216,9 @@ def build_type_qualified_name(type_: type, *, markdown: bool) -> str:
     # handle TransformsFrom
     if inspect.isclass(type_) and issubclass(type_, TransformsFrom):
         return build_type_qualified_name(
-            type_._get_config_type(None, None), markdown=markdown
+            type_._get_config_type(None, None),
+            markdown=markdown,
+            include_paths=include_paths,
         )
 
     # convert string enums to a string
@@ -224,7 +235,7 @@ def build_type_qualified_name(type_: type, *, markdown: bool) -> str:
         return name
 
     # add markdown link to custom types
-    if not markdown:
+    if not markdown or not include_paths:
         return name
 
     # Building the link to the source code file
@@ -253,10 +264,12 @@ def remove_optional(type_: type | None) -> tuple[type, bool]:
 
 
 def build_field_description(
-    field_name: str, field_info: FieldInfo, *, markdown: bool
+    field_name: str, field_info: FieldInfo, *, markdown: bool, include_paths: bool
 ) -> str:
     type_, is_optional = remove_optional(field_info.annotation)
-    qualified_name = build_type_qualified_name(type_, markdown=markdown)
+    qualified_name = build_type_qualified_name(
+        type_, markdown=markdown, include_paths=include_paths
+    )
 
     field_desc = f"`{field_name}`: {qualified_name}"
     if is_optional:
@@ -274,6 +287,7 @@ def build_input_fields(
     links: HintLiteral | None = None,
     add_union: type | None = None,
     strict: bool = False,
+    include_paths: bool = False,
 ) -> dict[str, tuple[type, Any]]:
     inputs = action._get_inputs_type()
     if isinstance(None, inputs):
@@ -286,12 +300,14 @@ def build_input_fields(
         markdown=False,
         include_title=False,
         include_io=False,
+        include_paths=include_paths,
     )
     markdown_action_description = build_action_description(
         action,
         markdown=True,
         include_title=False,
         include_io=False,
+        include_paths=include_paths,
     )
 
     new_field_infos = {}
@@ -303,11 +319,9 @@ def build_input_fields(
         title = action_title
 
         field_description = build_field_description(
-            field_name, field_info, markdown=False
+            field_name, field_info, markdown=False, include_paths=include_paths
         )
-        markdown_field_description = (
-            f"- {build_field_description(field_name, field_info, markdown=True)}"
-        )
+        markdown_field_description = f"- {build_field_description(field_name, field_info, markdown=True, include_paths=include_paths)}"
 
         description = field_description
         if action_description:
@@ -336,6 +350,7 @@ def _get_recursive_subfields(
     obj: dict | pydantic.BaseModel | Any,
     base_description: str | None,
     base_markdown_description: str | None,
+    include_paths: bool,
     name_prefix: str = "",
 ) -> list[type[str]]:
     out = []
@@ -345,11 +360,17 @@ def _get_recursive_subfields(
     #         out.extend(_get_recursive_subfields(field, base_description, base_markdown_description, f"{name}."))
     if inspect.isclass(obj) and issubclass(obj, pydantic.BaseModel):
         for name, field in obj.model_fields.items():
-            description = build_field_description(name, field, markdown=False)
+            description = build_field_description(
+                name, field, markdown=False, include_paths=include_paths
+            )
             if base_description:
                 description = base_description + "\n\n" + description
             markdown_description = (
-                "- " + build_field_description(name, field, markdown=True) + "\n\n---"
+                "- "
+                + build_field_description(
+                    name, field, markdown=True, include_paths=include_paths
+                )
+                + "\n\n---"
             )
             if base_markdown_description:
                 markdown_description = (
@@ -371,6 +392,7 @@ def _get_recursive_subfields(
                     field.annotation,
                     base_description,
                     base_markdown_description,
+                    include_paths=include_paths,
                     name_prefix=f"{name_prefix}{name}.",
                 )
             )
@@ -400,6 +422,7 @@ def build_action_description(
     action: type[InternalActionBase],
     *,
     markdown: bool,
+    include_paths: bool,
     include_title: bool = False,
     title_suffix: str = "",
     include_io: bool = True,
@@ -421,7 +444,7 @@ def build_action_description(
         if not isinstance(None, inputs):
             for field_name, field_info in inputs.model_fields.items():
                 inputs_description_items.append(
-                    f"- {build_field_description(field_name, field_info, markdown=markdown)}"
+                    f"- {build_field_description(field_name, field_info, markdown=markdown, include_paths=include_paths)}"
                 )
         if inputs_description_items:
             if markdown:
@@ -436,7 +459,7 @@ def build_action_description(
         if not isinstance(None, outputs):
             for field_name, field_info in outputs.model_fields.items():
                 outputs_description_items.append(
-                    f"- {build_field_description(field_name, field_info, markdown=markdown)}"
+                    f"- {build_field_description(field_name, field_info, markdown=markdown, include_paths=include_paths)}"
                 )
         if outputs_description_items:
             if markdown:
@@ -472,6 +495,7 @@ def build_var_literal(
 def build_link_literal(
     action_invocations: dict[ExecutableId, type[InternalActionBase]],
     strict: bool,
+    include_paths: bool,
 ) -> type[str]:
     union_elements = []
 
@@ -486,6 +510,7 @@ def build_link_literal(
             markdown=False,
             include_title=True,
             include_io=False,
+            include_paths=include_paths,
             title_suffix=" Output",
         )
         for name in unique_action_names
@@ -496,6 +521,7 @@ def build_link_literal(
             markdown=True,
             include_title=True,
             include_io=False,
+            include_paths=include_paths,
             title_suffix=" Output",
         )
         for name in unique_action_names
@@ -510,6 +536,7 @@ def build_link_literal(
             outputs,
             base_description,
             base_markdown_description,
+            include_paths=include_paths,
             name_prefix=f"{action_id}.",
         )
         if possible_links:

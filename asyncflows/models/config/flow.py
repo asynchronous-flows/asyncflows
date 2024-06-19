@@ -75,6 +75,7 @@ def build_hinted_action_config(
     action_names: list[str] | None = None,
     vars_: HintLiteral | None = None,
     links: HintLiteral | None = None,
+    include_paths: bool = False,
     strict: bool = False,
 ):
     HintedValueDeclaration = build_hinted_value_declaration(
@@ -89,6 +90,7 @@ def build_hinted_action_config(
                 action_names=action_names,
                 vars_=vars_,
                 links=links,
+                include_paths=include_paths,
                 strict=strict,
             )
         )  # pyright: ignore

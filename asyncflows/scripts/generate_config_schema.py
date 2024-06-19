@@ -45,6 +45,7 @@ def _get_action_invocations(
 
 def _build_asyncflows_schema(
     action_names: list[str],
+    include_paths: bool,
     strict: bool,
     config_filename: str | None = None,
     link_hint_literal_name: str = "__LinkHintLiteral",
@@ -56,6 +57,7 @@ def _build_asyncflows_schema(
         link_hint_literal = build_link_literal(
             action_invocations=action_invocations,
             strict=strict,
+            include_paths=include_paths,
         )
     else:
         link_hint_literal = None
@@ -64,6 +66,7 @@ def _build_asyncflows_schema(
         action_names=action_names,
         links=link_hint_literal,
         vars_=None,
+        include_paths=include_paths,
         strict=strict,
     )
     workflow_schema = HintedActionConfig.model_json_schema()
@@ -84,11 +87,13 @@ def _build_asyncflows_schema(
 def _build_and_save_asyncflows_schema(
     action_names: list[str],
     output_file: str,
+    include_paths: bool,
     strict: bool,
     config_filename: str | None = None,
 ):
     workflow_schema = _build_asyncflows_schema(
         action_names=action_names,
+        include_paths=include_paths,
         strict=strict,
         config_filename=config_filename,
     )
@@ -113,6 +118,7 @@ if __name__ == "__main__":
             action_names=action_names,
             config_filename=args.flow,
             strict=True,
+            include_paths=True,
         )
         # print to stdout for backwards compat
         json_schema_dump = json.dumps(schema, indent=2)
@@ -137,10 +143,12 @@ if __name__ == "__main__":
             action_names=action_names,
             output_file="asyncflows_schema.json",
             strict=False,
+            include_paths=False,
         )
 
         _build_and_save_asyncflows_schema(
             action_names=testing_action_names,
             output_file="testing_asyncflows_schema.json",
             strict=False,
+            include_paths=False,
         )

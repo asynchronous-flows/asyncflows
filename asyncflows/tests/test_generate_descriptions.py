@@ -60,11 +60,13 @@ class Color(str, enum.Enum):
 )
 def test_generate_field_description(field_name, field_info, markdown, expected_output):
     if markdown:
-        build_field_description(field_name, field_info, markdown=markdown).startswith(
-            expected_output
-        )
+        build_field_description(
+            field_name, field_info, markdown=markdown, include_paths=True
+        ).startswith(expected_output)
     else:
         assert (
-            build_field_description(field_name, field_info, markdown=markdown)
+            build_field_description(
+                field_name, field_info, markdown=markdown, include_paths=True
+            )
             == expected_output
         )

@@ -1338,7 +1338,7 @@
     "extract_pdf_textActionInvocation": {
       "additionalProperties": false,
       "description": "INPUTS\n- `file`: File | str\n- `min_start_chars`: int\n\nOUTPUTS\n- `title`: str (optional)\n- `start_of_text`: str (optional)\n- `full_text`: str (optional)\n- `pages`: list[Page] (optional)",
-      "markdownDescription": "**Inputs**\n- `file`: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n- `min_start_chars`: int\n\n**Outputs**\n- `title`: str (optional)\n- `start_of_text`: str (optional)\n- `full_text`: str (optional)\n- `pages`: list[[Page](file:///Users/rafael/asyncflows/asyncflows/actions/extract_pdf_text.py#L15)] (optional)",
+      "markdownDescription": "**Inputs**\n- `file`: File | str\n- `min_start_chars`: int\n\n**Outputs**\n- `title`: str (optional)\n- `start_of_text`: str (optional)\n- `full_text`: str (optional)\n- `pages`: list[Page] (optional)",
       "properties": {
         "action": {
           "const": "extract_pdf_text",
@@ -1346,7 +1346,7 @@
           "enum": [
             "extract_pdf_text"
           ],
-          "markdownDescription": "**Inputs**\n- `file`: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n- `min_start_chars`: int\n\n**Outputs**\n- `title`: str (optional)\n- `start_of_text`: str (optional)\n- `full_text`: str (optional)\n- `pages`: list[[Page](file:///Users/rafael/asyncflows/asyncflows/actions/extract_pdf_text.py#L15)] (optional)\n\n---",
+          "markdownDescription": "**Inputs**\n- `file`: File | str\n- `min_start_chars`: int\n\n**Outputs**\n- `title`: str (optional)\n- `start_of_text`: str (optional)\n- `full_text`: str (optional)\n- `pages`: list[Page] (optional)\n\n---",
           "title": "Extract Pdf Text Action",
           "type": "string"
         },
@@ -1402,7 +1402,7 @@
             }
           ],
           "description": "`file`: File | str",
-          "markdownDescription": "- `file`: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n\n---",
+          "markdownDescription": "- `file`: File | str\n\n---",
           "title": "Extract Pdf Text Action Input"
         },
         "min_start_chars": {
@@ -1693,7 +1693,7 @@
     "ocrActionInvocation": {
       "additionalProperties": false,
       "description": "INPUTS\n- `pdf`: File | str\n\nOUTPUTS\n- `pdf_ocr`: str",
-      "markdownDescription": "**Inputs**\n- `pdf`: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n\n**Outputs**\n- `pdf_ocr`: str",
+      "markdownDescription": "**Inputs**\n- `pdf`: File | str\n\n**Outputs**\n- `pdf_ocr`: str",
       "properties": {
         "action": {
           "const": "ocr",
@@ -1701,7 +1701,7 @@
           "enum": [
             "ocr"
           ],
-          "markdownDescription": "**Inputs**\n- `pdf`: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n\n**Outputs**\n- `pdf_ocr`: str\n\n---",
+          "markdownDescription": "**Inputs**\n- `pdf`: File | str\n\n**Outputs**\n- `pdf_ocr`: str\n\n---",
           "title": "Ocr Action",
           "type": "string"
         },
@@ -1757,7 +1757,7 @@
             }
           ],
           "description": "`pdf`: File | str",
-          "markdownDescription": "- `pdf`: [File](file:///Users/rafael/asyncflows/asyncflows/models/file.py#L19) | str\n\n---",
+          "markdownDescription": "- `pdf`: File | str\n\n---",
           "title": "Ocr Action Input"
         }
       },
@@ -1771,7 +1771,7 @@
     "promptActionInvocation": {
       "additionalProperties": false,
       "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- `model`: OptionalModelConfig (optional)\n- `quote_style`: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\nOUTPUTS\n- `result`: str  \n  Response given by the LLM",
-      "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- `model`: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- `quote_style`: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- `prompt`: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]\n\n**Outputs**\n- `result`: str  \n  Response given by the LLM",
+      "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- `model`: OptionalModelConfig (optional)\n- `quote_style`: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\n**Outputs**\n- `result`: str  \n  Response given by the LLM",
       "properties": {
         "action": {
           "const": "prompt",
@@ -1779,7 +1779,7 @@
           "enum": [
             "prompt"
           ],
-          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- `model`: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n- `quote_style`: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- `prompt`: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]\n\n**Outputs**\n- `result`: str  \n  Response given by the LLM\n\n---",
+          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- `model`: OptionalModelConfig (optional)\n- `quote_style`: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\n**Outputs**\n- `result`: str  \n  Response given by the LLM\n\n---",
           "title": "Prompt Action",
           "type": "string"
         },
@@ -1836,7 +1836,7 @@
           ],
           "default": null,
           "description": "Prompt the LLM with a message and receive a response.\n\n`model`: OptionalModelConfig (optional)",
-          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n- `model`: [OptionalModelConfig](file:///Users/rafael/asyncflows/asyncflows/models/config/model.py#L87) (optional)\n\n---",
+          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n- `model`: OptionalModelConfig (optional)\n\n---",
           "title": "Prompt Action Input"
         },
         "quote_style": {
@@ -1912,7 +1912,7 @@
             }
           ],
           "description": "Prompt the LLM with a message and receive a response.\n\n`prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]",
-          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n- `prompt`: list[[RoleElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L39) | [TextElement](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L49) | [ContextVar](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L206) | [ContextLink](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L212) | [ContextTemplate](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L218) | [ContextLambda](file:///Users/rafael/asyncflows/asyncflows/actions/utils/prompt_context.py#L224)]\n\n---",
+          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\n---",
           "title": "Prompt Action Input"
         }
       },
