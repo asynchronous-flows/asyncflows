@@ -58,7 +58,13 @@ class ActionConfig(StrictModel):
     default_model: ModelConfigDeclaration  # type: ignore
     action_timeout: float = 360
     flow: "FlowConfig"
-    default_output: ContextVarPath  # TODO `| ValueDeclaration`
+    default_output: ContextVarPath | None = None  # TODO `| ValueDeclaration`
+
+    def get_default_output(self) -> ContextVarPath:
+        if self.default_output is not None:
+            return self.default_output
+        # return last output of the flow
+        return list(self.flow.keys())[-1]
 
 
 Executable = Union[ActionInvocation, Loop]

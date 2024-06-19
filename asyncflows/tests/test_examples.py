@@ -105,4 +105,4 @@ async def test_examples_statically(log, example_name):
         raise FileNotFoundError(f"Example not found: {example_name}")
 
     config = load_config_file(example_yaml)
-    assert check_config_consistency(log, config, vars_, config.default_output)
+    assert check_config_consistency(log, config, vars_, config.get_default_output())

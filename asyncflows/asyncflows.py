@@ -105,7 +105,7 @@ class AsyncFlows:
 
     async def run(self, target_output: None | str = None):
         if target_output is None:
-            target_output = self.action_config.default_output
+            target_output = self.action_config.get_default_output()
 
         if not check_config_consistency(
             self.log,
@@ -137,7 +137,7 @@ class AsyncFlows:
 
     async def stream(self, target_output: None | str = None):
         if target_output is None:
-            target_output = self.action_config.default_output
+            target_output = self.action_config.get_default_output()
 
         if not check_config_consistency(
             self.log,

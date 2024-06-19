@@ -8,4 +8,4 @@ flow:
     action: prompt
     prompt:
       - text: Can you say hello world for me?
-default_output: hello_world.result
+#default_output: hello_world.result
