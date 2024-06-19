@@ -55,7 +55,7 @@ ModelConfigDeclaration = build_model_config()
 
 
 class ActionConfig(StrictModel):
-    default_model: ModelConfigDeclaration  # type: ignore
+    default_model: ModelConfigDeclaration = ModelConfig()  # type: ignore
     action_timeout: float = 360
     flow: "FlowConfig"
     default_output: ContextVarPath | None = None  # TODO `| ValueDeclaration`
