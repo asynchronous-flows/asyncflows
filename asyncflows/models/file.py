@@ -8,7 +8,7 @@ from typing_extensions import assert_never
 import structlog
 from pydantic import PrivateAttr
 
-from asyncflows.actions.base import Field, BaseModel
+from asyncflows.models.io import Field, BaseModel
 from asyncflows.models.blob import Blob
 from asyncflows.repos.blob_repo import BlobRepo
 from asyncflows.utils.request_utils import request_read

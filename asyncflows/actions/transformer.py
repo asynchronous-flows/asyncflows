@@ -1,6 +1,6 @@
 from typing import Any, Literal
 
-from asyncflows.actions.base import Action, BaseModel
+from asyncflows import Action, BaseModel
 from asyncflows.models.config.model import BiEncoderModelType, CrossEncoderModelType
 
 # from asyncflows.scripts.run_transformers_service import DocumentQueryRequest

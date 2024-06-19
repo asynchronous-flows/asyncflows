@@ -14,6 +14,8 @@ from asyncflows.actions.base import (
     StreamingAction,
     InternalActionBase,
     Action,
+)
+from asyncflows.models.io import (
     CacheControlOutputs,
     FinalInvocationInputs,
     BlobRepoInputs,

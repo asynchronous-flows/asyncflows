@@ -1,6 +1,6 @@
 from typing import Any
 
-from asyncflows.actions.base import Action, BaseModel, Field
+from asyncflows import Action, BaseModel, Field
 from asyncflows.utils.db_utils import get_async_db_url
 
 

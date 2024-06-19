@@ -1,4 +1,4 @@
-from asyncflows.actions.base import BaseModel, Action, Field
+from asyncflows import Action, BaseModel, Field
 from asyncflows.utils.db_utils import get_sync_db_url
 
 

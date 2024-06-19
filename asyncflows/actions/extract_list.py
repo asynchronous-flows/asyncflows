@@ -1,7 +1,7 @@
 from typing import Optional, Literal
 from typing_extensions import assert_never
 
-from asyncflows.actions.base import Action, BaseModel
+from asyncflows import Action, BaseModel
 
 LIST_FORMAT = Literal["comma", "newline", "space", "bullet points"]
 

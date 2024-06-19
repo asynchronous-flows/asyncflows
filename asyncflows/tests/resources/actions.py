@@ -3,10 +3,12 @@ from typing import AsyncIterator
 
 from asyncflows.actions.base import (
     Action,
+    StreamingAction,
+)
+from asyncflows.models.io import (
     FinalInvocationInputs,
     BlobRepoInputs,
     BaseModel,
-    StreamingAction,
 )
 from asyncflows.actions.utils.prompt_context import (
     PromptElement,

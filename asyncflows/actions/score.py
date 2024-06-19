@@ -1,4 +1,4 @@
-from asyncflows.actions.base import Action, BaseModel
+from asyncflows import Action, BaseModel
 
 
 class Inputs(BaseModel):

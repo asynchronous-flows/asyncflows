@@ -1,4 +1,4 @@
-from asyncflows.actions.base import Action, BaseModel, Field
+from asyncflows import Action, BaseModel, Field
 
 import aiohttp
 

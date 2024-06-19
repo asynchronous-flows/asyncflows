@@ -3,11 +3,13 @@ import ast
 import jsonschema
 import pytest
 from asyncflows.models.config.common import (
+    StrictModel,
+)
+from asyncflows.utils.rendering_utils import (
     extract_vars_from_template,
     render_template,
     render_var,
     _jinja_env,
-    StrictModel,
 )
 from asyncflows.models.config.value_declarations import (
     TextDeclaration,

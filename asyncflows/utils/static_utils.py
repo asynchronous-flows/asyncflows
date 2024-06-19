@@ -3,7 +3,7 @@ from typing_extensions import Any, assert_never
 import structlog
 
 from asyncflows.models.config.action import ActionInvocation
-from asyncflows.models.config.common import extract_root_var
+from asyncflows.utils.rendering_utils import extract_root_var
 from asyncflows.models.config.flow import (
     ActionConfig,
     Loop,

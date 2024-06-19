@@ -1,7 +1,7 @@
 import os
 
-from asyncflows.actions.base import BaseModel, Action
-from asyncflows.actions.base import BlobRepoInputs
+from asyncflows import Action, BaseModel
+from asyncflows.models.io import BlobRepoInputs
 from asyncflows.models.file import File
 
 

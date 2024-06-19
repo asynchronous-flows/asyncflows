@@ -1,9 +1,9 @@
-from asyncflows.actions.base import (
-    Action,
+from asyncflows.models.io import (
     CacheControlOutputs,
     BlobRepoInputs,
-    BaseModel,
 )
+from asyncflows import Action, BaseModel
+
 from asyncflows.models.file import File
 
 

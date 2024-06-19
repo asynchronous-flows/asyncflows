@@ -12,6 +12,8 @@ from typing_extensions import Self
 
 from asyncflows.models.config.common import (
     StrictModel,
+)
+from asyncflows.utils.rendering_utils import (
     extract_root_var,
     render_var,
     extract_vars_from_template,

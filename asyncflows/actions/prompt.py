@@ -8,12 +8,12 @@ from typing import Optional, AsyncIterator
 import aiohttp
 import tenacity
 
-from asyncflows.actions.base import (
-    StreamingAction,
+from asyncflows.models.io import (
     DefaultModelInputs,
-    BaseModel,
-    Field,
+    DefaultOutputOutputs,
 )
+from asyncflows import StreamingAction, Field
+
 
 from asyncflows.actions.utils.prompt_context import (
     RoleElement,
@@ -110,7 +110,9 @@ class Inputs(DefaultModelInputs):
     prompt: list[PromptElement]
 
 
-class Outputs(BaseModel):
+class Outputs(DefaultOutputOutputs):
+    _default_output = "result"
+
     result: str = Field(
         description="Response given by the LLM",
     )
