@@ -4,7 +4,6 @@ import types
 import typing
 from enum import Enum
 from typing import Any, Literal, Union, Annotated
-from weakref import WeakValueDictionary
 
 import pydantic
 from pydantic import Field, BaseModel
@@ -23,8 +22,10 @@ from asyncflows.models.primitives import HintLiteral, ExecutableId
 
 # edit: im kind of proud of this function now that it's been refactored a bit
 
-_forward_ref_cache = WeakValueDictionary()
-_transformation_cache = {}  # TODO this could be a WeakValueDictionary too, but it complains about types being stored
+
+# TODO could we make these weakrefs somehow? the weakref would need to be tied to the type object
+_forward_ref_cache = {}
+_transformation_cache = {}
 
 
 def templatify_fields(
