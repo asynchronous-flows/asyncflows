@@ -272,6 +272,9 @@ def build_field_description(
         type_, markdown=markdown, include_paths=include_paths
     )
 
+    if field_info.alias:
+        field_name = field_info.alias
+
     field_desc = f"`{field_name}`: {qualified_name}"
     if is_optional:
         field_desc += " (optional)"
@@ -317,6 +320,7 @@ def build_input_fields(
     for field_name, field_info in inputs.model_fields.items():
         # field_title = field_name.replace("_", " ").title()
         # title = f"{field_title}: {action_title}"
+
         title = action_title
 
         field_description = build_field_description(
