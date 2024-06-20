@@ -104,6 +104,16 @@ class AsyncFlows:
         )
 
     async def run(self, target_output: None | str = None):
+        """
+        Run the subset of the flow required to get the target output.
+        If the action has already been run, the cached output will be returned.
+
+        Parameters
+        ----------
+        target_output : None | str
+            the output to return (defaults to `default_output` in the config, or the last action's output if not set)
+        """
+
         if target_output is None:
             target_output = self.action_config.get_default_output()
 
@@ -136,6 +146,15 @@ class AsyncFlows:
         return await declaration.render(context)
 
     async def stream(self, target_output: None | str = None):
+        """
+        Run the subset of the flow required to get the target output, and asynchronously iterate the output.
+        If the action has already been run, the cached output will be returned.
+
+        Parameters
+        ----------
+        target_output : None | str
+            the output to return (defaults to `default_output` in the config, or the last action's output if not set)
+        """
         if target_output is None:
             target_output = self.action_config.get_default_output()
 
