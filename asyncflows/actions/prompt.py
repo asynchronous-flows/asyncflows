@@ -386,7 +386,7 @@ class Prompt(StreamingAction[Inputs, Outputs]):
                         "name": "function",
                         # "description": "Function to be called",
                         "parameters": schema.model_dump(exclude_unset=True),
-                    }
+                    },
                 }
             ]
 

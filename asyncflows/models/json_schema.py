@@ -26,40 +26,25 @@
 from __future__ import annotations
 
 import enum as _enum
-import tempfile
-from collections import defaultdict
-from contextlib import contextmanager
 from functools import lru_cache
-from pathlib import Path
 from typing import (
-    TYPE_CHECKING,
     Any,
-    Callable,
-    ClassVar,
-    DefaultDict,
     Dict,
-    Generator,
-    Iterable,
-    Iterator,
     List,
-    Mapping,
     Optional,
-    Sequence,
     Set,
-    Tuple,
-    Type,
-    Union, Literal,
+    Union,
+    Literal,
 )
-from urllib.parse import ParseResult
-from warnings import warn
 
 from pydantic import (
     Field,
 )
 
-UnionIntFloat = Union[int, float]
 
 from pydantic import ConfigDict, BaseModel, field_validator, model_validator
+
+UnionIntFloat = Union[int, float]
 
 
 def get_model_by_path(
@@ -80,14 +65,14 @@ def get_model_by_path(
     if isinstance(model, dict):
         return model
     raise NotImplementedError(  # pragma: no cover
-        f'Does not support json pointer to array. schema={schema}, key={keys}'
+        f"Does not support json pointer to array. schema={schema}, key={keys}"
     )
 
 
 class JSONReference(_enum.Enum):
-    LOCAL = 'LOCAL'
-    REMOTE = 'REMOTE'
-    URL = 'URL'
+    LOCAL = "LOCAL"
+    REMOTE = "REMOTE"
+    URL = "URL"
 
 
 class Discriminator(BaseModel):
@@ -101,7 +86,7 @@ typestring_type = Literal["string", "number", "object", "array", "boolean"]
 class JsonSchemaObject(BaseModel):
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
-        extra='forbid',
+        extra="forbid",
     )
 
     @classmethod
@@ -109,47 +94,47 @@ class JsonSchemaObject(BaseModel):
         return cls.model_fields
 
     __constraint_fields__: Set[str] = {
-        'exclusiveMinimum',
-        'minimum',
-        'exclusiveMaximum',
-        'maximum',
-        'multipleOf',
-        'minItems',
-        'maxItems',
-        'minLength',
-        'maxLength',
-        'pattern',
-        'uniqueItems',
+        "exclusiveMinimum",
+        "minimum",
+        "exclusiveMaximum",
+        "maximum",
+        "multipleOf",
+        "minItems",
+        "maxItems",
+        "minLength",
+        "maxLength",
+        "pattern",
+        "uniqueItems",
     }
     # __extra_key__: str = SPECIAL_PATH_FORMAT.format('extras')
 
-    @model_validator(mode='before')
+    @model_validator(mode="before")
     def validate_exclusive_maximum_and_exclusive_minimum(cls, values: Any) -> Any:
         if not isinstance(values, dict):
             return values
-        exclusive_maximum: Union[float, bool, None] = values.get('exclusiveMaximum')
-        exclusive_minimum: Union[float, bool, None] = values.get('exclusiveMinimum')
+        exclusive_maximum: Union[float, bool, None] = values.get("exclusiveMaximum")
+        exclusive_minimum: Union[float, bool, None] = values.get("exclusiveMinimum")
 
         if exclusive_maximum is True:
-            values['exclusiveMaximum'] = values['maximum']
-            del values['maximum']
+            values["exclusiveMaximum"] = values["maximum"]
+            del values["maximum"]
         elif exclusive_maximum is False:
-            del values['exclusiveMaximum']
+            del values["exclusiveMaximum"]
         if exclusive_minimum is True:
-            values['exclusiveMinimum'] = values['minimum']
-            del values['minimum']
+            values["exclusiveMinimum"] = values["minimum"]
+            del values["minimum"]
         elif exclusive_minimum is False:
-            del values['exclusiveMinimum']
+            del values["exclusiveMinimum"]
         return values
 
-    @field_validator('ref')
+    @field_validator("ref")
     def validate_ref(cls, value: Any) -> Any:
-        if isinstance(value, str) and '#' in value:
-            if value.endswith('#/'):
+        if isinstance(value, str) and "#" in value:
+            if value.endswith("#/"):
                 return value[:-1]
-            elif '#/' in value or value[0] == '#' or value[-1] == '#':
+            elif "#/" in value or value[0] == "#" or value[-1] == "#":
                 return value
-            return value.replace('#', '#/')
+            return value.replace("#", "#/")
         return value
 
     items: Union[List[JsonSchemaObject], JsonSchemaObject, bool, None] = None
@@ -176,25 +161,24 @@ class JsonSchemaObject(BaseModel):
     readOnly: Optional[bool] = None
     properties: Optional[Dict[str, Union[JsonSchemaObject, bool]]] = None
     required: List[str] = []
-    ref: Optional[str] = Field(default=None, alias='$ref')
+    ref: Optional[str] = Field(default=None, alias="$ref")
     nullable: Optional[bool] = False
-    x_enum_varnames: List[str] = Field(default=[], alias='x-enum-varnames')
+    x_enum_varnames: List[str] = Field(default=[], alias="x-enum-varnames")
     description: Optional[str] = None
     title: Optional[str] = None
     example: Any = None
     examples: Any = None
     default: Any = None
-    id: Optional[str] = Field(default=None, alias='$id')
-    custom_type_path: Optional[str] = Field(default=None, alias='customTypePath')
-    custom_base_path: Optional[str] = Field(default=None, alias='customBasePath')
+    id: Optional[str] = Field(default=None, alias="$id")
+    custom_type_path: Optional[str] = Field(default=None, alias="customTypePath")
+    custom_base_path: Optional[str] = Field(default=None, alias="customBasePath")
     # extras: Dict[str, Any] = Field(alias=__extra_key__, default_factory=dict)
     discriminator: Union[Discriminator, str, None] = None
-
 
     def is_object(self) -> bool:
         return (
             self.properties is not None
-            or self.type == 'object'
+            or self.type == "object"
             and not self.allOf
             and not self.oneOf
             and not self.anyOf
@@ -202,12 +186,12 @@ class JsonSchemaObject(BaseModel):
         )
 
     def is_array(self) -> bool:
-        return self.items is not None or self.type == 'array'
+        return self.items is not None or self.type == "array"
 
     def ref_object_name(self) -> str:  # pragma: no cover
-        return self.ref.rsplit('/', 1)[-1]  # type: ignore
+        return self.ref.rsplit("/", 1)[-1]  # type: ignore
 
-    @field_validator('items', mode='before')
+    @field_validator("items", mode="before")
     def validate_items(cls, values: Any) -> Any:
         # this condition expects empty dict
         return values or None
@@ -224,14 +208,14 @@ class JsonSchemaObject(BaseModel):
         return None  # pragma: no cover
 
     def type_has_null(self) -> bool:
-        return isinstance(self.type, list) and 'null' in self.type
+        return isinstance(self.type, list) and "null" in self.type
 
 
 @lru_cache()
 def get_ref_type(ref: str) -> JSONReference:
-    if ref[0] == '#':
+    if ref[0] == "#":
         return JSONReference.LOCAL
-    elif ref.startswith(('https://', 'http://')):
+    elif ref.startswith(("https://", "http://")):
         return JSONReference.URL
     return JSONReference.REMOTE
 
