@@ -343,6 +343,8 @@ def mock_prompt_result():
 def mock_prompt_action(mock_prompt_result):
     outputs = PromptOutputs(
         result=mock_prompt_result,
+        response=mock_prompt_result,
+        data=None,
     )
 
     async def outputs_iter(*args, **kwargs):

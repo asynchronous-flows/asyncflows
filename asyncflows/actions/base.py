@@ -105,6 +105,7 @@ class InternalActionBase(Generic[Inputs, Outputs], metaclass=ActionMeta):
         return o
 
 
+
 class Action(InternalActionBase[Inputs, Outputs]):
     """
     Base class for actions.

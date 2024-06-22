@@ -18,6 +18,8 @@ async def test_default_model_var(log_history):
 
     outputs = PromptOutputs(
         result="3",
+        response="3",
+        data=None,
     )
 
     async def run(self, inputs: PromptInputs):

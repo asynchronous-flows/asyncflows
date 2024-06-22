@@ -3,7 +3,7 @@ import logging
 import os
 import tempfile
 import base64
-from typing import Optional, AsyncIterator
+from typing import Optional, AsyncIterator, Any
 
 import aiohttp
 import tenacity
@@ -25,6 +25,7 @@ from asyncflows.models.config.model import OptionalModelConfig, ModelConfig
 
 import litellm
 
+from asyncflows.models.json_schema import JsonSchemaObject
 from asyncflows.utils.async_utils import Timer, measure_async_iterator
 from asyncflows.utils.secret_utils import get_secret
 from asyncflows.utils.singleton_utils import SingletonContext
@@ -108,13 +109,29 @@ class Inputs(DefaultModelInputs):
         "Defaults to XML-style quotes for Claude models and backticks for others.",
     )
     prompt: list[PromptElement]
+    output_schema: None | JsonSchemaObject = Field(
+        default=None,
+    )
 
 
 class Outputs(DefaultOutputOutputs):
-    _default_output = "result"
+    _default_output = "response"
 
     result: str = Field(
-        description="Response given by the LLM",
+        description="""
+Use `my_prompt` or `my_prompt.response` instead of `my_prompt.result`.  
+Alternatively, use `my_prompt.data` if `output_schema` input is specified.
+""",
+        deprecated=True,
+    )
+    response: str = Field(
+        description="""
+Text response given by the LLM.  
+If `output_schema` input is specified, this is a JSON string. Use `my_prompt.data` for structured access instead.
+""",
+    )
+    data: Any | None = Field(
+        description="Structured data, abides by the JSON schema specified in `output_schema` input. `None` otherwise.",
     )
 
 
@@ -349,6 +366,7 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         self,
         messages: list[dict[str, str]],
         model_config: ModelConfig,
+        schema: None | JsonSchemaObject,
     ):
         openai_api_key = get_secret("OPENAI_API_KEY")
         if openai_api_key is None and "gpt" in model_config.model:
@@ -357,6 +375,20 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         headers = {}
         if model_config.auth_token is not None:
             headers["Authorization"] = f"Bearer {model_config.auth_token}"
+
+        tool_kwargs = {}
+        if schema is not None:
+            tool_kwargs["tool_choice"] = "required"
+            tool_kwargs["tools"] = [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "function",
+                        # "description": "Function to be called",
+                        "parameters": schema.model_dump(exclude_unset=True),
+                    }
+                }
+            ]
 
         client = None
         try:
@@ -379,12 +411,20 @@ class Prompt(StreamingAction[Inputs, Outputs]):
                     presence_penalty=model_config.presence_penalty,
                     base_url=model_config.api_base,
                     extra_headers=headers,
+                    **tool_kwargs,
                     # **model_config.model_dump(),
                 ):
-                    delta = completion.choices[0].delta.content  # type: ignore
-                    if delta is None:
+                    delta_obj = completion.choices[0].delta  # type: ignore
+                    if schema is not None:
+                        if delta_obj.tool_calls is not None:
+                            delta_string = delta_obj.tool_calls[0].function.arguments
+                        else:
+                            delta_string = None
+                    else:
+                        delta_string = delta_obj.content
+                    if delta_string is None:
                         break
-                    yield delta
+                    yield delta_string
         finally:
             if client is not None:
                 await client.close()
@@ -393,13 +433,14 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         self,
         messages: list[dict[str, str]],
         model_config: ModelConfig,
+        schema: None | JsonSchemaObject,
     ) -> AsyncIterator[str]:
-        if "claude" in model_config.model:
+        if "claude" in model_config.model and schema is None:
             iterator = self._invoke_anthropic(
                 messages=messages,
                 model_config=model_config,
             )
-        elif model_config.model.startswith("ollama/"):
+        elif model_config.model.startswith("ollama/") and schema is None:
             iterator = self._invoke_ollama(
                 messages=messages,
                 model_config=model_config,
@@ -408,6 +449,7 @@ class Prompt(StreamingAction[Inputs, Outputs]):
             iterator = self._invoke_litellm(
                 messages=messages,
                 model_config=model_config,
+                schema=schema,
             )
 
         timer = Timer()
@@ -455,9 +497,22 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         async for partial_output in self.invoke_llm(
             messages=messages,
             model_config=resolved_model,
+            schema=inputs.output_schema,
         ):
             output += partial_output
-            yield Outputs(result=output)
+            yield Outputs(
+                result=output,
+                response=output,
+                data=None,
+            )
+
+        if inputs.output_schema is not None:
+            data = json.loads(output)
+            yield Outputs(
+                result=output,
+                response=output,
+                data=data,
+            )
 
         try:
             estimated_cost_usd = self.estimate_cost(
