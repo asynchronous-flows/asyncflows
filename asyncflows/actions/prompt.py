@@ -108,9 +108,23 @@ class Inputs(DefaultModelInputs):
         description="The quote style to use for the prompt. "
         "Defaults to XML-style quotes for Claude models and backticks for others.",
     )
-    prompt: list[PromptElement]
+    prompt: list[PromptElement] = Field(
+        description="""
+The prompt to send to the language model.  
+Consists of multiple elements like text, roles, variables, links, and more.
+
+See [prompting in-depth](https://github.com/asynchronous-flows/asyncflows?tab=readme-ov-file#prompting-in-depth) for more information.
+""",
+    )
     output_schema: None | JsonSchemaObject = Field(
         default=None,
+        description="""
+Optionally, a JSON schema forcing the language model to output structured data adhering to it.
+
+💡 WARNING: You must instruct the language model to generate JSON in your prompt.  
+Some model providers (like Ollama) do not properly support this feature, and will not guarantee
+adherence to the schema, but will still generate JSON.
+""",
     )
 
 
