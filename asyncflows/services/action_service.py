@@ -43,6 +43,7 @@ from asyncflows.utils.async_utils import (
     measure_coro,
     measure_async_iterator,
 )
+from asyncflows.utils.pydantic_utils import iterate_fields
 from asyncflows.utils.redis_utils import get_redis_url
 from asyncflows.utils.sentinel_utils import is_sentinel, Sentinel, is_set_of_tuples
 
@@ -283,8 +284,7 @@ class ActionService:
             value = await value.render(context)
         if isinstance(value, BaseModel):
             fields = {}
-            for field_name in value.model_fields:
-                field_value = getattr(value, field_name)
+            for field_name, field_value in iterate_fields(value):
                 fields[field_name] = await self._collect_inputs_from_context(
                     log, field_value, context=context
                 )
@@ -341,11 +341,12 @@ class ActionService:
             yield None
             return
 
-        input_spec = {
-            key: getattr(action_config, key)
-            for key in action_config.model_fields
-            if key not in ("id", "action") and getattr(action_config, key) is not None
-        }
+        input_spec = {}
+        for name, value in iterate_fields(action_config):
+            if name in ("id", "action"):
+                continue
+            if value is not None:
+                input_spec[name] = value
 
         dependencies = self._get_dependency_ids_and_stream_flag_from_input_spec(
             input_spec
