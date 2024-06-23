@@ -3,6 +3,8 @@
 
 [![Discord](https://img.shields.io/badge/discord-7289da)](https://discord.gg/AGZ6GrcJCh)
 
+<img width=400 src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/8efc8cca-f2a6-42a5-ba65-a5740e1c9e24"/>
+
 Declarative GenAI Pipelines  
 Built with asyncio, pydantic, YAML, jinja  
 </div>
@@ -36,13 +38,13 @@ Built with asyncio, pydantic, YAML, jinja
 
 # Introduction
 
-> Building generative AI **demos** is **easy**. Building something that **scales** is **hard**.  
-
-Moving our GenAI pipelines from complex code to declarative config 
-has made them **easier to read, conceptualize, and visualize**.
+Building generative AI **demos** is **easy**. Building something that **scales** is **hard**.  
 
 asyncflows crystallized from a **developer** and a **researcher** collaborating
-to work on AI. 
+to **accelerate** with generative AI. 
+
+Moving our pipelines from complex code to declarative config 
+has made them **easier to read, write, and conceptualize**.
 
 ## ✨ Philosophy
 
