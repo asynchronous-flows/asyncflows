@@ -36,7 +36,7 @@ def mock_database_url_env_var():
 
 
 def get_example_names():
-    examples_dir = "examples"
+    examples_dir = "asyncflows/examples"
     example_names = []
     for example in os.listdir(examples_dir):
         if example.endswith(".yaml"):
@@ -61,7 +61,7 @@ async def test_run_example(
     example_name,
     log_history,
 ):
-    example_stem = f"examples/{example_name}"
+    example_stem = f"asyncflows/examples/{example_name}"
     example_yaml = f"{example_stem}.yaml"
     example_py = f"{example_stem}.py"
 
@@ -95,7 +95,7 @@ example_vars = {
     get_example_names(),
 )
 async def test_examples_statically(log, example_name):
-    example_stem = f"examples/{example_name}"
+    example_stem = f"asyncflows/examples/{example_name}"
     example_yaml = f"{example_stem}.yaml"
 
     vars_ = example_vars.get(example_name, set())
