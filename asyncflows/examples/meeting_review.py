@@ -13,13 +13,14 @@ async def main():
 
     # Load the flow from the file
     flow = AsyncFlows.from_file(meeting_review_flow_path).set_vars(
-        meeting_notes="We met to discuss project alpha. Jason presented the latest updates on the project. Courtney asked about the timeline for the next milestone. The coffee still needs to be refilled. We agreed to meet again next week to review the progress."    )
+        meeting_notes="We met to discuss project alpha. Jason presented the latest updates on the project. Courtney asked about the timeline for the next milestone. The coffee still needs to be refilled. We agreed to meet again next week to review the progress."
+    )
 
     # Run the flow
-    result = await flow.run('structure.data')
+    result = await flow.run("structure.data")
 
     # Print the action items
-    print(result['action_items'])
+    print(result["action_items"])
 
 
 if __name__ == "__main__":
