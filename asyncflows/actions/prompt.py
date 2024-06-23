@@ -174,6 +174,8 @@ class Prompt(StreamingAction[Inputs, Outputs]):
             return OutputsWithoutSchema
 
         try:
+            # TODO support parital inference; for `var:` and `link:` in schema
+            #  honestly rewrite `jsonschema_to_pydantic` to work on dict instead of this obj
             schema_object = JsonSchemaObject.model_validate(schema)
         except ValueError:
             return None
