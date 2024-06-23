@@ -9,12 +9,6 @@ import sentry_sdk
 import structlog
 from pydantic import BaseModel, RootModel, ValidationError
 
-from asyncflows.actions import get_actions_dict
-from asyncflows.actions.base import (
-    StreamingAction,
-    InternalActionBase,
-    Action,
-)
 from asyncflows.models.io import (
     CacheControlOutputs,
     FinalInvocationInputs,
@@ -23,7 +17,13 @@ from asyncflows.models.io import (
     RedisUrlInputs,
 )
 from asyncflows.models.blob import Blob
-from asyncflows.models.config.action import ActionInvocation
+from asyncflows.models.config.action import (
+    ActionInvocation,
+    StreamingAction,
+    InternalActionBase,
+    Action,
+)
+from asyncflows.utils.action_utils import get_actions_dict
 from asyncflows.models.config.flow import ActionConfig, Loop, FlowConfig
 from asyncflows.models.config.model import ModelConfig
 from asyncflows.models.config.transform import TransformsInto
@@ -525,11 +525,11 @@ class ActionService:
         cache_key: str | None,
         flow: FlowConfig,
     ) -> None | Outputs:
-        action_config = flow[action_id]
-        if not isinstance(action_config, ActionInvocation):
+        action_invocation = flow[action_id]
+        if not isinstance(action_invocation, ActionInvocation):
             log.error("Not an action", action_id=action_id)
             return None
-        action_name = action_config.action
+        action_name = action_invocation.action
         action_type = self.get_action_type(action_name)
 
         if self.use_cache and action_type.cache:
@@ -545,7 +545,9 @@ class ActionService:
                 )
                 outputs_json = None
             if outputs_json is not None:
-                outputs_type: BaseModel = action_type._get_outputs_type()
+                outputs_type: BaseModel = action_type._get_outputs_type(
+                    action_invocation
+                )
                 try:
                     outputs = outputs_type.model_validate_json(outputs_json)
                     if not await self._contains_expired_blobs(log, outputs):

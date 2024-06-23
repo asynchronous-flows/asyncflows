@@ -6,20 +6,21 @@ import traceback
 import pydantic
 from pydantic import TypeAdapter
 
-from asyncflows.actions import get_actions_dict, InternalActionBase
 from asyncflows.log_config import get_logger
+from asyncflows.models.config.action import ActionInvocation
 from asyncflows.models.config.flow import (
     Loop,
     build_hinted_action_config,
     ActionConfig,
 )
+from asyncflows.models.primitives import ExecutableId
 from asyncflows.utils.loader_utils import load_config_file
-from asyncflows.utils.type_utils import build_link_literal
+from asyncflows.utils.action_utils import build_link_literal, get_actions_dict
 
 
 def _get_action_invocations(
     config_filename: str,
-) -> dict[str, type[InternalActionBase]]:
+) -> dict[ExecutableId, ActionInvocation]:
     try:
         # load the file not as a non-strict model
         action_config = load_config_file(config_filename, config_model=ActionConfig)
@@ -32,13 +33,12 @@ def _get_action_invocations(
         return {}
 
     action_invocations = {}
-    actions = get_actions_dict()
+    # actions = get_actions_dict()
     for action_id, action_invocation in action_config.flow.items():
         if isinstance(action_invocation, Loop):
             # TODO support for loops in link fields
             continue
-        action_name = action_invocation.action
-        action_invocations[action_id] = actions[action_name]
+        action_invocations[action_id] = action_invocation
 
     return action_invocations
 

@@ -4,7 +4,6 @@ from pydantic import Field
 
 from asyncflows.models.config.action import (
     ActionInvocation,
-    build_actions,
 )
 from asyncflows.models.config.common import StrictModel
 from asyncflows.models.config.model import ModelConfig
@@ -16,7 +15,7 @@ from asyncflows.models.primitives import (
     ExecutableId,
     HintLiteral,
 )
-from asyncflows.models.config.action import build_hinted_value_declaration
+from asyncflows.utils.action_utils import build_hinted_value_declaration, build_actions
 from asyncflows.models.config.value_declarations import (
     LinkDeclaration,
     LambdaDeclaration,

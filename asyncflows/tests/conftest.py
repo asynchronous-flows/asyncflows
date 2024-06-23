@@ -13,7 +13,7 @@ from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-from asyncflows.actions import get_actions_dict
+from asyncflows.utils.action_utils import get_actions_dict
 from asyncflows.actions.prompt import Outputs as PromptOutputs, Prompt
 from asyncflows.actions.transformer import (
     BaseTransformerInputs as TransformerInputs,

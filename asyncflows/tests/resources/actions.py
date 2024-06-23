@@ -1,7 +1,7 @@
 import asyncio
 from typing import AsyncIterator
 
-from asyncflows.actions.base import (
+from asyncflows.models.config.action import (
     Action,
     StreamingAction,
 )

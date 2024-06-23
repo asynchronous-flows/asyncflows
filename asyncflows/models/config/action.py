@@ -1,32 +1,17 @@
+import inspect
 import typing
-from typing import Union, Literal, Annotated
+import structlog
+from typing import ClassVar, Type, Any, Optional, TypeVar, Generic, AsyncIterator
 
-import pydantic
-from pydantic import ConfigDict, Field
+from pydantic import Field
 
-from asyncflows.actions import get_actions_dict
 from asyncflows.models.config.common import ExtraModel
-from asyncflows.utils.type_utils import (
-    build_action_description,
-    build_input_fields,
-    build_action_title,
-)
 from asyncflows.models.config.value_declarations import (
-    VarDeclaration,
     ValueDeclaration,
-    LinkDeclaration,
 )
-from asyncflows.models.primitives import HintLiteral
+from asyncflows.models.io import Inputs, Outputs
 from asyncflows.models.primitives import ExecutableName
-
-
-# if TYPE_CHECKING:
-#     ActionId = str
-#     Action = Any
-# else:
-#     actions = get_actions_dict()
-#     ActionId = Literal[tuple(actions)]
-#     Action = Union[tuple(actions.values())]
+from asyncflows.utils.request_utils import request_text, request_read
 
 
 class ActionInvocation(ExtraModel):
@@ -37,127 +22,145 @@ class ActionInvocation(ExtraModel):
     )
 
 
-def build_hinted_value_declaration(
-    vars_: HintLiteral | None = None,
-    links: HintLiteral | None = None,
-    strict: bool = False,
-    excluded_declaration_types: None | list[type[ValueDeclaration]] = None,
-) -> type[ValueDeclaration]:
-    if excluded_declaration_types is None:
-        excluded_declaration_types = []
+class ActionMeta(type):
+    """
+    Metaclass for actions.
+    Its only responsibility is to register actions in a global registry.
+    """
 
-    union_elements = []
+    actions_registry: dict[ExecutableName, Type["InternalActionBase"]] = {}
 
-    if vars_:
-        union_elements.append(
-            VarDeclaration.from_hint_literal(vars_, strict),
-        )
-    if (not vars_ or not strict) and VarDeclaration not in excluded_declaration_types:
-        union_elements.append(VarDeclaration)
+    def __new__(mcs, name: str, bases: tuple[type, ...], attrs: dict[str, Any]):
+        cls = super().__new__(mcs, name, bases, attrs)
+        if name in ("InternalActionBase", "Action", "StreamingAction"):
+            return cls
+        if not hasattr(cls, "name"):
+            raise ValueError(
+                f"Action `{cls.__name__}` does not specify `name` class variable"
+            )
+        action_name = getattr(cls, "name")
+        if action_name in mcs.actions_registry and not mcs.is_same_class(
+            cls, mcs.actions_registry[action_name]
+        ):
+            raise ValueError(
+                f"Action `{cls.__name__}` has duplicate name `{action_name}`"
+            )
+        if issubclass(cls, InternalActionBase):
+            mcs.actions_registry[action_name] = cls
+        return cls
 
-    if links:
-        union_elements.append(
-            LinkDeclaration.from_hint_literal(links, strict),
-        )
-    if (not links or not strict) and LinkDeclaration not in excluded_declaration_types:
-        union_elements.append(LinkDeclaration)
-
-    other_elements = [
-        element
-        for element in typing.get_args(ValueDeclaration)
-        if element not in (VarDeclaration, LinkDeclaration)
-        and element not in excluded_declaration_types
-    ]
-    union_elements.extend(other_elements)
-
-    return Union[tuple(union_elements)]  # type: ignore
-
-
-def build_actions(
-    action_names: list[str] | None = None,
-    vars_: HintLiteral | None = None,
-    links: HintLiteral | None = None,
-    include_paths: bool = False,
-    strict: bool = False,
-):
-    # Dynamically build action models from currently defined actions
-    # for best typehints and autocompletion possible in the jsonschema
-
-    HintedValueDeclaration = build_hinted_value_declaration(vars_, links, strict)
-
-    if action_names is None:
-        action_names = list(get_actions_dict().keys())
-
-    actions_dict = get_actions_dict()
-    action_models = []
-    for action_name in action_names:
-        action = actions_dict[action_name]
-
-        title = build_action_title(action, markdown=False)
-
-        description = build_action_description(
-            action, markdown=False, include_paths=include_paths
-        )
-        markdown_description = build_action_description(
-            action, markdown=True, include_paths=include_paths
+    @staticmethod
+    def is_same_class(cls1, cls2):
+        return (
+            inspect.getfile(cls1) == inspect.getfile(cls2)
+            and cls1.__qualname__ == cls2.__qualname__
         )
 
-        # build action literal
-        action_literal = Literal[action.name]  # type: ignore
 
-        # add title
-        action_literal = Annotated[
-            action_literal,
-            Field(
-                title=title,
-            ),
-        ]
+class InternalActionBase(Generic[Inputs, Outputs], metaclass=ActionMeta):
+    ### Abstract interface
 
-        # add description
-        if description is not None:
-            action_literal = Annotated[
-                action_literal,
-                Field(
-                    description=description,
-                    json_schema_extra={
-                        "markdownDescription": markdown_description + "\n\n---",
-                    }
-                    if markdown_description is not None
-                    else None,
-                ),
-            ]
+    #: The name of the action, used to identify it in the asyncflows configuration. Required.
+    # `finished` is a reserved name (FIXME is it still?).
+    name: ClassVar[str]
 
-        # build base model field
-        fields = {
-            "action": (action_literal, ...),
-            "cache_key": (None | str | HintedValueDeclaration, None),
-        }
+    #: The name of the action, used to describe it to the LLM upon action selection. Optional, defaults to `id`.
+    readable_name: ClassVar[Optional[str]] = None
 
-        # build input fields
-        fields |= build_input_fields(
-            action,
-            vars_=vars_,
-            links=links,
-            add_union=HintedValueDeclaration,
-            strict=strict,
-            include_paths=include_paths,
-        )
+    #: The description of the action, used to describe it to the LLM upon action selection. Optional.
+    description: ClassVar[Optional[str]] = None
 
-        # build action invocation model
-        action_basemodel = pydantic.create_model(
-            action.name + "ActionInvocation",
-            __base__=ActionInvocation,
-            __module__=__name__,
-            __doc__=description,
-            model_config=ConfigDict(
-                title=title,
-                json_schema_extra={
-                    "markdownDescription": markdown_description,
-                },
-                arbitrary_types_allowed=True,
-                extra="forbid",
-            ),
-            **fields,  # pyright: ignore[reportGeneralTypeIssues]
-        )
-        action_models.append(action_basemodel)
-    return action_models
+    #: Whether to cache the (final) result of this action. Optional, defaults to `True`.
+    cache: bool = True
+
+    #: The version of the action, used to persist cache across project changes.
+    # Optional, defaults to `None` (never cache across project changes).
+    version: None | int = None
+
+    ### Helpers
+
+    async def request_read(
+        self, url: str, method: str = "GET", fields: None | list[dict] = None, **kwargs
+    ) -> bytes:
+        return await request_read(self.log, url, method, fields, **kwargs)
+
+    async def request_text(
+        self, url: str, method: str = "GET", fields: None | list[dict] = None, **kwargs
+    ) -> str:
+        return await request_text(self.log, url, method, fields, **kwargs)
+
+    ### Internals
+
+    def __init__(
+        self,
+        log: structlog.stdlib.BoundLogger,
+        temp_dir: str,
+    ) -> None:
+        self.log = log
+        self.temp_dir = temp_dir
+
+    @classmethod
+    def _get_inputs_type(cls) -> type[Inputs]:
+        i = typing.get_args(cls.__orig_bases__[0])[0]  # pyright: ignore
+        if isinstance(i, TypeVar):
+            raise ValueError(
+                f"Action `{cls.name}` does not specify inputs type argument"
+            )
+        return i
+
+    @classmethod
+    def narrow_outputs_type(
+        cls, action_invocation: ActionInvocation
+    ) -> type[Outputs] | None:
+        return None
+
+    @classmethod
+    def _get_outputs_type(
+        cls,
+        action_invocation: ActionInvocation | None,
+    ) -> type[Outputs]:
+        if action_invocation is not None:
+            narrowed_output = cls.narrow_outputs_type(action_invocation)
+            if narrowed_output is not None:
+                return narrowed_output
+        o = typing.get_args(cls.__orig_bases__[0])[1]  # pyright: ignore
+        if isinstance(o, TypeVar):
+            raise ValueError(
+                f"Action `{cls.name}` does not specify outputs type argument"
+            )
+        return o
+
+
+class Action(InternalActionBase[Inputs, Outputs]):
+    """
+    Base class for actions.
+
+    Actions are the basic unit of work in the autonomous agent.
+    They are responsible for performing a single task, affecting the environment in some way,
+    and returning a string describing the result of the action.
+    """
+
+    async def run(self, inputs: Inputs) -> Outputs:
+        """
+        Run the action.
+
+        Read the `inputs` argument to read variables from the context.
+        Return outputs to write variables to the context.
+        """
+        raise NotImplementedError
+
+
+class StreamingAction(InternalActionBase[Inputs, Outputs]):
+    """
+    Base class for actions that stream outputs.
+    """
+
+    async def run(self, inputs: Inputs) -> AsyncIterator[Outputs]:
+        """
+        Run the action.
+
+        Read the `inputs` argument to read variables from the context.
+        Yield outputs to write variables to the context.
+        """
+        raise NotImplementedError
+        yield

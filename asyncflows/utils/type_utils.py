@@ -1,18 +1,20 @@
 import inspect
 import os
 import types
-import typing
 from enum import Enum
-from typing import Any, Literal, Union, Annotated
+from typing import Any, Literal, Union
 
-import pydantic
-from pydantic import Field, BaseModel
+from pydantic import BaseModel
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 
-from asyncflows.actions import InternalActionBase, get_actions_dict
 from asyncflows.models.config.transform import TransformsFrom
-from asyncflows.models.primitives import HintLiteral, ExecutableId
+import typing
+from typing import Annotated
+
+import pydantic
+
+from asyncflows.models.primitives import HintLiteral
 
 # forgive me father for I have sinned
 # "I have used a global variable", says copilot
@@ -285,201 +287,6 @@ def build_field_description(
     return field_desc
 
 
-def build_input_fields(
-    action: type[InternalActionBase],
-    vars_: HintLiteral | None = None,
-    links: HintLiteral | None = None,
-    add_union: type | None = None,
-    strict: bool = False,
-    include_paths: bool = False,
-) -> dict[str, tuple[type, Any]]:
-    inputs = action._get_inputs_type()
-    if isinstance(None, inputs):
-        return {}
-
-    # generate action description
-    action_title = build_action_title(action, markdown=False, title_suffix=" Input")
-    action_description = build_action_description(
-        action,
-        markdown=False,
-        include_title=False,
-        include_io=False,
-        include_paths=include_paths,
-    )
-    markdown_action_description = build_action_description(
-        action,
-        markdown=True,
-        include_title=False,
-        include_io=False,
-        include_paths=include_paths,
-    )
-
-    new_field_infos = {}
-
-    # add input description
-    for field_name, field_info in inputs.model_fields.items():
-        # field_title = field_name.replace("_", " ").title()
-        # title = f"{field_title}: {action_title}"
-
-        title = action_title
-
-        field_description = build_field_description(
-            field_name, field_info, markdown=False, include_paths=include_paths
-        )
-        markdown_field_description = f"- {build_field_description(field_name, field_info, markdown=True, include_paths=include_paths)}"
-
-        description = field_description
-        if action_description:
-            description = action_description + "\n\n" + description
-        markdown_description = markdown_field_description + "\n\n---"
-        if markdown_action_description:
-            markdown_description = (
-                markdown_action_description + "\n\n" + markdown_description
-            )
-
-        new_field_info = FieldInfo.merge_field_infos(
-            field_info,
-            title=title,
-            description=description,
-            json_schema_extra={
-                "markdownDescription": markdown_description,
-            },
-        )
-        new_field_infos[field_name] = new_field_info
-
-    # templatify the input fields
-    return templatify_fields(new_field_infos, vars_, links, add_union, strict)
-
-
-def _get_recursive_subfields(
-    obj: dict | pydantic.BaseModel | Any,
-    base_description: str | None,
-    base_markdown_description: str | None,
-    include_paths: bool,
-    name_prefix: str = "",
-) -> list[type[str]]:
-    out = []
-    # if isinstance(obj, dict):
-    #     for name, field in obj.items():
-    #         # out.append(name)
-    #         out.extend(_get_recursive_subfields(field, base_description, base_markdown_description, f"{name}."))
-    if inspect.isclass(obj) and issubclass(obj, pydantic.BaseModel):
-        for name, field in obj.model_fields.items():
-            description = build_field_description(
-                name, field, markdown=False, include_paths=include_paths
-            )
-            if base_description:
-                description = base_description + "\n\n" + description
-            markdown_description = (
-                "- "
-                + build_field_description(
-                    name, field, markdown=True, include_paths=include_paths
-                )
-                + "\n\n---"
-            )
-            if base_markdown_description:
-                markdown_description = (
-                    base_markdown_description + "\n\n" + markdown_description
-                )
-            out.append(
-                Annotated[
-                    Literal[f"{name_prefix}{name}"],
-                    Field(
-                        description=description,
-                        json_schema_extra={
-                            "markdownDescription": markdown_description,
-                        },
-                    ),
-                ]
-            )
-            out.extend(
-                _get_recursive_subfields(
-                    field.annotation,
-                    base_description,
-                    base_markdown_description,
-                    include_paths=include_paths,
-                    name_prefix=f"{name_prefix}{name}.",
-                )
-            )
-    return out
-
-
-def build_action_title(
-    action: type[InternalActionBase],
-    *,
-    markdown: bool,
-    title_suffix: str = "",
-) -> str:
-    if action.readable_name:
-        title = action.readable_name
-    else:
-        title = action.name.replace("_", " ").title()
-    title += " Action"
-
-    title = f"{title}{title_suffix}"
-
-    if markdown:
-        title = f"**{title}**"
-    return title
-
-
-def build_action_description(
-    action: type[InternalActionBase],
-    *,
-    markdown: bool,
-    include_paths: bool,
-    include_title: bool = False,
-    title_suffix: str = "",
-    include_io: bool = True,
-) -> None | str:
-    description_items = []
-
-    if include_title:
-        title = build_action_title(action, markdown=markdown, title_suffix=title_suffix)
-        description_items.append(title)
-
-    # grab the main description
-    if action.description:
-        description_items.append(inspect.cleandoc(action.description))
-
-    if include_io:
-        # add inputs description
-        inputs_description_items = []
-        inputs = action._get_inputs_type()
-        if not isinstance(None, inputs):
-            for field_name, field_info in inputs.model_fields.items():
-                inputs_description_items.append(
-                    f"- {build_field_description(field_name, field_info, markdown=markdown, include_paths=include_paths)}"
-                )
-        if inputs_description_items:
-            if markdown:
-                title = "**Inputs**"
-            else:
-                title = "INPUTS"
-            description_items.append(f"{title}\n" + "\n".join(inputs_description_items))
-
-        # add outputs description
-        outputs_description_items = []
-        outputs = action._get_outputs_type()
-        if not isinstance(None, outputs):
-            for field_name, field_info in outputs.model_fields.items():
-                outputs_description_items.append(
-                    f"- {build_field_description(field_name, field_info, markdown=markdown, include_paths=include_paths)}"
-                )
-        if outputs_description_items:
-            if markdown:
-                title = "**Outputs**"
-            else:
-                title = "OUTPUTS"
-            description_items.append(
-                f"{title}\n" + "\n".join(outputs_description_items)
-            )
-
-    if not description_items:
-        return None
-    return "\n\n".join(description_items)
-
-
 def build_var_literal(
     vars_: list[str],
     strict: bool,
@@ -491,61 +298,6 @@ def build_var_literal(
 
     if vars_:
         union_elements.append(Literal[tuple(vars_)])  # type: ignore
-
-    if union_elements:
-        return Union[tuple(union_elements)]  # type: ignore
-    return str
-
-
-def build_link_literal(
-    action_invocations: dict[ExecutableId, type[InternalActionBase]],
-    strict: bool,
-    include_paths: bool,
-) -> type[str]:
-    union_elements = []
-
-    if not strict:
-        union_elements.append(str)
-
-    actions_dict = get_actions_dict()
-    unique_action_names = set(action.name for action in action_invocations.values())
-    action_descriptions = {
-        name: build_action_description(
-            actions_dict[name],
-            markdown=False,
-            include_title=True,
-            include_io=False,
-            include_paths=include_paths,
-            title_suffix=" Output",
-        )
-        for name in unique_action_names
-    }
-    markdown_action_descriptions = {
-        name: build_action_description(
-            actions_dict[name],
-            markdown=True,
-            include_title=True,
-            include_io=False,
-            include_paths=include_paths,
-            title_suffix=" Output",
-        )
-        for name in unique_action_names
-    }
-
-    # if there are any models, then each recursive subfield is a var, like jsonpath
-    for action_id, action in action_invocations.items():
-        outputs = action._get_outputs_type()
-        base_description = action_descriptions[action.name]
-        base_markdown_description = markdown_action_descriptions[action.name]
-        possible_links = _get_recursive_subfields(
-            outputs,
-            base_description,
-            base_markdown_description,
-            include_paths=include_paths,
-            name_prefix=f"{action_id}.",
-        )
-        if possible_links:
-            union_elements.extend(possible_links)
 
     if union_elements:
         return Union[tuple(union_elements)]  # type: ignore
