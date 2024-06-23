@@ -341,10 +341,13 @@ def mock_prompt_result():
 
 @pytest.fixture()
 def mock_prompt_action(mock_prompt_result):
+    # TODO mock the prompt for each example separately
     outputs = PromptOutputs(
         result=mock_prompt_result,
         response=mock_prompt_result,
-        data=None,
+        data={
+            "action_items": ["a", "b"],
+        },
     )
 
     async def outputs_iter(*args, **kwargs):

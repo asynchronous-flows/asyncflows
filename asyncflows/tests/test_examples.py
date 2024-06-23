@@ -87,6 +87,7 @@ example_vars = {
     "rag": {"texts", "question"},
     "sql_rag": {"query"},
     "text_style_transfer": {"writing_sample", "topic"},
+    "meeting_review": {"meeting_notes"},
 }
 
 
