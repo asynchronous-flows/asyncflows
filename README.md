@@ -94,38 +94,24 @@ pip install asyncflows
 
 Depending on what you need, consider installing **extra dependencies**:
 
-### Model Providers
-
 <details>
 <summary>
-OpenAI
+Model Providers
 </summary>
+
+**OpenAI**
 
 ```bash
 pip install 'asyncflows[openai]'
 ```
 
-See also [Using Any Language Model](#using-any-language-model).
-
-</details>
-
-<details>
-<summary>
-Anthropic
-</summary>
+**Anthropic**
 
 ```bash
 pip install 'asyncflows[anthropic]'
 ```
 
-See also [Using Any Language Model](#using-any-language-model).
-
-</details>
-
-<details>
-<summary>
-Google Cloud (Vertex AI)
-</summary>
+**Google Cloud (Vertex AI)**
 
 ```bash
 pip install 'asyncflows[gcloud]'
@@ -135,53 +121,46 @@ See also [Using Any Language Model](#using-any-language-model).
 
 </details>
 
-### SQL Databases
 
 <details>
 <summary>
-Postgres
+SQL Databases
 </summary>
+
+**Postgres**
 
 ```bash
 pip install 'asyncflows[pg]'
 ```
 
-</details>
-
-<details>
-<summary>
-SQLite
-</summary>
+**SQLite**
 
 ```bash
 pip install 'asyncflows[sqlite]'
 ```
-
-</details>
 
 Any SQL database implemented in [sqlalchemy](https://docs.sqlalchemy.org/en/20/core/engines.html) is supported, 
 though you may need to install additional dependencies not shown here. 
 Please open an issue if you run into this, 
 we will happily add an extra category for your database. 
 
+</details>
 
-### Miscellaneous
+
+
 
 <details>
 <summary>
-Retrieve and Rerank
+Miscellaneous
 </summary>
+
+**Retrieve and Rerank**
 
 ```bash
 pip install 'asyncflows[transformers]'
 ```
 
-</details>
-
-<details>
-<summary>
-PDF Extraction
-</summary>
+**PDF Extraction**
 
 ```bash
 pip install 'asyncflows[pdf]'
