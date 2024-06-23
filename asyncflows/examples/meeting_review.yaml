@@ -1,0 +1,48 @@
+# asyncflows-language-server
+
+flow:
+
+  # FIRST, generate an unstructured response
+  meeting_review:
+    action: prompt
+    # Use Claude-3 Opus with a temperature of 1
+    model:
+      model: claude-3-5-sonnet-20240620
+      temperature: 1
+    # Prompt the LLM to generate a meeting notes review
+    prompt:
+      - heading: Meeting Notes
+        var: meeting_notes
+      - text: |
+          Review these meeting notes and identify key decisions and action items.
+
+  # THEN, structure the response
+  structure:
+    action: prompt
+    # Use GPT-4o with a temperature of 0
+    model:
+      model: gpt-4o
+      temperature: 0
+    # Prompt the LLM to respond with a list
+    prompt:
+      - heading: Meeting Notes Review
+        link: meeting_review
+      - text: |
+          Based on the meeting notes review, what are the key decisions and action items? Summarize the main points.
+    # Specify a JSONschema for structured output
+    output_schema:
+      # An example of this output is:
+      # {
+      #   "key_decisions": ["Decision 1", "Decision 2"],
+      #   "action_items": ["Action Item 1", "Action Item 2"]
+      # }
+      type: object
+      properties:
+        key_decisions:
+          type: array
+          items:
+            type: string
+        action_items:
+          type: array
+          items:
+            type: string

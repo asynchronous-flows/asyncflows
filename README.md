@@ -1,10 +1,9 @@
 <div align="center">
-<h1>♾️ asyncflows 🌊</h1>
+<h1>asyncflows</h1>
 
 [![Discord](https://img.shields.io/badge/discord-7289da)](https://discord.gg/AGZ6GrcJCh)
-[![Try in Colab](https://img.shields.io/badge/colab-red)](https://colab.research.google.com/github/asynchronous-flows/asyncflows/blob/main/asyncflows/examples/hello_world.ipynb)
 
-Config-Driven Asynchronous AI Pipelines  
+Declarative GenAI Pipelines  
 Built with asyncio, pydantic, YAML, jinja  
 </div>
 
@@ -12,6 +11,9 @@ Built with asyncio, pydantic, YAML, jinja
 **Table of Contents**
 
 1. [Introduction](#introduction)  
+2.1 [Philosophy](#-philosophy)  
+2.2 [Stack](#-stack)  
+2.3 [Getting Started](#-getting-started)
 2. [Installation](#installation)  
 2.1 [With pip](#with-pip)  
 2.2 [Local development](#local-development)  
@@ -34,53 +36,127 @@ Built with asyncio, pydantic, YAML, jinja
 
 # Introduction
 
-asyncflows is a framework for designing and running AI pipelines using simple YAML configuration.
+> Building generative AI **demos** is **easy**. Building something that **scales** is **hard**.  
 
-Here is a simple flow that prompts the LLM to say "hello world", and prints the result.
+Moving our GenAI pipelines from complex code to declarative config 
+has made them **easier to read, conceptualize, and visualize**.
+
+asyncflows crystallized from a **developer** and a **researcher** collaborating
+to work on AI. 
+
+## ✨ Philosophy
+
+✨ The GenAI landscape is rapidly evolving; we are **platform-agnostic**, and strive to enable the use of any LLM, database, or hosting service.  
+✨ Actions are **infinitely configurable** for a wide array of use cases.  
+✨ Low-complexity AI pipelines are **transparent** and **readable**.  
+✨ asyncflows is designed to be **scalable** and **monitorable**, with built-in **caching** and **logging** of event loop blocking time.  
+
+## 🥞 Stack
+
+🥞 Define pipelines with concise `YAML`.  
+🥞 Template prompts with `jinja`.  
+🥞 Parallelize infinitely, on top of vanilla `asyncio`.  
+🥞 Write actions with strongly-typed inputs and outputs as `pydantic` models.  
+
+## 👋 Getting Started
+
+Here's a flow that extracts **key decisions** and **action items** from **meeting notes**.
+
+We found that separating **structured data generation** into a **generating** step and a **structuring** step [**reduces bias in the output**](https://arxiv.org/abs/2402.01740):
+
+1. Prompt `claude-3.5-sonnet` for a summary of the `meeting_notes`
+2. Prompt `gpt-4o` to generate a JSON with key decisions and action items
 
 <div align="center">
-
-<img width="465" alt="hello world" src="https://github.com/asynchronous-flows/asyncflows/assets/24586651/b02a447b-7e86-4abc-a94a-5e276eff5dd6">
-
+<img width="1274" alt="meeting_review" src="https://github.com/asynchronous-flows/meeting-review-example/assets/24586651/6969d507-ab04-49f1-b1fe-3468cf42be78">
 </div>
 
 YAML file that defines the flow:
-```yaml
-# hello_world.yaml
 
-default_model:
-  model: ollama/llama3
+```yaml
+# meeting_review.yaml
+
 flow:
-  hello_world:
+
+  # FIRST, generate an unstructured response
+  meeting_review:
     action: prompt
+    # Use Claude-3 Opus with a temperature of 1
+    model:
+      model: claude-3-5-sonnet-20240620
+      temperature: 1
+    # Prompt the LLM to generate a meeting notes review
     prompt:
-      - text: Can you say hello world for me?
-default_output: hello_world.result
+      - heading: Meeting Notes
+        var: meeting_notes
+      - text: |
+          Review these meeting notes and identify key decisions and action items.
+
+  # THEN, structure the response
+  structure:
+    action: prompt
+    # Use GPT-4o with a temperature of 0
+    model:
+      model: gpt-4o
+      temperature: 0
+    # Prompt the LLM to respond with a list
+    prompt:
+      - heading: Meeting Notes Review
+        link: meeting_review
+      - text: |
+          Based on the meeting notes review, what are the key decisions and action items? Summarize the main points.
+    # Specify a JSONschema for structured output
+    output_schema:
+      # An example of this output is:
+      # {
+      #   "key_decisions": ["Decision 1", "Decision 2"],
+      #   "action_items": ["Action Item 1", "Action Item 2"]
+      # }
+      type: object
+      properties:
+        key_decisions:
+          type: array
+          items:
+            type: string
+        action_items:
+          type: array
+          items:
+            type: string
 ```
 
 Python code that runs the flow:
 ```python
 from asyncflows import AsyncFlows
+import json
 
-flow = AsyncFlows.from_file("hello_world.yaml")
-result = await flow.run()
-print(result)
+# Load the flow
+flow = AsyncFlows.from_file("meeting_review.yaml")
+
+# Set the variable
+flow = flow.set_vars(
+     meeting_notes="We met to discuss project alpha. Jason presented the latest updates on the project. Courtney asked about the timeline for the next milestone. The coffee still needs to be refilled. We agreed to meet again next week to review the progress." 
+)
+
+# Run the flow
+result = await flow.run('structure.data')
+
+# Print the action items
+action_items = result['action_items']
+print(json.dumps(action_items, indent=2))
 ```
 
 Output of the python script:
-```python
-Hello, world!
+```json
+[
+  "Review the progress on project alpha at the next meeting.",
+  "Follow up on the timeline for the next milestone (as Courtney inquired about this).",
+  "Refill the coffee (as it was noted that this needs to be done)."
+]
 ```
 
-Run the example yourself with:
+### Run the example yourself
 
-```bash
-python -m asyncflows.examples.hello_world
-```
-
-Or:
-
-[![Try in Colab](https://img.shields.io/badge/Run_it_in_Google_Colab-red)](https://colab.research.google.com/github/asynchronous-flows/asyncflows/blob/main/asyncflows/examples/hello_world.ipynb)
+[![template repo](https://img.shields.io/badge/template_repo-blue)](https://github.com/asynchronous-flows/meeting-review-example)
 
 # Installation
 
