@@ -17,7 +17,7 @@ from asyncflows.models.config.value_declarations import (
     VarDeclaration,
     LinkDeclaration,
 )
-from asyncflows.models.io import Inputs, Outputs
+from asyncflows.models.io import Inputs, Outputs, DefaultOutputOutputs
 from asyncflows.models.primitives import HintLiteral, ExecutableId, ExecutableName
 from asyncflows.utils.type_utils import build_field_description, templatify_fields
 
@@ -106,33 +106,15 @@ def _get_recursive_subfields(
     #         out.extend(_get_recursive_subfields(field, base_description, base_markdown_description, f"{name}."))
     if inspect.isclass(obj) and issubclass(obj, pydantic.BaseModel):
         for name, field in obj.model_fields.items():
-            description = build_field_description(
-                name, field, markdown=False, include_paths=include_paths
+            annotated_field = _build_annotated_field(
+                base_description=base_description,
+                base_markdown_description=base_markdown_description,
+                field=field,
+                include_paths=include_paths,
+                name=name,
+                name_prefix=name_prefix,
             )
-            if base_description:
-                description = base_description + "\n\n" + description
-            markdown_description = (
-                "- "
-                + build_field_description(
-                    name, field, markdown=True, include_paths=include_paths
-                )
-                + "\n\n---"
-            )
-            if base_markdown_description:
-                markdown_description = (
-                    base_markdown_description + "\n\n" + markdown_description
-                )
-            out.append(
-                Annotated[
-                    Literal[f"{name_prefix}{name}"],
-                    Field(
-                        description=description,
-                        json_schema_extra={
-                            "markdownDescription": markdown_description,
-                        },
-                    ),
-                ]
-            )
+            out.append(annotated_field)
             out.extend(
                 _get_recursive_subfields(
                     field.annotation,
@@ -143,6 +125,43 @@ def _get_recursive_subfields(
                 )
             )
     return out
+
+
+def _build_annotated_field(
+    base_description: str | None,
+    base_markdown_description: str | None,
+    field: FieldInfo,
+    include_paths: bool,
+    name: str,
+    alias_name: str | None = None,
+    name_prefix: str = "",
+):
+    if alias_name is None:
+        alias_name = name
+    description = build_field_description(
+        name, field, markdown=False, include_paths=include_paths
+    )
+    if base_description:
+        description = base_description + "\n\n" + description
+    markdown_description = (
+        "- "
+        + build_field_description(
+            name, field, markdown=True, include_paths=include_paths
+        )
+        + "\n\n---"
+    )
+    if base_markdown_description:
+        markdown_description = base_markdown_description + "\n\n" + markdown_description
+    annotated_field = Annotated[
+        Literal[f"{name_prefix}{alias_name}"],
+        Field(
+            description=description,
+            json_schema_extra={
+                "markdownDescription": markdown_description,
+            },
+        ),
+    ]
+    return annotated_field
 
 
 def build_action_title(
@@ -237,7 +256,7 @@ def build_link_literal(
     # if there are any models, then each recursive subfield is a var, like jsonpath
     for action_id, action_invocation in action_invocations.items():
         action_type = actions_dict[action_invocation.action]
-        outputs = action_type._get_outputs_type(action_invocation)
+        outputs_type = action_type._get_outputs_type(action_invocation)
         base_description = build_action_description(
             action_type,
             action_invocation=action_invocation,
@@ -256,8 +275,21 @@ def build_link_literal(
             include_paths=include_paths,
             title_suffix=" Output",
         )
+        if issubclass(outputs_type, DefaultOutputOutputs):
+            output_attr = outputs_type._default_output
+            field = outputs_type.model_fields[output_attr]
+            annotated_field = _build_annotated_field(
+                base_description=base_description,
+                base_markdown_description=base_markdown_description,
+                field=field,
+                include_paths=include_paths,
+                name=output_attr,
+                alias_name=action_id,
+            )
+            union_elements.append(annotated_field)
+
         possible_links = _get_recursive_subfields(
-            outputs,
+            outputs_type,
             base_description,
             base_markdown_description,
             include_paths=include_paths,
