@@ -419,19 +419,24 @@ def recursive_import(package_name):
 _processed_entrypoints = set()
 
 
-def get_actions_dict() -> dict[ExecutableName, Type[InternalActionBase[Any, Any]]]:
+def get_actions_dict(
+    entrypoint_whitelist: list[str] | None = None,
+) -> dict[ExecutableName, Type[InternalActionBase[Any, Any]]]:
     import importlib_metadata
 
     # import all action entrypoints, including `asyncflows.actions` and other installed packages
     entrypoints = importlib_metadata.entry_points(group="asyncflows")
     for entrypoint in entrypoints.select(name="actions"):
-        if entrypoint.dist.name in _processed_entrypoints:
+        dist_name = entrypoint.dist.name
+        if dist_name in _processed_entrypoints or (
+            entrypoint_whitelist is not None and dist_name not in entrypoint_whitelist
+        ):
             continue
-        _processed_entrypoints.add(entrypoint.dist.name)
+        _processed_entrypoints.add(dist_name)
         try:
             recursive_import(entrypoint.value)
         except Exception as e:
-            print(f"Failed to import entrypoint {entrypoint.name}: {e}")
+            print(f"Failed to import {dist_name} entrypoint: {e}")
 
     # return all subclasses of Action as registered in the metaclass
     return ActionMeta.actions_registry

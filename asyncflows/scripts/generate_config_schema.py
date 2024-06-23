@@ -111,9 +111,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    action_names = list(get_actions_dict().keys())
-
     if args.flow:
+        action_names = list(get_actions_dict().keys())
+
         schema = _build_asyncflows_schema(
             action_names=action_names,
             config_filename=args.flow,
@@ -133,10 +133,20 @@ if __name__ == "__main__":
         except Exception:
             pass
     else:
+        action_names = list(
+            get_actions_dict(
+                entrypoint_whitelist=["asyncflows"],
+            ).keys()
+        )
+
         # TODO assert tests not imported before this line
         import asyncflows.tests.resources.actions  # noqa
 
-        testing_action_names = list(get_actions_dict().keys())
+        testing_action_names = list(
+            get_actions_dict(
+                entrypoint_whitelist=["asyncflows"],
+            ).keys()
+        )
 
         # build default action and test action schemas
         _build_and_save_asyncflows_schema(
