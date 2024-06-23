@@ -450,9 +450,11 @@
               "enum": [
                 "string",
                 "number",
+                "integer",
                 "object",
                 "array",
-                "boolean"
+                "boolean",
+                "null"
               ],
               "type": "string"
             },
@@ -461,9 +463,11 @@
                 "enum": [
                   "string",
                   "number",
+                  "integer",
                   "object",
                   "array",
-                  "boolean"
+                  "boolean",
+                  "null"
                 ],
                 "type": "string"
               },
@@ -494,6 +498,11 @@
         "format": {
           "anyOf": [
             {
+              "enum": [
+                "email",
+                "uri",
+                "date"
+              ],
               "type": "string"
             },
             {
@@ -517,33 +526,6 @@
           ],
           "default": null,
           "title": "Format"
-        },
-        "pattern": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
-              "$ref": "#/$defs/EnvDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LambdaDeclaration"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Pattern"
         },
         "minLength": {
           "anyOf": [
@@ -800,66 +782,6 @@
           "default": null,
           "title": "Exclusiveminimum"
         },
-        "additionalProperties": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/JsonSchemaObject_"
-            },
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
-              "$ref": "#/$defs/EnvDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LambdaDeclaration"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Additionalproperties"
-        },
-        "patternProperties": {
-          "anyOf": [
-            {
-              "additionalProperties": {
-                "$ref": "#/$defs/JsonSchemaObject_"
-              },
-              "type": "object"
-            },
-            {
-              "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
-              "$ref": "#/$defs/EnvDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LambdaDeclaration"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Patternproperties"
-        },
         "oneOf": {
           "anyOf": [
             {
@@ -966,60 +888,6 @@
           "default": [],
           "title": "Enum"
         },
-        "writeOnly": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
-              "$ref": "#/$defs/EnvDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LambdaDeclaration"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Writeonly"
-        },
-        "readOnly": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/$defs/VarDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LinkDeclaration"
-            },
-            {
-              "$ref": "#/$defs/TextDeclaration"
-            },
-            {
-              "$ref": "#/$defs/EnvDeclaration"
-            },
-            {
-              "$ref": "#/$defs/LambdaDeclaration"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Readonly"
-        },
         "properties": {
           "anyOf": [
             {
@@ -1079,9 +947,13 @@
             },
             {
               "$ref": "#/$defs/LambdaDeclaration"
+            },
+            {
+              "type": "null"
             }
           ],
-          "default": [],
+          "default": null,
+          "description": "List of required properties. Defaults to all properties.",
           "title": "Required"
         },
         "$ref": {
@@ -2854,16 +2726,16 @@
     },
     "promptActionInvocation": {
       "additionalProperties": false,
-      "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- `model`: OptionalModelConfig (optional)\n- `quote_style`: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n- `output_schema`: None (optional)\n\nOUTPUTS\n- `result`: str  \n  \nUse `my_prompt` or `my_prompt.response` instead of `my_prompt.result`.  \nAlternatively, use `my_prompt.data` if `output_schema` input is specified.\n\n- `response`: str  \n  \nText response given by the LLM.  \nIf `output_schema` input is specified, this is a JSON string. Use `my_prompt.data` for structured access instead.\n\n- `data`: Any (optional)  \n  Structured data, abides by the JSON schema specified in `output_schema` input. `None` otherwise.",
-      "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- `model`: OptionalModelConfig (optional)\n- `quote_style`: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n- `output_schema`: None (optional)\n\n**Outputs**\n- `result`: str  \n  \nUse `my_prompt` or `my_prompt.response` instead of `my_prompt.result`.  \nAlternatively, use `my_prompt.data` if `output_schema` input is specified.\n\n- `response`: str  \n  \nText response given by the LLM.  \nIf `output_schema` input is specified, this is a JSON string. Use `my_prompt.data` for structured access instead.\n\n- `data`: Any (optional)  \n  Structured data, abides by the JSON schema specified in `output_schema` input. `None` otherwise.",
+      "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- `model`: OptionalModelConfig (optional)\n- `quote_style`: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]  \n  \nThe prompt to send to the language model.  \nConsists of multiple elements like text, roles, variables, links, and more.\n\nSee [prompting in-depth](https://github.com/asynchronous-flows/asyncflows?tab=readme-ov-file#prompting-in-depth) for more information.\n\n- `output_schema`: JsonSchemaObject (optional)  \n  \nOptionally, a JSON schema forcing the language model to output structured data adhering to it.\n\nThe schema adheres to the standard, except for the `required` field \u2013 if it is not provided, all fields are required.\n\n\ud83d\udca1 WARNING: You must instruct the language model to generate JSON in your prompt.  \nSome model providers (like Ollama) do not properly support this feature, and will not guarantee\nadherence to the schema, but will still generate JSON.\n\n\nOUTPUTS\n- `result`: str  \n  \nUse `my_prompt` or `my_prompt.response` instead of `my_prompt.result`.  \nAlternatively, use `my_prompt.data` if `output_schema` input is specified.\n\n- `response`: str  \n  \nText response given by the LLM.  \nIf `output_schema` input is specified, this is a JSON string. Use `my_prompt.data` for structured access instead.\n\n- `data`: Any (optional)  \n  Structured data, abides by the JSON schema specified in `output_schema` input. `None` otherwise.",
+      "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- `model`: OptionalModelConfig (optional)\n- `quote_style`: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]  \n  \nThe prompt to send to the language model.  \nConsists of multiple elements like text, roles, variables, links, and more.\n\nSee [prompting in-depth](https://github.com/asynchronous-flows/asyncflows?tab=readme-ov-file#prompting-in-depth) for more information.\n\n- `output_schema`: JsonSchemaObject (optional)  \n  \nOptionally, a JSON schema forcing the language model to output structured data adhering to it.\n\nThe schema adheres to the standard, except for the `required` field \u2013 if it is not provided, all fields are required.\n\n\ud83d\udca1 WARNING: You must instruct the language model to generate JSON in your prompt.  \nSome model providers (like Ollama) do not properly support this feature, and will not guarantee\nadherence to the schema, but will still generate JSON.\n\n\n**Outputs**\n- `result`: str  \n  \nUse `my_prompt` or `my_prompt.response` instead of `my_prompt.result`.  \nAlternatively, use `my_prompt.data` if `output_schema` input is specified.\n\n- `response`: str  \n  \nText response given by the LLM.  \nIf `output_schema` input is specified, this is a JSON string. Use `my_prompt.data` for structured access instead.\n\n- `data`: Any (optional)  \n  Structured data, abides by the JSON schema specified in `output_schema` input. `None` otherwise.",
       "properties": {
         "action": {
           "const": "prompt",
-          "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- `model`: OptionalModelConfig (optional)\n- `quote_style`: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n- `output_schema`: None (optional)\n\nOUTPUTS\n- `result`: str  \n  \nUse `my_prompt` or `my_prompt.response` instead of `my_prompt.result`.  \nAlternatively, use `my_prompt.data` if `output_schema` input is specified.\n\n- `response`: str  \n  \nText response given by the LLM.  \nIf `output_schema` input is specified, this is a JSON string. Use `my_prompt.data` for structured access instead.\n\n- `data`: Any (optional)  \n  Structured data, abides by the JSON schema specified in `output_schema` input. `None` otherwise.",
+          "description": "Prompt the LLM with a message and receive a response.\n\nINPUTS\n- `model`: OptionalModelConfig (optional)\n- `quote_style`: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]  \n  \nThe prompt to send to the language model.  \nConsists of multiple elements like text, roles, variables, links, and more.\n\nSee [prompting in-depth](https://github.com/asynchronous-flows/asyncflows?tab=readme-ov-file#prompting-in-depth) for more information.\n\n- `output_schema`: JsonSchemaObject (optional)  \n  \nOptionally, a JSON schema forcing the language model to output structured data adhering to it.\n\nThe schema adheres to the standard, except for the `required` field \u2013 if it is not provided, all fields are required.\n\n\ud83d\udca1 WARNING: You must instruct the language model to generate JSON in your prompt.  \nSome model providers (like Ollama) do not properly support this feature, and will not guarantee\nadherence to the schema, but will still generate JSON.\n\n\nOUTPUTS\n- `result`: str  \n  \nUse `my_prompt` or `my_prompt.response` instead of `my_prompt.result`.  \nAlternatively, use `my_prompt.data` if `output_schema` input is specified.\n\n- `response`: str  \n  \nText response given by the LLM.  \nIf `output_schema` input is specified, this is a JSON string. Use `my_prompt.data` for structured access instead.\n\n- `data`: Any (optional)  \n  Structured data, abides by the JSON schema specified in `output_schema` input. `None` otherwise.",
           "enum": [
             "prompt"
           ],
-          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- `model`: OptionalModelConfig (optional)\n- `quote_style`: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n- `output_schema`: None (optional)\n\n**Outputs**\n- `result`: str  \n  \nUse `my_prompt` or `my_prompt.response` instead of `my_prompt.result`.  \nAlternatively, use `my_prompt.data` if `output_schema` input is specified.\n\n- `response`: str  \n  \nText response given by the LLM.  \nIf `output_schema` input is specified, this is a JSON string. Use `my_prompt.data` for structured access instead.\n\n- `data`: Any (optional)  \n  Structured data, abides by the JSON schema specified in `output_schema` input. `None` otherwise.\n\n---",
+          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n**Inputs**\n- `model`: OptionalModelConfig (optional)\n- `quote_style`: 'backticks' | 'xml' (optional)  \n  The quote style to use for the prompt. Defaults to XML-style quotes for Claude models and backticks for others.\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]  \n  \nThe prompt to send to the language model.  \nConsists of multiple elements like text, roles, variables, links, and more.\n\nSee [prompting in-depth](https://github.com/asynchronous-flows/asyncflows?tab=readme-ov-file#prompting-in-depth) for more information.\n\n- `output_schema`: JsonSchemaObject (optional)  \n  \nOptionally, a JSON schema forcing the language model to output structured data adhering to it.\n\nThe schema adheres to the standard, except for the `required` field \u2013 if it is not provided, all fields are required.\n\n\ud83d\udca1 WARNING: You must instruct the language model to generate JSON in your prompt.  \nSome model providers (like Ollama) do not properly support this feature, and will not guarantee\nadherence to the schema, but will still generate JSON.\n\n\n**Outputs**\n- `result`: str  \n  \nUse `my_prompt` or `my_prompt.response` instead of `my_prompt.result`.  \nAlternatively, use `my_prompt.data` if `output_schema` input is specified.\n\n- `response`: str  \n  \nText response given by the LLM.  \nIf `output_schema` input is specified, this is a JSON string. Use `my_prompt.data` for structured access instead.\n\n- `data`: Any (optional)  \n  Structured data, abides by the JSON schema specified in `output_schema` input. `None` otherwise.\n\n---",
           "title": "Prompt Action",
           "type": "string"
         },
@@ -2995,8 +2867,8 @@
               "$ref": "#/$defs/LambdaDeclaration"
             }
           ],
-          "description": "Prompt the LLM with a message and receive a response.\n\n`prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]",
-          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]\n\n---",
+          "description": "Prompt the LLM with a message and receive a response.\n\n`prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]  \n  \nThe prompt to send to the language model.  \nConsists of multiple elements like text, roles, variables, links, and more.\n\nSee [prompting in-depth](https://github.com/asynchronous-flows/asyncflows?tab=readme-ov-file#prompting-in-depth) for more information.\n",
+          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n- `prompt`: list[RoleElement | TextElement | ContextVar | ContextLink | ContextTemplate | ContextLambda]  \n  \nThe prompt to send to the language model.  \nConsists of multiple elements like text, roles, variables, links, and more.\n\nSee [prompting in-depth](https://github.com/asynchronous-flows/asyncflows?tab=readme-ov-file#prompting-in-depth) for more information.\n\n\n---",
           "title": "Prompt Action Input"
         },
         "output_schema": {
@@ -3024,8 +2896,8 @@
             }
           ],
           "default": null,
-          "description": "Prompt the LLM with a message and receive a response.\n\n`output_schema`: None (optional)",
-          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n- `output_schema`: None (optional)\n\n---",
+          "description": "Prompt the LLM with a message and receive a response.\n\n`output_schema`: JsonSchemaObject (optional)  \n  \nOptionally, a JSON schema forcing the language model to output structured data adhering to it.\n\nThe schema adheres to the standard, except for the `required` field \u2013 if it is not provided, all fields are required.\n\n\ud83d\udca1 WARNING: You must instruct the language model to generate JSON in your prompt.  \nSome model providers (like Ollama) do not properly support this feature, and will not guarantee\nadherence to the schema, but will still generate JSON.\n",
+          "markdownDescription": "Prompt the LLM with a message and receive a response.\n\n- `output_schema`: JsonSchemaObject (optional)  \n  \nOptionally, a JSON schema forcing the language model to output structured data adhering to it.\n\nThe schema adheres to the standard, except for the `required` field \u2013 if it is not provided, all fields are required.\n\n\ud83d\udca1 WARNING: You must instruct the language model to generate JSON in your prompt.  \nSome model providers (like Ollama) do not properly support this feature, and will not guarantee\nadherence to the schema, but will still generate JSON.\n\n\n---",
           "title": "Prompt Action Input"
         }
       },
@@ -3038,16 +2910,16 @@
     },
     "rerankActionInvocation": {
       "additionalProperties": false,
-      "description": "INPUTS\n- `model`: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: None (optional)\n- `query`: str\n- `k`: int\n\nOUTPUTS\n- `result`: list[Any]",
-      "markdownDescription": "**Inputs**\n- `model`: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: None (optional)\n- `query`: str\n- `k`: int\n\n**Outputs**\n- `result`: list[Any]",
+      "description": "INPUTS\n- `model`: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: list[str] (optional)\n- `query`: str\n- `k`: int\n\nOUTPUTS\n- `result`: list[Any]",
+      "markdownDescription": "**Inputs**\n- `model`: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: list[str] (optional)\n- `query`: str\n- `k`: int\n\n**Outputs**\n- `result`: list[Any]",
       "properties": {
         "action": {
           "const": "rerank",
-          "description": "INPUTS\n- `model`: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: None (optional)\n- `query`: str\n- `k`: int\n\nOUTPUTS\n- `result`: list[Any]",
+          "description": "INPUTS\n- `model`: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: list[str] (optional)\n- `query`: str\n- `k`: int\n\nOUTPUTS\n- `result`: list[Any]",
           "enum": [
             "rerank"
           ],
-          "markdownDescription": "**Inputs**\n- `model`: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: None (optional)\n- `query`: str\n- `k`: int\n\n**Outputs**\n- `result`: list[Any]\n\n---",
+          "markdownDescription": "**Inputs**\n- `model`: 'cross-encoder/ms-marco-TinyBERT-L-2-v2' | 'BAAI/bge-reranker-base'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: list[str] (optional)\n- `query`: str\n- `k`: int\n\n**Outputs**\n- `result`: list[Any]\n\n---",
           "title": "Rerank Action",
           "type": "string"
         },
@@ -3197,8 +3069,8 @@
             }
           ],
           "default": null,
-          "description": "`texts`: None (optional)",
-          "markdownDescription": "- `texts`: None (optional)\n\n---",
+          "description": "`texts`: list[str] (optional)",
+          "markdownDescription": "- `texts`: list[str] (optional)\n\n---",
           "title": "Rerank Action Input"
         },
         "query": {
@@ -3263,16 +3135,16 @@
     },
     "retrieveActionInvocation": {
       "additionalProperties": false,
-      "description": "INPUTS\n- `model`: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: None (optional)\n- `query`: str\n- `k`: int\n\nOUTPUTS\n- `result`: list[Any]",
-      "markdownDescription": "**Inputs**\n- `model`: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: None (optional)\n- `query`: str\n- `k`: int\n\n**Outputs**\n- `result`: list[Any]",
+      "description": "INPUTS\n- `model`: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: list[str] (optional)\n- `query`: str\n- `k`: int\n\nOUTPUTS\n- `result`: list[Any]",
+      "markdownDescription": "**Inputs**\n- `model`: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: list[str] (optional)\n- `query`: str\n- `k`: int\n\n**Outputs**\n- `result`: list[Any]",
       "properties": {
         "action": {
           "const": "retrieve",
-          "description": "INPUTS\n- `model`: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: None (optional)\n- `query`: str\n- `k`: int\n\nOUTPUTS\n- `result`: list[Any]",
+          "description": "INPUTS\n- `model`: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: list[str] (optional)\n- `query`: str\n- `k`: int\n\nOUTPUTS\n- `result`: list[Any]",
           "enum": [
             "retrieve"
           ],
-          "markdownDescription": "**Inputs**\n- `model`: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: None (optional)\n- `query`: str\n- `k`: int\n\n**Outputs**\n- `result`: list[Any]\n\n---",
+          "markdownDescription": "**Inputs**\n- `model`: 'sentence-transformers/all-mpnet-base-v2' | 'BAAI/bge-small-en-v1.5'\n- `device`: 'cpu' | 'cuda' | 'mps' | 'tensorrt' (optional)\n- `documents`: list[Any]\n- `texts`: list[str] (optional)\n- `query`: str\n- `k`: int\n\n**Outputs**\n- `result`: list[Any]\n\n---",
           "title": "Retrieve Action",
           "type": "string"
         },
@@ -3422,8 +3294,8 @@
             }
           ],
           "default": null,
-          "description": "`texts`: None (optional)",
-          "markdownDescription": "- `texts`: None (optional)\n\n---",
+          "description": "`texts`: list[str] (optional)",
+          "markdownDescription": "- `texts`: list[str] (optional)\n\n---",
           "title": "Retrieve Action Input"
         },
         "query": {
