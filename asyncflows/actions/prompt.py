@@ -8,6 +8,7 @@ from typing import Optional, AsyncIterator, Any
 import aiohttp
 import tenacity
 
+from asyncflows.models.config.action import ActionInvocation
 from asyncflows.models.io import (
     DefaultModelInputs,
     DefaultOutputOutputs,
@@ -27,6 +28,7 @@ import litellm
 
 from asyncflows.models.json_schema import JsonSchemaObject
 from asyncflows.utils.async_utils import Timer, measure_async_iterator
+from asyncflows.utils.json_schema_utils import jsonschema_to_pydantic
 from asyncflows.utils.secret_utils import get_secret
 from asyncflows.utils.singleton_utils import SingletonContext
 
@@ -121,6 +123,8 @@ See [prompting in-depth](https://github.com/asynchronous-flows/asyncflows?tab=re
         description="""
 Optionally, a JSON schema forcing the language model to output structured data adhering to it.
 
+The schema adheres to the standard, except for the `required` field – if it is not provided, all fields are required.
+
 💡 WARNING: You must instruct the language model to generate JSON in your prompt.  
 Some model providers (like Ollama) do not properly support this feature, and will not guarantee
 adherence to the schema, but will still generate JSON.
@@ -155,6 +159,29 @@ class Prompt(StreamingAction[Inputs, Outputs]):
     description = """
     Prompt the LLM with a message and receive a response.
     """
+
+    @classmethod
+    def narrow_outputs_type(
+        cls, action_invocation: ActionInvocation
+    ) -> type[Outputs] | None:
+        class OutputsWithoutSchema(Outputs):
+            data: None
+
+        if not hasattr(action_invocation, "output_schema"):
+            return OutputsWithoutSchema
+        schema = getattr(action_invocation, "output_schema")
+        if schema is None:
+            return OutputsWithoutSchema
+
+        try:
+            schema_object = JsonSchemaObject.model_validate(schema)
+        except ValueError:
+            return None
+
+        class OutputsWithSchema(Outputs):
+            data: jsonschema_to_pydantic(schema_object)  # type: ignore
+
+        return OutputsWithSchema
 
     def build_messages(
         self,
