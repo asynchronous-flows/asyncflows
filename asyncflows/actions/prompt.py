@@ -3,6 +3,7 @@ import logging
 import os
 import tempfile
 import base64
+from collections import defaultdict
 from typing import Optional, AsyncIterator, Any
 
 import aiohttp
@@ -271,7 +272,7 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         self,
         messages: list[dict[str, str]],
         model_config: ModelConfig,
-    ):
+    ) -> AsyncIterator[tuple[str, int]]:
         from anthropic import AsyncAnthropic
         from anthropic.types import MessageParam
         from anthropic import NOT_GIVEN
@@ -319,7 +320,7 @@ class Prompt(StreamingAction[Inputs, Outputs]):
             top_p=model_config.top_p if model_config.top_p is not None else NOT_GIVEN,
         ) as stream:
             async for completion in stream.text_stream:
-                yield completion
+                yield completion, 0
 
     @tenacity.retry(
         wait=tenacity.wait_exponential(multiplier=1, max=10),
@@ -330,7 +331,7 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         self,
         messages: list[dict[str, str]],
         model_config: ModelConfig,
-    ):
+    ) -> AsyncIterator[tuple[str, int]]:
         api_base = (
             model_config.api_base
             or get_secret("OLLAMA_API_BASE")
@@ -399,18 +400,18 @@ class Prompt(StreamingAction[Inputs, Outputs]):
                         json_, buffer = buffer.split("\n", 1)
                         completion = process_completion(json_)
                         if completion is not None:
-                            yield completion
+                            yield completion, 0
                 if buffer:
                     completion = process_completion(buffer)
                     if completion is not None:
-                        yield completion
+                        yield completion, 0
 
     async def _invoke_litellm(
         self,
         messages: list[dict[str, str]],
         model_config: ModelConfig,
         schema: None | JsonSchemaObject,
-    ):
+    ) -> AsyncIterator[tuple[str, int]]:
         openai_api_key = get_secret("OPENAI_API_KEY")
         if openai_api_key is None and "gpt" in model_config.model:
             self.log.warning("OpenAI API key not set")
@@ -434,6 +435,7 @@ class Prompt(StreamingAction[Inputs, Outputs]):
             ]
 
         client = None
+        tool_index = 0
         try:
             if "gpt" in model_config.model:
                 from openai import AsyncOpenAI
@@ -460,14 +462,16 @@ class Prompt(StreamingAction[Inputs, Outputs]):
                     delta_obj = completion.choices[0].delta  # type: ignore
                     if schema is not None:
                         if delta_obj.tool_calls is not None:
-                            delta_string = delta_obj.tool_calls[0].function.arguments
+                            tool_call = delta_obj.tool_calls[0]
+                            tool_index = tool_call.index
+                            delta_string = tool_call.function.arguments
                         else:
                             delta_string = None
                     else:
                         delta_string = delta_obj.content
                     if delta_string is None:
                         break
-                    yield delta_string
+                    yield delta_string, tool_index
         finally:
             if client is not None:
                 await client.close()
@@ -477,7 +481,9 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         messages: list[dict[str, str]],
         model_config: ModelConfig,
         schema: None | JsonSchemaObject,
-    ) -> AsyncIterator[str]:
+    ) -> AsyncIterator[tuple[str, int]]:
+        # this function returns (delta, tool_index); when filling functions (currently only via litellm),
+        # it returns one argument at a time (incrementing tool_index)
         if "claude" in model_config.model and schema is None:
             iterator = self._invoke_anthropic(
                 messages=messages,
@@ -537,12 +543,14 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         )
 
         output = ""
-        async for partial_output in self.invoke_llm(
+        tool_responses = defaultdict(str)
+        async for partial_output, tool_index in self.invoke_llm(
             messages=messages,
             model_config=resolved_model,
             schema=inputs.output_schema,
         ):
             output += partial_output
+            tool_responses[tool_index] += partial_output
             yield Outputs(
                 result=output,
                 response=output,
@@ -550,12 +558,19 @@ class Prompt(StreamingAction[Inputs, Outputs]):
             )
 
         if inputs.output_schema is not None:
-            data = json.loads(output)
-            yield Outputs(
-                result=output,
-                response=output,
-                data=data,
-            )
+            data = {}
+            try:
+                for tool_response in tool_responses.values():
+                    data |= json.loads(tool_response)
+                yield Outputs(
+                    result=output,
+                    response=output,
+                    data=data,
+                )
+            except json.JSONDecodeError:
+                self.log.exception(
+                    "Failed to parse JSON response", tool_responses=tool_responses
+                )
 
         try:
             estimated_cost_usd = self.estimate_cost(
