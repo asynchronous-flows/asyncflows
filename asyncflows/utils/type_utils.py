@@ -261,8 +261,13 @@ def remove_optional(type_: type | None) -> tuple[type, bool]:
         return typing.Any, True
     if typing.get_origin(type_) in [Union, types.UnionType]:
         args = typing.get_args(type_)
+        is_optional = False
         if type(None) in args:
-            return args[0], True
+            args = tuple(arg for arg in args if arg is not type(None))
+            is_optional = True
+        if len(args) == 1:
+            return args[0], is_optional
+        return Union[args], is_optional  # type: ignore
     return type_, False
 
 
