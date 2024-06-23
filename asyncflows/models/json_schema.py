@@ -22,8 +22,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
 from __future__ import annotations
+from typing import Union, Literal
+from pydantic import (
+    BaseModel,
+    Field,
+)
 
 import enum as _enum
 from functools import lru_cache
@@ -33,16 +37,10 @@ from typing import (
     List,
     Optional,
     Set,
-    Union,
-    Literal,
-)
-
-from pydantic import (
-    Field,
 )
 
 
-from pydantic import ConfigDict, BaseModel, field_validator, model_validator
+from pydantic import ConfigDict, field_validator, model_validator
 
 UnionIntFloat = Union[int, float]
 
@@ -80,7 +78,9 @@ class Discriminator(BaseModel):
     mapping: Optional[Dict[str, str]] = None
 
 
-typestring_type = Literal["string", "number", "object", "array", "boolean"]
+typestring_type = Literal[
+    "string", "number", "integer", "object", "array", "boolean", "null"
+]
 
 
 class JsonSchemaObject(BaseModel):
@@ -103,7 +103,7 @@ class JsonSchemaObject(BaseModel):
         "maxItems",
         "minLength",
         "maxLength",
-        "pattern",
+        # "pattern",
         "uniqueItems",
     }
     # __extra_key__: str = SPECIAL_PATH_FORMAT.format('extras')
@@ -140,8 +140,10 @@ class JsonSchemaObject(BaseModel):
     items: Union[List[JsonSchemaObject], JsonSchemaObject, bool, None] = None
     uniqueItems: Optional[bool] = None
     type: Union[typestring_type, List[typestring_type], None] = None
-    format: Optional[str] = None
-    pattern: Optional[str] = None
+    format: Optional[Literal["email", "uri", "date"]] = None
+    # pattern: Optional[str] = Field(
+    #     default=None, description="A regular expression pattern."
+    # )
     minLength: Optional[int] = None
     maxLength: Optional[int] = None
     minimum: Optional[UnionIntFloat] = None
@@ -151,16 +153,19 @@ class JsonSchemaObject(BaseModel):
     multipleOf: Optional[float] = None
     exclusiveMaximum: Union[float, bool, None] = None
     exclusiveMinimum: Union[float, bool, None] = None
-    additionalProperties: Union[JsonSchemaObject, bool, None] = None
-    patternProperties: Optional[Dict[str, JsonSchemaObject]] = None
+    # additionalProperties: Union[JsonSchemaObject, bool, None] = None
+    # patternProperties: Optional[Dict[str, JsonSchemaObject]] = None
     oneOf: List[JsonSchemaObject] = []
     anyOf: List[JsonSchemaObject] = []
     allOf: List[JsonSchemaObject] = []
     enum: List[Any] = []
-    writeOnly: Optional[bool] = None
-    readOnly: Optional[bool] = None
+    # writeOnly: Optional[bool] = None
+    # readOnly: Optional[bool] = None
     properties: Optional[Dict[str, Union[JsonSchemaObject, bool]]] = None
-    required: List[str] = []
+    required: List[str] | None = Field(
+        default=None,
+        description="List of required properties. Defaults to all properties.",
+    )
     ref: Optional[str] = Field(default=None, alias="$ref")
     nullable: Optional[bool] = False
     x_enum_varnames: List[str] = Field(default=[], alias="x-enum-varnames")
