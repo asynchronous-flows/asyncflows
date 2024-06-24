@@ -161,7 +161,7 @@ class JsonSchemaObject(BaseModel):
     enum: List[Any] = []
     # writeOnly: Optional[bool] = None
     # readOnly: Optional[bool] = None
-    properties: Optional[Dict[str, Union[JsonSchemaObject, bool]]] = None
+    properties: Optional[Dict[str, JsonSchemaObject]] = None
     required: List[str] | None = Field(
         default=None,
         description="List of required properties. Defaults to all properties.",

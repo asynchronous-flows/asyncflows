@@ -36,13 +36,11 @@ flow:
       #   "key_decisions": ["Decision 1", "Decision 2"],
       #   "action_items": ["Action Item 1", "Action Item 2"]
       # }
-      type: object
-      properties:
-        key_decisions:
-          type: array
-          items:
-            type: string
-        action_items:
-          type: array
-          items:
-            type: string
+      key_decisions:
+        type: array
+        items:
+          type: string
+      action_items:
+        type: array
+        items:
+          type: string

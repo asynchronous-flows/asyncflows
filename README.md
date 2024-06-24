@@ -108,22 +108,20 @@ flow:
       - text: |
           Based on the meeting notes review, what are the key decisions and action items? Summarize the main points.
     # Specify a JSONschema for structured output
+    # An example of this output is:
+    # {
+    #   "key_decisions": ["Decision 1", "Decision 2"],
+    #   "action_items": ["Action Item 1", "Action Item 2"]
+    # }
     output_schema:
-      # An example of this output is:
-      # {
-      #   "key_decisions": ["Decision 1", "Decision 2"],
-      #   "action_items": ["Action Item 1", "Action Item 2"]
-      # }
-      type: object
-      properties:
-        key_decisions:
-          type: array
-          items:
-            type: string
-        action_items:
-          type: array
-          items:
-            type: string
+     key_decisions:
+       type: array
+       items:
+         type: string
+     action_items:
+       type: array
+       items:
+         type: string
 ```
 
 Python code that runs the flow:

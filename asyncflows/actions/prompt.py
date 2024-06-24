@@ -119,7 +119,7 @@ Consists of multiple elements like text, roles, variables, links, and more.
 See [prompting in-depth](https://github.com/asynchronous-flows/asyncflows?tab=readme-ov-file#prompting-in-depth) for more information.
 """,
     )
-    output_schema: None | JsonSchemaObject = Field(
+    output_schema: None | dict[str, JsonSchemaObject] = Field(
         default=None,
         description="""
 Optionally, a JSON schema forcing the language model to output structured data adhering to it.
@@ -177,7 +177,10 @@ class Prompt(StreamingAction[Inputs, Outputs]):
         try:
             # TODO support parital inference; for `var:` and `link:` in schema
             #  honestly rewrite `jsonschema_to_pydantic` to work on dict instead of this obj
-            schema_object = JsonSchemaObject.model_validate(schema)
+            schema_object = JsonSchemaObject(
+                type="object",
+                properties=schema,
+            )
         except ValueError:
             return None
 
@@ -542,12 +545,21 @@ class Prompt(StreamingAction[Inputs, Outputs]):
             inputs.quote_style,
         )
 
+        # resolve schema
+        if inputs.output_schema is None:
+            schema = None
+        else:
+            schema = JsonSchemaObject(
+                type="object",
+                properties=inputs.output_schema,
+            )
+
         output = ""
         tool_responses = defaultdict(str)
         async for partial_output, tool_index in self.invoke_llm(
             messages=messages,
             model_config=resolved_model,
-            schema=inputs.output_schema,
+            schema=schema,
         ):
             output += partial_output
             tool_responses[tool_index] += partial_output
