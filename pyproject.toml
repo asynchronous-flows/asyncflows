@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "asyncflows"
-version = "0.1.10"
+version = "0.1.11"
 description = "Declarative AI Pipelines"
 authors = ["Rafael Irgolic <hello@irgolic.com>"]
 readme = "README.md"
